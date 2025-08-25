@@ -1,0 +1,13 @@
+{
+  "name": "tutor-portal-api",
+  "version": "1.0.0",
+  "description": "API for Tutor Portal admin approval workflow",
+  "scripts": {
+    "start": "func start"
+  },
+  "dependencies": {
+    "@azure/data-tables": "^13.2.2",
+    "@azure/identity": "^3.3.0",
+    "@azure/communication-email": "^1.0.0"
+  }
+}
