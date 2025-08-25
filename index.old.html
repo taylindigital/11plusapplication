@@ -385,94 +385,6 @@
         }
 
         // ============================================
-        // API FUNCTIONS
-        // ============================================
-        
-        async function checkUserStatus(email) {
-            try {
-                const response = await fetch('/api/CheckUserStatus', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                });
-                
-                if (response.ok) {
-                    return await response.json();
-                }
-                return null;
-            } catch (error) {
-                console.error('Error checking user status:', error);
-                return null;
-            }
-        }
-        
-        async function notifyNewSignup(email, name) {
-            try {
-                const response = await fetch('/api/OnUserSignUp', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, name })
-                });
-                
-                if (response.ok) {
-                    console.log('Admin notified of new signup');
-                }
-            } catch (error) {
-                console.error('Error notifying signup:', error);
-            }
-        }
-        
-        async function getPendingUsers(isAdmin) {
-            try {
-                const response = await fetch('/api/GetPendingUsers', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ isAdmin })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.users || [];
-                }
-                return [];
-            } catch (error) {
-                console.error('Error getting pending users:', error);
-                return [];
-            }
-        }
-        
-        async function approveRejectUser(email, action, adminEmail, isAdmin) {
-            try {
-                const response = await fetch('/api/ApproveUser', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        email, 
-                        action, 
-                        adminEmail,
-                        isAdmin 
-                    })
-                });
-                
-                if (response.ok) {
-                    return await response.json();
-                }
-                return null;
-            } catch (error) {
-                console.error('Error processing user:', error);
-                return null;
-            }
-        }
-
-        // ============================================
         // AUTHENTICATION FUNCTIONS
         // ============================================
         
@@ -527,49 +439,6 @@
             }
         }
 
-        async function handleAuthResponse(response) {
-            if (response && response.account) {
-                currentAccount = response.account;
-                
-                // Check if this is a new user (first time signing in)
-                const email = response.account.username || response.account.idTokenClaims?.emails?.[0];
-                const name = response.account.name || response.account.idTokenClaims?.name || '';
-                
-                // Check user status in our database
-                const userStatus = await checkUserStatus(email);
-                
-                if (userStatus) {
-                    if (userStatus.status === 'pending') {
-                        // New user - notify admin
-                        await notifyNewSignup(email, name);
-                        showStatus('Your account is pending approval. You will receive an email once approved.', 'info');
-                    } else if (userStatus.status === 'approved') {
-                        showStatus(`Successfully logged in as ${email}`, 'success');
-                    } else if (userStatus.status === 'rejected') {
-                        showStatus('Your account application was not approved. Please contact support.', 'error');
-                        setTimeout(() => {
-                            signOut();
-                        }, 3000);
-                        return;
-                    }
-                } else {
-                    // First time user
-                    await notifyNewSignup(email, name);
-                    showStatus('Welcome! Your account is pending admin approval.', 'info');
-                }
-                
-                // Check if user is admin from B2C claims
-                userIsAdmin = response.account.idTokenClaims?.extension_isAdmin === true || 
-                              response.account.idTokenClaims?.isAdmin === true;
-                userApprovalStatus = userStatus?.status || 'pending';
-                userHasSubscription = userStatus?.hasSubscription || false;
-                
-                setTimeout(() => {
-                    render();
-                }, 1500);
-            }
-        }
-
         function handleAuthResponse(response) {
             if (response && response.account) {
                 currentAccount = response.account;
@@ -598,8 +467,7 @@
                         
                         if (response.accessToken) {
                             console.log("User already logged in:", accounts[0].username);
-                            // Set up user state
-                            await handleAuthResponse({ account: accounts[0] });
+                            render();
                         }
                     } catch (error) {
                         // Session expired, need to login again
@@ -618,10 +486,6 @@
         
         let statusMessage = "";
         let statusType = "";
-        let userIsAdmin = false;
-        let userApprovalStatus = 'pending';
-        let userHasSubscription = false;
-        let pendingUsers = [];
 
         function showStatus(message, type = "info") {
             statusMessage = message;
@@ -637,25 +501,7 @@
             } else if (!currentAccount) {
                 app.innerHTML = renderLogin();
             } else {
-                // Use async rendering for dashboard
-                renderDashboard().then(html => {
-                    app.innerHTML = html;
-                });
-            }
-        }
-        
-        // Add function to handle user approval/rejection
-        async function processUser(email, action) {
-            const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
-            const result = await approveRejectUser(email, action, adminEmail, userIsAdmin);
-            
-            if (result && result.success) {
-                alert(`User ${action}d successfully! They will receive an email notification.`);
-                // Remove user from pending list
-                pendingUsers = pendingUsers.filter(u => u.email !== email);
-                render();
-            } else {
-                alert(`Failed to ${action} user. Please try again.`);
+                app.innerHTML = renderDashboard();
             }
         }
 
@@ -726,97 +572,6 @@
                             Redirect URI: <code style="font-size: 12px;">${B2C_CONFIG.redirectUri}</code>
                         </p>
                     </div>
-                </div>
-            `;
-        }
-
-        async function renderDashboard() {
-            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
-            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
-            
-            // Load pending users if admin
-            if (userIsAdmin && pendingUsers.length === 0) {
-                pendingUsers = await getPendingUsers(true);
-            }
-            
-            return `
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">Tutor Portal</div>
-                        <div class="user-info">
-                            ${userApprovalStatus === 'approved' ? 
-                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
-                                    ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
-                                </span>` : 
-                                `<span class="subscription-badge inactive">
-                                    ${userApprovalStatus === 'pending' ? 'Pending Approval' : 'Not Approved'}
-                                </span>`
-                            }
-                            <span>Welcome, ${displayName}</span>
-                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
-                        </div>
-                    </div>
-
-                    ${userIsAdmin && pendingUsers.length > 0 ? `
-                        <div class="admin-panel fade-in" style="background: #fef5e7; border: 1px solid #f9c74f; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                            <h3 style="color: #f9844a; margin-bottom: 15px;">Admin Panel - Pending User Approvals (${pendingUsers.length})</h3>
-                            <div class="pending-users" style="display: flex; flex-direction: column; gap: 10px;">
-                                ${pendingUsers.map(user => `
-                                    <div class="user-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px;">
-                                        <div>
-                                            <strong>${user.name || 'No name'}</strong> - ${user.email}
-                                            <small style="margin-left: 10px; color: #718096;">Applied: ${new Date(user.signupDate).toLocaleDateString()}</small>
-                                        </div>
-                                        <div class="user-actions" style="display: flex; gap: 10px;">
-                                            <button class="btn" style="background: #48bb78; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
-                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'pending' ? `
-                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
-                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
-                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
-                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'approved' ? `
-                        <div class="dashboard">
-                            <div class="sidebar">
-                                <h3>Navigation</h3>
-                                <div class="nav-item active">Lesson Plans</div>
-                                <div class="nav-item">Resources</div>
-                                <div class="nav-item">Schedule</div>
-                                <div class="nav-item">Students</div>
-                                ${userIsAdmin ? '<div class="nav-item">Admin Settings</div>' : ''}
-                            </div>
-
-                            <div class="content-area">
-                                <div class="watermark">PROTECTED</div>
-                                <div class="content-wrapper">
-                                    <h2>Lesson Plans</h2>
-                                    ${userHasSubscription ? `
-                                        <p style="color: #4a5568; margin-top: 20px;">Content will be available here once you have an active subscription.</p>
-                                    ` : `
-                                        <div style="text-align: center; padding: 60px 20px; color: #718096;">
-                                            <h3 style="color: #4a5568; margin-bottom: 20px;">Subscribe to Access Content</h3>
-                                            <p>Get unlimited access to all lesson plans and teaching resources</p>
-                                            <button class="btn" onclick="alert('Stripe integration coming next!')" style="margin-top: 20px;">
-                                                Start Subscription - £9.99/month
-                                            </button>
-                                        </div>
-                                    `}
-                                </div>
-                            </div>
-                        </div>
-                    ` : ''}
                 </div>
             `;
         }
