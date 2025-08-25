@@ -303,16 +303,16 @@
         // AZURE B2C CONFIGURATION
         // ============================================
         
-        // IMPORTANT: Replace these values with your actual Azure B2C configuration
+        // Azure B2C Configuration for brightstars11plus
         const B2C_CONFIG = {
-            // Your B2C tenant name (just the name, not the full domain)
-            tenantName: "brightstars11plus", // e.g., "tutorportaltenant"
+            // Your B2C tenant name
+            tenantName: "brightstars11plus",
             
             // Your Application (client) ID from Azure B2C app registration
-            clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b", // e.g., "12345678-1234-1234-1234-123456789012"
+            clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
             
-            // Your User Flow name
-            signInSignUpPolicyName: "SignUpSignIn", // Update if you used a different name
+            // Your User Flow name - new B2C format without prefix
+            signInSignUpPolicyName: "SignUpSignIn", // New user flows don't use B2C_1_ prefix
             
             // Redirect URI (must match what's registered in Azure)
             redirectUri: window.location.origin, // This will use current domain
@@ -323,8 +323,8 @@
             // Cache location
             cacheLocation: "sessionStorage", // Can be "localStorage" or "sessionStorage"
             
-            // Set to true once you've configured the values above
-            isConfigured: false
+            // Configuration is now set!
+            isConfigured: true
         };
 
         // Build authority URL
