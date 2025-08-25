@@ -490,18 +490,14 @@
                     // For CIAM, we need to specify the user flow in the request
                     extraQueryParameters: {
                         p: B2C_CONFIG.signInSignUpPolicyName
-                    }
+                    },
+                    // Add prompt to ensure proper redirect
+                    prompt: "select_account"
                 };
 
-                // Try popup first, fallback to redirect if blocked
-                try {
-                    const response = await msalInstance.loginPopup(loginRequest);
-                    handleAuthResponse(response);
-                } catch (popupError) {
-                    // If popup is blocked, use redirect
-                    console.log("Popup blocked, using redirect");
-                    await msalInstance.loginRedirect(loginRequest);
-                }
+                // Use redirect instead of popup for more reliable behavior
+                await msalInstance.loginRedirect(loginRequest);
+                
             } catch (error) {
                 console.error("Login error:", error);
                 showStatus(`Login failed: ${error.message}`, "error");
@@ -931,13 +927,17 @@
             console.log("Initializing MSAL with configuration:", B2C_CONFIG);
             if (initializeMSAL()) {
                 console.log("MSAL initialized successfully");
-                // Handle redirect response if coming back from B2C
+                
+                // IMPORTANT: Handle redirect FIRST before any rendering
                 try {
                     const response = await msalInstance.handleRedirectPromise();
-                    if (response) {
-                        handleAuthResponse(response);
+                    console.log("Redirect response:", response);
+                    
+                    if (response && response.account) {
+                        // Coming back from a redirect login
+                        await handleAuthResponse(response);
                     } else {
-                        // Check for existing login
+                        // Not coming from redirect, check for existing login
                         await checkExistingLogin();
                     }
                 } catch (error) {
