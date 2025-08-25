@@ -308,28 +308,32 @@
             // Your B2C tenant name
             tenantName: "brightstars11plus",
             
+            // Your tenant ID (GUID from the OpenID configuration)
+            tenantId: "d96d2f4e-d080-4c2f-90e1-cce96e64b6ba",
+            
             // Your Application (client) ID from Azure B2C app registration
             clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
             
-            // Your User Flow name - new B2C format without prefix
-            signInSignUpPolicyName: "SignUpSignIn", // New user flows don't use B2C_1_ prefix
+            // Your User Flow name (new CIAM format)
+            signInSignUpPolicyName: "SignUpSignIn",
             
             // Redirect URI (must match what's registered in Azure)
-            redirectUri: window.location.origin, // This will use current domain
+            redirectUri: window.location.origin,
             
             // Scopes
             scopes: ["openid", "profile"],
             
             // Cache location
-            cacheLocation: "sessionStorage", // Can be "localStorage" or "sessionStorage"
+            cacheLocation: "sessionStorage",
             
             // Configuration is now set!
             isConfigured: true
         };
 
-        // Build authority URL
+        // Build authority URL - new CIAM format uses tenant GUID
         const getAuthority = () => {
-            return `https://${B2C_CONFIG.tenantName}.b2clogin.com/${B2C_CONFIG.tenantName}.onmicrosoft.com/${B2C_CONFIG.signInSignUpPolicyName}`;
+            // Use the tenant GUID format from the OpenID configuration
+            return `https://${B2C_CONFIG.tenantName}.ciamlogin.com/${B2C_CONFIG.tenantId}`;
         };
 
         // ============================================
@@ -351,7 +355,7 @@
                     auth: {
                         clientId: B2C_CONFIG.clientId,
                         authority: getAuthority(),
-                        knownAuthorities: [`${B2C_CONFIG.tenantName}.b2clogin.com`],
+                        knownAuthorities: [`${B2C_CONFIG.tenantName}.ciamlogin.com`],
                         redirectUri: B2C_CONFIG.redirectUri,
                         postLogoutRedirectUri: B2C_CONFIG.redirectUri,
                         navigateToLoginRequestUrl: false
@@ -394,7 +398,11 @@
                 showStatus("Redirecting to Azure B2C login...", "info");
                 
                 const loginRequest = {
-                    scopes: B2C_CONFIG.scopes
+                    scopes: B2C_CONFIG.scopes,
+                    // For CIAM, we need to specify the user flow in the request
+                    extraQueryParameters: {
+                        p: B2C_CONFIG.signInSignUpPolicyName
+                    }
                 };
 
                 // Try popup first, fallback to redirect if blocked
@@ -640,12 +648,7 @@
             B2C_CONFIG.signInSignUpPolicyName = userFlow;
             B2C_CONFIG.isConfigured = true;
             
-            // Save to localStorage for persistence
-            localStorage.setItem('b2cConfig', JSON.stringify({
-                tenantName: tenantName,
-                clientId: clientId,
-                signInSignUpPolicyName: userFlow
-            }));
+            // No need to save to localStorage anymore since we're using hardcoded values
             
             // Initialize MSAL with new config
             if (initializeMSAL()) {
@@ -663,23 +666,7 @@
         // INITIALIZATION
         // ============================================
         
-        // Load saved configuration from localStorage
-        function loadSavedConfiguration() {
-            const saved = localStorage.getItem('b2cConfig');
-            if (saved) {
-                try {
-                    const config = JSON.parse(saved);
-                    B2C_CONFIG.tenantName = config.tenantName;
-                    B2C_CONFIG.clientId = config.clientId;
-                    B2C_CONFIG.signInSignUpPolicyName = config.signInSignUpPolicyName;
-                    B2C_CONFIG.isConfigured = true;
-                    return true;
-                } catch (error) {
-                    console.error("Error loading saved config:", error);
-                }
-            }
-            return false;
-        }
+        // We're not loading from localStorage anymore since config is hardcoded
 
         // Initialize app when page loads
         window.addEventListener('load', async () => {
@@ -692,23 +679,27 @@
                 }
             });
 
-            // Load saved configuration
-            if (loadSavedConfiguration()) {
-                console.log("Loaded saved B2C configuration");
-                if (initializeMSAL()) {
-                    // Handle redirect response if coming back from B2C
-                    try {
-                        const response = await msalInstance.handleRedirectPromise();
-                        if (response) {
-                            handleAuthResponse(response);
-                        } else {
-                            // Check for existing login
-                            await checkExistingLogin();
-                        }
-                    } catch (error) {
-                        console.error("Error handling redirect:", error);
+            // Clear any old saved configuration to use the hardcoded values
+            localStorage.removeItem('b2cConfig');
+            
+            // Initialize MSAL with the hardcoded configuration
+            console.log("Initializing MSAL with configuration:", B2C_CONFIG);
+            if (initializeMSAL()) {
+                console.log("MSAL initialized successfully");
+                // Handle redirect response if coming back from B2C
+                try {
+                    const response = await msalInstance.handleRedirectPromise();
+                    if (response) {
+                        handleAuthResponse(response);
+                    } else {
+                        // Check for existing login
+                        await checkExistingLogin();
                     }
+                } catch (error) {
+                    console.error("Error handling redirect:", error);
                 }
+            } else {
+                console.error("Failed to initialize MSAL");
             }
             
             // Initial render
