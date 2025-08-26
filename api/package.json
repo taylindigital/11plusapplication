@@ -2,11 +2,6 @@
   "name": "api",
   "version": "1.0.0",
   "description": "",
-  "scripts": {
-    "start": "func start"
-  },
-  "dependencies": {
-    "@azure/data-tables": "^13.2.2",
-    "@azure/communication-email": "^1.0.0"
-  }
+  "scripts": {},
+  "dependencies": {}
 }
