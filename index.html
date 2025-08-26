@@ -845,62 +845,6 @@
             `;
         }
 
-        function renderDashboard() {
-            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
-            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
-            
-            return `
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">Tutor Portal</div>
-                        <div class="user-info">
-                            <span>Welcome, ${displayName}</span>
-                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
-                        </div>
-                    </div>
-
-                    <div class="dashboard">
-                        <div class="sidebar">
-                            <h3>Navigation</h3>
-                            <div class="nav-item active">Lesson Plans</div>
-                            <div class="nav-item">Resources</div>
-                            <div class="nav-item">Schedule</div>
-                            <div class="nav-item">Students</div>
-                        </div>
-
-                        <div class="content-area">
-                            <div class="watermark">PROTECTED</div>
-                            <div class="content-wrapper">
-                                <h2>Welcome to Tutor Portal</h2>
-                                
-                                <div style="background: #c6f6d5; border: 1px solid #9ae6b4; padding: 20px; border-radius: 8px; margin: 20px 0;">
-                                    <h3 style="color: #22543d; margin-bottom: 10px;">✅ Authentication Successful!</h3>
-                                    <p style="color: #22543d;">You are successfully authenticated with Azure B2C.</p>
-                                    <p style="margin-top: 10px; font-size: 14px;">
-                                        <strong>User Details:</strong><br>
-                                        Email: ${username}<br>
-                                        Display Name: ${displayName}<br>
-                                        User ID: ${currentAccount?.localAccountId || currentAccount?.homeAccountId || 'N/A'}
-                                    </p>
-                                </div>
-                                
-                                <div style="margin-top: 30px;">
-                                    <h3 style="color: #2d3748; margin-bottom: 15px;">Next Steps:</h3>
-                                    <ol style="line-height: 2; color: #4a5568;">
-                                        <li>✅ Azure B2C Authentication is working</li>
-                                        <li>⏳ Set up backend API for user approval workflow</li>
-                                        <li>⏳ Integrate Stripe for subscriptions</li>
-                                        <li>⏳ Add lesson plan management</li>
-                                        <li>⏳ Implement content protection</li>
-                                    </ol>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-
         function saveConfiguration() {
             const tenantName = document.getElementById('tenantName').value.trim();
             const clientId = document.getElementById('clientId').value.trim();
