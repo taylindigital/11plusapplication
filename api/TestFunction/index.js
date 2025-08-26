@@ -1,3 +1,5 @@
 module.exports = async function (context, req) {
-  context.res = { body: "Hello from Azure Functions!" };
+  context.res = {
+    body: "Hello from Azure Functions!"
+  };
 };
