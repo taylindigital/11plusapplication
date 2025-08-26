@@ -1,7 +1,9 @@
 {
-  "IsEncrypted": true,
+  "IsEncrypted": false,
   "Values": {
-    "FUNCTIONS_WORKER_RUNTIME": "CfDJ8HFGUJ7zY/FBlJq4zqaHQ0X/jPFVkPzVumpnau49EZbLmbMEMhbv06jHmy8AHF5PkR0xl/EGbDwumeCTKP/uCKXd5zphR8t57wfPWiU0CRsRMdGDOLONwazEZU54pNremQ=="
-  },
-  "ConnectionStrings": {}
+    "AzureWebJobsStorage": "UseDevelopmentStorage=true",
+    "FUNCTIONS_WORKER_RUNTIME": "node",
+    "AZURE_COMMUNICATION_CONNECTION_STRING": "",
+    "AZURE_COMMUNICATION_SENDER": ""
+  }
 }
