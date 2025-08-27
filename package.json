@@ -1,8 +1,0 @@
-{
-  "name": "tutor-portal",
-  "version": "1.0.0",
-  "description": "Tutor Portal Application",
-  "scripts": {
-    "build": "echo 'No build required for static HTML'"
-  }
-}
