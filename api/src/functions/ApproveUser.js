@@ -49,7 +49,7 @@ module.exports = async function (context, req) {
                 html: action === 'approve' 
                     ? `<h2>Welcome to Tutor Portal!</h2>
                        <p>Your account has been approved. You can now log in and subscribe to access all content.</p>
-                       <p><a href="https://brave-pond-0a2cb0203.2.azurestaticapps.net/">Login to Tutor Portal</a></p>`
+                       <p><a href="https://brave-cliff-07c1f8903.2.azurestaticapps.net/">Login to Tutor Portal</a></p>`
                     : `<h2>Tutor Portal Application Update</h2>
                        <p>Unfortunately, your application has not been approved at this time.</p>
                        <p>If you have questions, please contact support.</p>`

@@ -56,7 +56,7 @@ module.exports = async function (context, req) {
                        <p><strong>Email:</strong> ${email}</p>
                        <p><strong>Name:</strong> ${name || 'Not provided'}</p>
                        <p><strong>Time:</strong> ${new Date().toLocaleString()}</p>
-                       <p><a href="https://brave-pond-0a2cb0203.2.azurestaticapps.net/">Go to Admin Panel to approve</a></p>`
+                       <p><a href="https://brave-cliff-07c1f8903.2.azurestaticapps.net/">Go to Admin Panel to approve</a></p>`
             }
         };
         
