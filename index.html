@@ -390,7 +390,7 @@
         
         async function checkUserStatus(email) {
             try {
-                const response = await fetch('/api/CheckUserStatus', {
+                const response = await fetch('/api/checkuserstatus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -410,7 +410,7 @@
         
         async function notifyNewSignup(email, name) {
             try {
-                const response = await fetch('/api/OnUserSignUp', {
+                const response = await fetch('/api/onusersignup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -428,7 +428,7 @@
         
         async function getPendingUsers(isAdmin) {
             try {
-                const response = await fetch('/api/GetPendingUsers', {
+                const response = await fetch('/api/getpendingusers', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -449,7 +449,7 @@
         
         async function approveRejectUser(email, action, adminEmail, isAdmin) {
             try {
-                const response = await fetch('/api/ApproveUser', {
+                const response = await fetch('/api/approveuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -558,10 +558,13 @@
                     showStatus(`Logged in as ${email}`, 'success');
                 }
                 
-                // Check if user is admin from B2C claims
+                // Check if user is admin from B2C claims or hardcoded for now
                 console.log("Token claims:", response.account.idTokenClaims);
+                const userEmail = email.toLowerCase();
                 userIsAdmin = response.account.idTokenClaims?.extension_isAdmin === true || 
-                              response.account.idTokenClaims?.isAdmin === true;
+                              response.account.idTokenClaims?.isAdmin === true ||
+                              response.account.idTokenClaims?.extension_b2c_isAdmin === true ||
+                              userEmail === 'taylorj29@hotmail.com'; // Hardcoded admin for testing
                 userApprovalStatus = userStatus?.status || 'approved'; // Default to approved if API not working
                 userHasSubscription = userStatus?.hasSubscription || false;
                 
