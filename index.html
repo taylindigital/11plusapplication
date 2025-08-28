@@ -561,7 +561,7 @@
                 // Check if user is admin from B2C claims or hardcoded for now
                 console.log("Token claims:", response.account.idTokenClaims);
                 const userEmail = email.toLowerCase();
-                userIsAdmin = response.account.idTokenClaims?.roles?.includes('Admin') ||
+                userIsAdmin = response.account.idTokenClaims?.roles?.includes('Admin') || true; // Temporary admin for testing
                 userApprovalStatus = userStatus?.status || 'approved'; // Default to approved if API not working
                 userHasSubscription = userStatus?.hasSubscription || false;
                 
