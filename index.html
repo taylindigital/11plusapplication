@@ -390,7 +390,7 @@
         
         async function checkUserStatus(email) {
             try {
-                const response = await fetch('/api/checkuserstatus', {
+                const response = await fetch('/api/src/functions/checkuserstatus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -410,7 +410,7 @@
         
         async function notifyNewSignup(email, name) {
             try {
-                const response = await fetch('/api/onusersignup', {
+                const response = await fetch('/api/src/functions/onusersignup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -428,7 +428,7 @@
         
         async function getPendingUsers(isAdmin) {
             try {
-                const response = await fetch('/api/getpendingusers', {
+                const response = await fetch('/api/src/functions/getpendingusers', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -449,7 +449,7 @@
         
         async function approveRejectUser(email, action, adminEmail, isAdmin) {
             try {
-                const response = await fetch('/api/approveuser', {
+                const response = await fetch('/api/src/functions/approveuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -558,10 +558,10 @@
                     showStatus(`Logged in as ${email}`, 'success');
                 }
                 
-                // Check if user is admin from B2C claims or hardcoded for now
+                // Check if user is admin from roles claim
                 console.log("Token claims:", response.account.idTokenClaims);
-                const userEmail = email.toLowerCase();
-                userIsAdmin = response.account.idTokenClaims?.roles?.includes('Admin') || true; // Temporary admin for testing
+                userIsAdmin = response.account.idTokenClaims?.roles?.includes('isAdmin') || false;
+                console.log("User is admin:", userIsAdmin);
                 userApprovalStatus = userStatus?.status || 'approved'; // Default to approved if API not working
                 userHasSubscription = userStatus?.hasSubscription || false;
                 
