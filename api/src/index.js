@@ -5,6 +5,8 @@ const checkUserStatus = require('./functions/checkuserstatus');
 const getPendingUsers = require('./functions/getpendingusers');
 const approveUser = require('./functions/approveuser');
 const onUserSignUp = require('./functions/onusersignup');
+const lessons = require('./functions/lessons');
+const upload = require('./functions/upload');
 
 // Register the functions
 app.http('checkuserstatus', {
@@ -29,6 +31,18 @@ app.http('onusersignup', {
     methods: ['POST'],
     authLevel: 'anonymous',
     handler: onUserSignUp
+});
+
+app.http('lessons', {
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    authLevel: 'anonymous',
+    handler: lessons
+});
+
+app.http('upload', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: upload
 });
 
 // Add a test endpoint
