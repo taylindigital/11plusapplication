@@ -1,3 +1,73 @@
+        async function renderDashboard() {
+            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
+            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
+            
+            // Load data
+            if (userIsAdmin && pendingUsers.length === 0) {
+                pendingUsers = await getPendingUsers(true);
+            }
+            
+            if (lessons.length === 0) {
+                lessons = await getLessons();
+            }
+            
+            return `
+                <div class="container">
+                    <div class="header">
+                        <div class="logo">Tutor Portal</div>
+                        <div class="user-info">
+                            ${userApprovalStatus === 'approved' ? 
+                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
+                                    ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
+                                </span>` : 
+                                `<span class="subscription-badge inactive">
+                                    ${userApprovalStatus === 'pending' ? 'Pending Approval' : 'Not Approved'}
+                                </span>`
+                            }
+                            <span>Welcome, ${displayName}</span>
+                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
+                        </div>
+                    </div>
+
+                    ${userIsAdmin && pendingUsers.length > 0 ? `
+                        <div class="admin-panel fade-in" style="background: #fef5e7; border: 1px solid #f9c74f; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <h3 style="color: #f9844a; margin-bottom: 15px;">Admin Panel - Pending User Approvals (${pendingUsers.length})</h3>
+                            <div class="pending-users" style="display: flex; flex-direction: column; gap: 10px;">
+                                ${pendingUsers.map(user => `
+                                    <div class="user-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px;">
+                                        <div>
+                                            <strong>${user.name || 'No name'}</strong> - ${user.email}
+                                            <small style="margin-left: 10px; color: #718096;">Applied: ${new Date(user.signupDate).toLocaleDateString()}</small>
+                                        </div>
+                                        <div class="user-actions" style="display: flex; gap: 10px;">
+                                            <button class="btn" style="background: #48bb78; padding: 5px 15px; font-size: 14px;" 
+                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
+                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
+                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'pending' ? `
+                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
+                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
+                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
+                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'approved' ? `
+                        <div class="dashboard">
+                            <div class="sidebar">
+                                <h3>Navigation</h3>
+                                <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="switchView('lessons')">Lesson Plans</div>
+                                <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="switchView('resources')">Resources</div>
+                                <div class="nav-item ${currentView === 'schedule' ? 'active' : ''}" onclick="switchView('schedule')">Schedule</div>
+                                <div class="nav-item ${currentView === 'students' ? 'active' : ''}" onclick="switchView('students')">Students</div>
+                                ${userIsAdmin ? `
                                 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -1338,7 +1408,7 @@
                     ` : ''}
                 </div>
             `;
-        }
+        };" 
                                                 onclick="processUser('${user.email}', 'approve')">Approve</button>
                                             <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
                                                 onclick="processUser('${user.email}', 'reject')">Reject</button>
@@ -1409,6 +1479,53 @@
             
             // No need to save to localStorage anymore since we're using hardcoded values
             
+            // Initialize MSAL with new config
+            if (initializeMSAL()) {
+                showStatus("Configuration saved successfully! Initializing authentication...", "success");
+                setTimeout(() => {
+                    checkExistingLogin();
+                    render();
+                }, 1500);
+            } else {
+                showStatus("Error initializing authentication. Please check your configuration.", "error");
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        // Initialize app when page loads
+        window.addEventListener('load', async () => {
+            // Prevent print shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
+                    e.preventDefault();
+                    alert('Printing and saving are disabled for content protection.');
+                    return false;
+                }
+            });
+
+            // Clear any old saved configuration to use the hardcoded values
+            localStorage.removeItem('b2cConfig');
+            
+            // Initialize MSAL with the hardcoded configuration
+            console.log("Initializing MSAL with configuration:", B2C_CONFIG);
+            if (initializeMSAL()) {
+                console.log("MSAL initialized successfully");
+                
+                // IMPORTANT: Handle redirect FIRST before any rendering
+                try {
+                    const response = await msalInstance.handleRedirectPromise();
+                    console.log("Redirect response:", response);
+                    
+                    if (response && response.account) {
+                        // Coming back from a redirect login
+                        await handleAuthResponse(response);
+                    } else {
+                        // Not coming from redirect, check for existing login
+                        await checkExistingLogin();
+                    }
                 } catch (error) {
                     console.error("Error handling redirect:", error);
                 }
