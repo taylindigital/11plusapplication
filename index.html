@@ -390,7 +390,7 @@
         
         async function checkUserStatus(email) {
             try {
-                const response = await fetch('/api/src/functions/checkuserstatus', {
+                const response = await fetch('/api/checkuserstatus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -410,7 +410,7 @@
         
         async function notifyNewSignup(email, name) {
             try {
-                const response = await fetch('/api/src/functions/onusersignup', {
+                const response = await fetch('/api/onusersignup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -428,7 +428,7 @@
         
         async function getPendingUsers(isAdmin) {
             try {
-                const response = await fetch('/api/src/functions/getpendingusers', {
+                const response = await fetch('/api/getpendingusers', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -449,7 +449,7 @@
         
         async function approveRejectUser(email, action, adminEmail, isAdmin) {
             try {
-                const response = await fetch('/api/src/functions/approveuser', {
+                const response = await fetch('/api/approveuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
