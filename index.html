@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+                                <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -390,7 +390,7 @@
         
         async function checkUserStatus(email) {
             try {
-                const response = await fetch('/api/checkuserstatus', {
+                const response = await fetch('/api/src/functions/checkuserstatus', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -410,7 +410,7 @@
         
         async function notifyNewSignup(email, name) {
             try {
-                const response = await fetch('/api/onusersignup', {
+                const response = await fetch('/api/src/functions/onusersignup', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -428,7 +428,7 @@
         
         async function getPendingUsers(isAdmin) {
             try {
-                const response = await fetch('/api/getpendingusers', {
+                const response = await fetch('/api/src/functions/getpendingusers', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -449,7 +449,7 @@
         
         async function approveRejectUser(email, action, adminEmail, isAdmin) {
             try {
-                const response = await fetch('/api/approveuser', {
+                const response = await fetch('/api/src/functions/approveuser', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -613,6 +613,8 @@
         let userApprovalStatus = 'pending';
         let userHasSubscription = false;
         let pendingUsers = [];
+        let lessons = [];
+        let currentView = 'lessons';
 
         function showStatus(message, type = "info") {
             statusMessage = message;
@@ -681,6 +683,382 @@
             } else {
                 alert(`Failed to ${action} user. Please try again.`);
             }
+        }
+        
+        // Lesson Management Functions
+        function switchView(view) {
+            currentView = view;
+            render();
+        }
+        
+        function toggleContentInput() {
+            const contentType = document.getElementById('lesson-content-type').value;
+            const htmlGroup = document.getElementById('html-content-group');
+            const fileGroup = document.getElementById('file-upload-group');
+            
+            if (contentType === 'html') {
+                htmlGroup.style.display = 'block';
+                fileGroup.style.display = 'none';
+            } else {
+                htmlGroup.style.display = 'none';
+                fileGroup.style.display = 'block';
+            }
+        }
+        
+        async function saveLesson() {
+            const contentType = document.getElementById('lesson-content-type').value;
+            let content = '';
+            
+            if (contentType === 'file') {
+                const fileInput = document.getElementById('lesson-file');
+                if (fileInput.files.length > 0) {
+                    const uploadResult = await uploadFile(fileInput.files[0]);
+                    if (!uploadResult || !uploadResult.success) {
+                        alert('Failed to upload file. Please try again.');
+                        return;
+                    }
+                    content = uploadResult.url;
+                } else {
+                    alert('Please select a file to upload.');
+                    return;
+                }
+            } else {
+                content = document.getElementById('lesson-content').value;
+                if (!content.trim()) {
+                    alert('Please enter lesson content.');
+                    return;
+                }
+            }
+            
+            const lessonData = {
+                title: document.getElementById('lesson-title').value,
+                subject: document.getElementById('lesson-subject').value,
+                grade: document.getElementById('lesson-grade').value,
+                description: document.getElementById('lesson-description').value,
+                content: content,
+                contentType: contentType,
+                isPublished: document.getElementById('lesson-published').checked
+            };
+            
+            if (!lessonData.title) {
+                alert('Please enter a lesson title.');
+                return;
+            }
+            
+            const result = await createLesson(lessonData);
+            if (result && result.success) {
+                alert('Lesson created successfully!');
+                lessons = await getLessons();
+                currentView = 'manage-lessons';
+                render();
+            } else {
+                alert('Failed to create lesson. Please try again.');
+            }
+        }
+        
+        async function editLesson(lessonId) {
+            // For now, just alert - in production, you'd open an edit form
+            alert(`Edit functionality coming soon for lesson: ${lessonId}`);
+        }
+        
+        // Enhanced content protection
+        let viewStartTime = null;
+        let currentLessonId = null;
+        
+        async function viewLesson(lessonId) {
+            if (!userHasSubscription && !userIsAdmin) {
+                alert('Please subscribe to view lesson content.');
+                return;
+            }
+            
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson) {
+                alert('Lesson not found.');
+                return;
+            }
+            
+            // Track view start
+            viewStartTime = new Date();
+            currentLessonId = lessonId;
+            
+            // Log lesson access (for analytics)
+            fetch('/api/trackview', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    lessonId: lessonId,
+                    userEmail: currentAccount?.username,
+                    timestamp: viewStartTime.toISOString()
+                })
+            }).catch(() => {}); // Silent fail for tracking
+            
+            // Create protected view with enhanced security
+            const protectedContent = `
+                <div id="lesson-container" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 1000; overflow: auto;">
+                    <!-- Screenshot deterrent overlay -->
+                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; pointer-events: none; background: transparent;"></div>
+                    
+                    <div style="position: relative; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
+                        <!-- Dynamic watermarks -->
+                        <div class="watermark-container" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1001;">
+                            <div style="position: absolute; top: 20%; left: 30%; transform: rotate(-20deg); font-size: 40px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
+                                ${currentAccount?.username || 'PROTECTED'}
+                            </div>
+                            <div style="position: absolute; top: 40%; left: 60%; transform: rotate(-25deg); font-size: 35px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
+                                ${new Date().toLocaleDateString()}
+                            </div>
+                            <div style="position: absolute; top: 60%; left: 25%; transform: rotate(-15deg); font-size: 45px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
+                                CONFIDENTIAL
+                            </div>
+                            <div style="position: absolute; top: 80%; left: 55%; transform: rotate(-30deg); font-size: 38px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
+                                ${currentAccount?.username || 'PROTECTED'}
+                            </div>
+                        </div>
+                        
+                        <!-- Session timeout warning -->
+                        <div id="timeout-warning" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
+                                background: #f56565; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1004;">
+                            Session expires in <span id="timeout-counter">60</span> seconds
+                        </div>
+                        
+                        <!-- Content -->
+                        <div style="padding: 40px; max-width: 800px; margin: 0 auto; position: relative; z-index: 1002;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                                <div>
+                                    <h1 style="color: #2d3748; margin-bottom: 10px;">${lesson.title}</h1>
+                                    <p style="color: #667eea; font-weight: 500;">
+                                        ${lesson.subject} - ${lesson.grade}
+                                    </p>
+                                </div>
+                                <button onclick="closeLesson()" style="background: #667eea; color: white; border: none; padding: 10px 20px; 
+                                        border-radius: 5px; cursor: pointer;">
+                                    Close
+                                </button>
+                            </div>
+                            
+                            <!-- View info banner -->
+                            <div style="background: #e6f7ff; border: 1px solid #91d5ff; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                                <small style="color: #003a8c;">
+                                    Viewing started at ${new Date().toLocaleTimeString()} | 
+                                    This content is protected and tracked | 
+                                    Authorized for: ${currentAccount?.username}
+                                </small>
+                            </div>
+                            
+                            ${lesson.contentType === 'file' ? 
+                                `<iframe id="lesson-iframe" src="${lesson.content}" style="width: 100%; height: 70vh; border: 1px solid #e2e8f0; border-radius: 5px;"></iframe>` :
+                                `<div style="line-height: 1.8; color: #4a5568; position: relative;">
+                                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; background: transparent;"></div>
+                                    ${lesson.content}
+                                </div>`
+                            }
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Create viewer
+            const viewer = document.createElement('div');
+            viewer.innerHTML = protectedContent;
+            viewer.id = 'lesson-viewer';
+            document.body.appendChild(viewer);
+            
+            // Enhanced protection measures
+            setupContentProtection(viewer);
+            
+            // Start session timeout (5 minutes)
+            startSessionTimeout();
+            
+            // Detect developer tools
+            detectDevTools();
+        }
+        
+        function setupContentProtection(viewer) {
+            // Disable right-click
+            viewer.addEventListener('contextmenu', e => {
+                e.preventDefault();
+                showSecurityWarning('Right-click is disabled');
+                return false;
+            });
+            
+            // Disable text selection
+            viewer.addEventListener('selectstart', e => {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable drag
+            viewer.addEventListener('dragstart', e => {
+                e.preventDefault();
+                return false;
+            });
+            
+            // Disable copy keyboard shortcuts
+            viewer.addEventListener('keydown', e => {
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'a' || e.key === 'x')) {
+                    e.preventDefault();
+                    showSecurityWarning('Copy/Select is disabled');
+                    return false;
+                }
+                // Disable F12 and other dev tools shortcuts
+                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
+                    e.preventDefault();
+                    showSecurityWarning('Developer tools are disabled');
+                    return false;
+                }
+            });
+            
+            // Prevent screenshot on some browsers (limited effectiveness)
+            viewer.addEventListener('keyup', e => {
+                if (e.key === 'PrintScreen') {
+                    navigator.clipboard.writeText('Screenshot disabled');
+                    showSecurityWarning('Screenshots are not allowed');
+                }
+            });
+            
+            // Blur content when window loses focus (user might be taking screenshot)
+            window.addEventListener('blur', () => {
+                const container = document.getElementById('lesson-container');
+                if (container) {
+                    container.style.filter = 'blur(10px)';
+                }
+            });
+            
+            window.addEventListener('focus', () => {
+                const container = document.getElementById('lesson-container');
+                if (container) {
+                    container.style.filter = 'none';
+                }
+            });
+            
+            // Add CSS to prevent printing
+            const style = document.createElement('style');
+            style.innerHTML = `
+                @media print { 
+                    #lesson-viewer { display: none !important; } 
+                    body { display: none !important; }
+                }
+                #lesson-viewer * {
+                    -webkit-touch-callout: none;
+                    -webkit-user-select: none;
+                    -khtml-user-select: none;
+                    -moz-user-select: none;
+                    -ms-user-select: none;
+                    user-select: none;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+        
+        function showSecurityWarning(message) {
+            const warning = document.createElement('div');
+            warning.style.cssText = `
+                position: fixed;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: #f56565;
+                color: white;
+                padding: 20px 30px;
+                border-radius: 10px;
+                z-index: 10000;
+                font-size: 18px;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            `;
+            warning.textContent = message;
+            document.body.appendChild(warning);
+            
+            setTimeout(() => warning.remove(), 2000);
+        }
+        
+        let sessionTimer;
+        let warningTimer;
+        
+        function startSessionTimeout() {
+            // Clear any existing timers
+            clearTimeout(sessionTimer);
+            clearTimeout(warningTimer);
+            
+            // Show warning after 4 minutes
+            warningTimer = setTimeout(() => {
+                const warning = document.getElementById('timeout-warning');
+                if (warning) {
+                    warning.style.display = 'block';
+                    let counter = 60;
+                    const countdown = setInterval(() => {
+                        counter--;
+                        const counterEl = document.getElementById('timeout-counter');
+                        if (counterEl) counterEl.textContent = counter;
+                        if (counter <= 0) {
+                            clearInterval(countdown);
+                        }
+                    }, 1000);
+                }
+            }, 4 * 60 * 1000);
+            
+            // Close after 5 minutes
+            sessionTimer = setTimeout(() => {
+                alert('Session expired for security. Please reopen the lesson if needed.');
+                closeLesson();
+            }, 5 * 60 * 1000);
+        }
+        
+        function detectDevTools() {
+            let devtools = {open: false, orientation: null};
+            const threshold = 160;
+            
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!devtools.open) {
+                        devtools.open = true;
+                        showSecurityWarning('Developer tools detected - Content protected');
+                        const container = document.getElementById('lesson-container');
+                        if (container) {
+                            container.style.filter = 'blur(20px)';
+                        }
+                    }
+                } else {
+                    if (devtools.open) {
+                        devtools.open = false;
+                        const container = document.getElementById('lesson-container');
+                        if (container) {
+                            container.style.filter = 'none';
+                        }
+                    }
+                }
+            }, 500);
+        }
+        
+        function closeLesson() {
+            // Clear timers
+            clearTimeout(sessionTimer);
+            clearTimeout(warningTimer);
+            
+            // Log view duration
+            if (viewStartTime && currentLessonId) {
+                const duration = Math.round((new Date() - viewStartTime) / 1000);
+                fetch('/api/trackview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        lessonId: currentLessonId,
+                        userEmail: currentAccount?.username,
+                        action: 'close',
+                        duration: duration
+                    })
+                }).catch(() => {});
+            }
+            
+            // Remove viewer
+            const viewer = document.getElementById('lesson-viewer');
+            if (viewer) {
+                viewer.remove();
+            }
+            
+            // Re-enable window blur/focus listeners
+            window.removeEventListener('blur', null);
+            window.removeEventListener('focus', null);
         }
 
         function renderConfiguration() {
@@ -758,9 +1136,13 @@
             const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
             const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
             
-            // Load pending users if admin
+            // Load data
             if (userIsAdmin && pendingUsers.length === 0) {
                 pendingUsers = await getPendingUsers(true);
+            }
+            
+            if (lessons.length === 0) {
+                lessons = await getLessons();
             }
             
             return `
@@ -793,6 +1175,170 @@
                                         </div>
                                         <div class="user-actions" style="display: flex; gap: 10px;">
                                             <button class="btn" style="background: #48bb78; padding: 5px 15px; font-size: 14px;" 
+                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
+                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
+                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'pending' ? `
+                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
+                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
+                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
+                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'approved' ? `
+                        <div class="dashboard">
+                            <div class="sidebar">
+                                <h3>Navigation</h3>
+                                <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="switchView('lessons')">Lesson Plans</div>
+                                ${userIsAdmin ? `
+                                    <div class="nav-item ${currentView === 'manage-lessons' ? 'active' : ''}" onclick="switchView('manage-lessons')">Manage Lessons</div>
+                                    <div class="nav-item ${currentView === 'add-lesson' ? 'active' : ''}" onclick="switchView('add-lesson')">Add New Lesson</div>
+                                ` : ''}
+                                <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="switchView('resources')">Resources</div>
+                                <div class="nav-item ${currentView === 'schedule' ? 'active' : ''}" onclick="switchView('schedule')">Schedule</div>
+                                <div class="nav-item ${currentView === 'students' ? 'active' : ''}" onclick="switchView('students')">Students</div>
+                            </div>
+
+                            <div class="content-area">
+                                <div class="watermark">PROTECTED</div>
+                                <div class="content-wrapper">
+                                    ${currentView === 'lessons' ? `
+                                        <h2>Lesson Plans</h2>
+                                        ${userHasSubscription || userIsAdmin ? `
+                                            <div class="lesson-grid">
+                                                ${lessons.filter(l => l.isPublished || userIsAdmin).map(lesson => `
+                                                    <div class="lesson-card" onclick="viewLesson('${lesson.id}')" 
+                                                         style="position: relative; user-select: none;">
+                                                        <h4>${lesson.title}</h4>
+                                                        <p style="color: #667eea; font-weight: 500;">${lesson.subject} - ${lesson.grade}</p>
+                                                        <p>${lesson.description || 'No description'}</p>
+                                                        <div class="lesson-meta">
+                                                            <span>${new Date(lesson.createdDate).toLocaleDateString()}</span>
+                                                            ${!lesson.isPublished && userIsAdmin ? '<span style="color: #f56565;">Draft</span>' : ''}
+                                                            <span style="color: #667eea;">View →</span>
+                                                        </div>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                            ${lessons.filter(l => l.isPublished || userIsAdmin).length === 0 ? 
+                                                '<p style="text-align: center; color: #718096; margin-top: 40px;">No lessons available yet.</p>' : ''}
+                                        ` : `
+                                            <div style="text-align: center; padding: 60px 20px; color: #718096;">
+                                                <h3 style="color: #4a5568; margin-bottom: 20px;">Subscribe to Access Content</h3>
+                                                <p>Get unlimited access to all lesson plans and teaching resources</p>
+                                                <button class="btn" onclick="alert('Stripe integration coming next!')" style="margin-top: 20px;">
+                                                    Start Subscription - £9.99/month
+                                                </button>
+                                            </div>
+                                        `}
+                                    ` : currentView === 'manage-lessons' && userIsAdmin ? `
+                                        <h2>Manage Lessons</h2>
+                                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
+                                            <thead>
+                                                <tr style="border-bottom: 2px solid #e2e8f0;">
+                                                    <th style="text-align: left; padding: 10px;">Title</th>
+                                                    <th style="text-align: left; padding: 10px;">Subject</th>
+                                                    <th style="text-align: left; padding: 10px;">Grade</th>
+                                                    <th style="text-align: left; padding: 10px;">Status</th>
+                                                    <th style="text-align: left; padding: 10px;">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                ${lessons.map(lesson => `
+                                                    <tr style="border-bottom: 1px solid #e2e8f0;">
+                                                        <td style="padding: 10px;">${lesson.title}</td>
+                                                        <td style="padding: 10px;">${lesson.subject}</td>
+                                                        <td style="padding: 10px;">${lesson.grade}</td>
+                                                        <td style="padding: 10px;">
+                                                            <span style="background: ${lesson.isPublished ? '#48bb78' : '#f56565'}; 
+                                                                       color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
+                                                                ${lesson.isPublished ? 'Published' : 'Draft'}
+                                                            </span>
+                                                        </td>
+                                                        <td style="padding: 10px;">
+                                                            <button onclick="editLesson('${lesson.id}')" style="margin-right: 5px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Edit</button>
+                                                            <button onclick="deleteLesson('${lesson.id}').then(() => location.reload())" style="padding: 5px 10px; background: #f56565; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
+                                                        </td>
+                                                    </tr>
+                                                `).join('')}
+                                            </tbody>
+                                        </table>
+                                        ${lessons.length === 0 ? '<p style="text-align: center; color: #718096; margin-top: 40px;">No lessons created yet.</p>' : ''}
+                                    ` : currentView === 'add-lesson' && userIsAdmin ? `
+                                        <h2>Add New Lesson</h2>
+                                        <div style="max-width: 600px; margin-top: 20px;">
+                                            <div class="form-group">
+                                                <label>Title</label>
+                                                <input type="text" id="lesson-title" placeholder="Enter lesson title">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Subject</label>
+                                                <select id="lesson-subject">
+                                                    <option>Mathematics</option>
+                                                    <option>English</option>
+                                                    <option>Science</option>
+                                                    <option>History</option>
+                                                    <option>Geography</option>
+                                                    <option>Verbal Reasoning</option>
+                                                    <option>Non-Verbal Reasoning</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Grade</label>
+                                                <select id="lesson-grade">
+                                                    <option>Year 3</option>
+                                                    <option>Year 4</option>
+                                                    <option>Year 5</option>
+                                                    <option>Year 6</option>
+                                                    <option>11+</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Description</label>
+                                                <textarea id="lesson-description" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px;"></textarea>
+                                            </div>
+                                            <div class="form-group">
+                                                <label>Content Type</label>
+                                                <select id="lesson-content-type" onchange="toggleContentInput()">
+                                                    <option value="html">HTML Content</option>
+                                                    <option value="file">Upload File (PDF/Word)</option>
+                                                </select>
+                                            </div>
+                                            <div class="form-group" id="html-content-group">
+                                                <label>Lesson Content</label>
+                                                <textarea id="lesson-content" rows="10" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px; font-family: monospace;"></textarea>
+                                            </div>
+                                            <div class="form-group" id="file-upload-group" style="display: none;">
+                                                <label>Upload File</label>
+                                                <input type="file" id="lesson-file" accept=".pdf,.doc,.docx">
+                                            </div>
+                                            <div class="form-group">
+                                                <label>
+                                                    <input type="checkbox" id="lesson-published"> Publish immediately
+                                                </label>
+                                            </div>
+                                            <button class="btn" onclick="saveLesson()">Save Lesson</button>
+                                        </div>
+                                    ` : `
+                                        <h2>${currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h2>
+                                        <p style="color: #718096; margin-top: 20px;">This section is coming soon.</p>
+                                    `}
+                                </div>
+                                <div class="content-protection"></div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
                                                 onclick="processUser('${user.email}', 'approve')">Approve</button>
                                             <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
                                                 onclick="processUser('${user.email}', 'reject')">Reject</button>
@@ -863,55 +1409,6 @@
             
             // No need to save to localStorage anymore since we're using hardcoded values
             
-            // Initialize MSAL with new config
-            if (initializeMSAL()) {
-                showStatus("Configuration saved successfully! Initializing authentication...", "success");
-                setTimeout(() => {
-                    checkExistingLogin();
-                    render();
-                }, 1500);
-            } else {
-                showStatus("Error initializing authentication. Please check your configuration.", "error");
-            }
-        }
-
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        
-        // We're not loading from localStorage anymore since config is hardcoded
-
-        // Initialize app when page loads
-        window.addEventListener('load', async () => {
-            // Prevent print shortcuts
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
-                    e.preventDefault();
-                    alert('Printing and saving are disabled for content protection.');
-                    return false;
-                }
-            });
-
-            // Clear any old saved configuration to use the hardcoded values
-            localStorage.removeItem('b2cConfig');
-            
-            // Initialize MSAL with the hardcoded configuration
-            console.log("Initializing MSAL with configuration:", B2C_CONFIG);
-            if (initializeMSAL()) {
-                console.log("MSAL initialized successfully");
-                
-                // IMPORTANT: Handle redirect FIRST before any rendering
-                try {
-                    const response = await msalInstance.handleRedirectPromise();
-                    console.log("Redirect response:", response);
-                    
-                    if (response && response.account) {
-                        // Coming back from a redirect login
-                        await handleAuthResponse(response);
-                    } else {
-                        // Not coming from redirect, check for existing login
-                        await checkExistingLogin();
-                    }
                 } catch (error) {
                     console.error("Error handling redirect:", error);
                 }
