@@ -562,7 +562,6 @@
                 console.log("Token claims:", response.account.idTokenClaims);
                 const userEmail = email.toLowerCase();
                 userIsAdmin = response.account.idTokenClaims?.roles?.includes('Admin') ||
-                              userEmail === 'taylorj29@hotmail.com'; // Hardcoded admin for testing
                 userApprovalStatus = userStatus?.status || 'approved'; // Default to approved if API not working
                 userHasSubscription = userStatus?.hasSubscription || false;
                 
