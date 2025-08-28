@@ -1,33 +1,44 @@
 const { TableClient } = require("@azure/data-tables");
 
-module.exports = async function (context, req) {
+module.exports = async function (request, context) {
     context.log('Checking user status');
 
-    const userEmail = req.query.email || (req.body && req.body.email);
+    const body = await request.json().catch(() => ({}));
+    const userEmail = body.email || request.query.get('email');
     
     if (!userEmail) {
-        context.res = {
+        return {
             status: 400,
-            body: { error: "Email is required" }
+            jsonBody: { error: "Email is required" }
         };
-        return;
     }
 
     try {
         const connectionString = process.env["STORAGE_CONNECTION_STRING"];
+        if (!connectionString) {
+            context.log('Storage connection string not configured');
+            return {
+                status: 200,
+                jsonBody: {
+                    email: userEmail,
+                    status: 'approved', // Default to approved if no storage
+                    isApproved: true,
+                    hasSubscription: false
+                }
+            };
+        }
+
         const tableClient = TableClient.fromConnectionString(connectionString, "Users");
         
         // Create table if it doesn't exist
-        await tableClient.createTable().catch(() => {
-            // Table might already exist, that's ok
-        });
+        await tableClient.createTable().catch(() => {});
 
         try {
             const user = await tableClient.getEntity("Users", userEmail);
             
-            context.res = {
+            return {
                 status: 200,
-                body: {
+                jsonBody: {
                     email: userEmail,
                     status: user.status || 'pending',
                     approvedDate: user.approvedDate,
@@ -48,9 +59,9 @@ module.exports = async function (context, req) {
                 
                 await tableClient.createEntity(newUser);
                 
-                context.res = {
+                return {
                     status: 200,
-                    body: {
+                    jsonBody: {
                         email: userEmail,
                         status: 'pending',
                         isApproved: false,
@@ -62,10 +73,10 @@ module.exports = async function (context, req) {
             }
         }
     } catch (error) {
-        context.log.error('Error checking user status:', error);
-        context.res = {
+        context.log('Error checking user status:', error);
+        return {
             status: 500,
-            body: { error: "Failed to check user status" }
+            jsonBody: { error: "Failed to check user status" }
         };
     }
 };

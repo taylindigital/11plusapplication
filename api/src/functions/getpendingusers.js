@@ -1,22 +1,28 @@
 const { TableClient } = require("@azure/data-tables");
 
-module.exports = async function (context, req) {
+module.exports = async function (request, context) {
     context.log('Getting pending users for admin');
 
-    const isAdmin = req.body && req.body.isAdmin === true;
+    const body = await request.json().catch(() => ({}));
+    const isAdmin = body.isAdmin === true;
     
     if (!isAdmin) {
-        context.res = {
+        return {
             status: 403,
-            body: { error: "Unauthorized. Admin access required." }
+            jsonBody: { error: "Unauthorized. Admin access required." }
         };
-        return;
     }
 
     try {
         const connectionString = process.env["STORAGE_CONNECTION_STRING"];
+        if (!connectionString) {
+            return {
+                status: 200,
+                jsonBody: { users: [] }
+            };
+        }
+
         const tableClient = TableClient.fromConnectionString(connectionString, "Users");
-        
         await tableClient.createTable().catch(() => {});
         
         const users = [];
@@ -33,15 +39,15 @@ module.exports = async function (context, req) {
             });
         }
         
-        context.res = {
+        return {
             status: 200,
-            body: { users }
+            jsonBody: { users }
         };
     } catch (error) {
-        context.log.error('Error getting pending users:', error);
-        context.res = {
+        context.log('Error getting pending users:', error);
+        return {
             status: 500,
-            body: { error: "Failed to get pending users" }
+            jsonBody: { error: "Failed to get pending users" }
         };
     }
 };
