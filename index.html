@@ -2,7 +2,7 @@
             const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
             const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
             
-            // Load data
+            // Load data 
             if (userIsAdmin && pendingUsers.length === 0) {
                 pendingUsers = await getPendingUsers(true);
             }
