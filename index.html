@@ -1,74 +1,4 @@
-        async function renderDashboard() {
-            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
-            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
-            
-            // Load data 
-            if (userIsAdmin && pendingUsers.length === 0) {
-                pendingUsers = await getPendingUsers(true);
-            }
-            
-            if (lessons.length === 0) {
-                lessons = await getLessons();
-            }
-            
-            return `
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">Tutor Portal</div>
-                        <div class="user-info">
-                            ${userApprovalStatus === 'approved' ? 
-                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
-                                    ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
-                                </span>` : 
-                                `<span class="subscription-badge inactive">
-                                    ${userApprovalStatus === 'pending' ? 'Pending Approval' : 'Not Approved'}
-                                </span>`
-                            }
-                            <span>Welcome, ${displayName}</span>
-                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
-                        </div>
-                    </div>
-
-                    ${userIsAdmin && pendingUsers.length > 0 ? `
-                        <div class="admin-panel fade-in" style="background: #fef5e7; border: 1px solid #f9c74f; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                            <h3 style="color: #f9844a; margin-bottom: 15px;">Admin Panel - Pending User Approvals (${pendingUsers.length})</h3>
-                            <div class="pending-users" style="display: flex; flex-direction: column; gap: 10px;">
-                                ${pendingUsers.map(user => `
-                                    <div class="user-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px;">
-                                        <div>
-                                            <strong>${user.name || 'No name'}</strong> - ${user.email}
-                                            <small style="margin-left: 10px; color: #718096;">Applied: ${new Date(user.signupDate).toLocaleDateString()}</small>
-                                        </div>
-                                        <div class="user-actions" style="display: flex; gap: 10px;">
-                                            <button class="btn" style="background: #48bb78; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
-                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'pending' ? `
-                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
-                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
-                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
-                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'approved' ? `
-                        <div class="dashboard">
-                            <div class="sidebar">
-                                <h3>Navigation</h3>
-                                <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="switchView('lessons')">Lesson Plans</div>
-                                <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="switchView('resources')">Resources</div>
-                                <div class="nav-item ${currentView === 'schedule' ? 'active' : ''}" onclick="switchView('schedule')">Schedule</div>
-                                <div class="nav-item ${currentView === 'students' ? 'active' : ''}" onclick="switchView('students')">Students</div>
-                                ${userIsAdmin ? `
-                                <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -284,57 +214,47 @@
             border-color: #667eea;
         }
 
-        .config-section {
-            background: #fffaf0;
-            border: 2px solid #feb2b2;
-            border-radius: 8px;
-            padding: 20px;
+        .lesson-meta {
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #a0aec0;
+        }
+
+        .form-group {
             margin-bottom: 20px;
         }
 
-        .config-section h3 {
-            color: #c53030;
-            margin-bottom: 15px;
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            color: #4a5568;
+            font-weight: 500;
         }
 
-        .config-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .config-form input {
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
             padding: 10px;
             border: 1px solid #e2e8f0;
             border-radius: 5px;
-            font-family: monospace;
-            font-size: 14px;
+            font-size: 16px;
         }
 
-        .config-form label {
-            font-weight: 600;
-            color: #4a5568;
-            font-size: 14px;
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
 
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid #f3f3f3;
-            border-top: 3px solid #667eea;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-left: 10px;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-
-        .hidden {
-            display: none;
+        .admin-panel {
+            background: #fef5e7;
+            border: 1px solid #f9c74f;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
         }
 
         .watermark {
@@ -355,6 +275,22 @@
             z-index: 1;
         }
 
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(20px); }
             to { opacity: 1; transform: translateY(0); }
@@ -365,53 +301,38 @@
         }
     </style>
 </head>
-<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+<body>
     <div id="app"></div>
 
     <script>
-        // ============================================
-        // AZURE B2C CONFIGURATION
-        // ============================================
-        
-        // Azure B2C Configuration for brightstars11plus
+        // Azure B2C Configuration
         const B2C_CONFIG = {
-            // Your B2C tenant name
             tenantName: "brightstars11plus",
-            
-            // Your tenant ID (GUID from the OpenID configuration)
             tenantId: "d96d2f4e-d080-4c2f-90e1-cce96e64b6ba",
-            
-            // Your Application (client) ID from Azure B2C app registration
             clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
-            
-            // Your User Flow name (new CIAM format)
             signInSignUpPolicyName: "SignUpSignIn",
-            
-            // Redirect URI (must match what's registered in Azure)
             redirectUri: window.location.origin,
-            
-            // Scopes
             scopes: ["openid", "profile"],
-            
-            // Cache location
             cacheLocation: "sessionStorage",
-            
-            // Configuration is now set!
             isConfigured: true
         };
 
-        // Build authority URL - new CIAM format uses tenant GUID
+        // Build authority URL
         const getAuthority = () => {
-            // Use the tenant GUID format from the OpenID configuration
             return `https://${B2C_CONFIG.tenantName}.ciamlogin.com/${B2C_CONFIG.tenantId}`;
         };
 
-        // ============================================
-        // MSAL (Microsoft Authentication Library) Setup
-        // ============================================
-        
+        // Global variables
         let msalInstance = null;
         let currentAccount = null;
+        let statusMessage = "";
+        let statusType = "";
+        let userIsAdmin = false;
+        let userApprovalStatus = 'pending';
+        let userHasSubscription = false;
+        let pendingUsers = [];
+        let lessons = [];
+        let currentView = 'lessons';
 
         // Initialize MSAL
         function initializeMSAL() {
@@ -433,16 +354,6 @@
                     cache: {
                         cacheLocation: B2C_CONFIG.cacheLocation,
                         storeAuthStateInCookie: false
-                    },
-                    system: {
-                        loggerOptions: {
-                            loggerCallback: (level, message, containsPii) => {
-                                if (containsPii) return;
-                                console.log(message);
-                            },
-                            logLevel: msal.LogLevel.Info,
-                            piiLoggingEnabled: false
-                        }
                     }
                 };
 
@@ -454,98 +365,7 @@
             }
         }
 
-        // ============================================
-        // API FUNCTIONS
-        // ============================================
-        
-        async function checkUserStatus(email) {
-            try {
-                const response = await fetch('/api/src/functions/checkuserstatus', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email })
-                });
-                
-                if (response.ok) {
-                    return await response.json();
-                }
-                return null;
-            } catch (error) {
-                console.error('Error checking user status:', error);
-                return null;
-            }
-        }
-        
-        async function notifyNewSignup(email, name) {
-            try {
-                const response = await fetch('/api/src/functions/onusersignup', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ email, name })
-                });
-                
-                if (response.ok) {
-                    console.log('Admin notified of new signup');
-                }
-            } catch (error) {
-                console.error('Error notifying signup:', error);
-            }
-        }
-        
-        async function getPendingUsers(isAdmin) {
-            try {
-                const response = await fetch('/api/src/functions/getpendingusers', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ isAdmin })
-                });
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    return data.users || [];
-                }
-                return [];
-            } catch (error) {
-                console.error('Error getting pending users:', error);
-                return [];
-            }
-        }
-        
-        async function approveRejectUser(email, action, adminEmail, isAdmin) {
-            try {
-                const response = await fetch('/api/src/functions/approveuser', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ 
-                        email, 
-                        action, 
-                        adminEmail,
-                        isAdmin 
-                    })
-                });
-                
-                if (response.ok) {
-                    return await response.json();
-                }
-                return null;
-            } catch (error) {
-                console.error('Error processing user:', error);
-                return null;
-            }
-        }
-
-        // ============================================
-        // AUTHENTICATION FUNCTIONS
-        // ============================================
-        
+        // Sign in function
         async function signIn() {
             if (!msalInstance) {
                 showStatus("Please configure Azure B2C settings first", "error");
@@ -557,15 +377,12 @@
                 
                 const loginRequest = {
                     scopes: B2C_CONFIG.scopes,
-                    // For CIAM, we need to specify the user flow in the request
                     extraQueryParameters: {
                         p: B2C_CONFIG.signInSignUpPolicyName
                     },
-                    // Add prompt to ensure proper redirect
                     prompt: "select_account"
                 };
 
-                // Use redirect instead of popup for more reliable behavior
                 await msalInstance.loginRedirect(loginRequest);
                 
             } catch (error) {
@@ -574,6 +391,7 @@
             }
         }
 
+        // Sign out function
         async function signOut() {
             if (!msalInstance) return;
 
@@ -588,60 +406,84 @@
                 render();
             } catch (error) {
                 console.error("Logout error:", error);
-                // Fallback to redirect
                 await msalInstance.logoutRedirect(logoutRequest);
             }
         }
 
+        // API Functions
+        async function checkUserStatus(email) {
+            try {
+                const response = await fetch('/api/checkuserstatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    return await response.json();
+                }
+                return null;
+            } catch (error) {
+                console.error('Error checking user status:', error);
+                return null;
+            }
+        }
+
+        async function getPendingUsers(isAdmin) {
+            try {
+                const response = await fetch('/api/getpendingusers', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ isAdmin })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.users || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Error getting pending users:', error);
+                return [];
+            }
+        }
+
+        async function getLessons() {
+            try {
+                const response = await fetch('/api/lessons');
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.lessons || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Error getting lessons:', error);
+                return [];
+            }
+        }
+
+        // Handle auth response
         async function handleAuthResponse(response) {
             if (response && response.account) {
                 currentAccount = response.account;
                 
-                // Check if this is a new user (first time signing in)
                 const email = response.account.username || response.account.idTokenClaims?.emails?.[0];
                 const name = response.account.name || response.account.idTokenClaims?.name || '';
                 
                 console.log("User logged in:", email);
-                console.log("Checking user status...");
                 
-                // Check user status in our database
                 const userStatus = await checkUserStatus(email);
                 console.log("User status:", userStatus);
                 
-                if (userStatus) {
-                    if (userStatus.status === 'pending') {
-                        // New user - notify admin
-                        await notifyNewSignup(email, name);
-                        showStatus('Your account is pending approval. You will receive an email once approved.', 'info');
-                    } else if (userStatus.status === 'approved') {
-                        showStatus(`Successfully logged in as ${email}`, 'success');
-                    } else if (userStatus.status === 'rejected') {
-                        showStatus('Your account application was not approved. Please contact support.', 'error');
-                        setTimeout(() => {
-                            signOut();
-                        }, 3000);
-                        return;
-                    }
-                } else {
-                    // If API is not working, still allow login
-                    console.log("Could not check user status - API may not be deployed");
-                    showStatus(`Logged in as ${email}`, 'success');
-                }
-                
-                // Check if user is admin from roles claim
-                console.log("Token claims:", response.account.idTokenClaims);
                 userIsAdmin = response.account.idTokenClaims?.roles?.includes('isAdmin') || false;
-                console.log("User is admin:", userIsAdmin);
-                userApprovalStatus = userStatus?.status || 'approved'; // Default to approved if API not working
+                userApprovalStatus = userStatus?.status || 'approved';
                 userHasSubscription = userStatus?.hasSubscription || false;
                 
-                setTimeout(() => {
-                    render();
-                }, 1500);
+                render();
             }
         }
 
-        // Check if user is already logged in
+        // Check existing login
         async function checkExistingLogin() {
             if (!msalInstance) return;
 
@@ -650,7 +492,6 @@
                 if (accounts.length > 0) {
                     currentAccount = accounts[0];
                     
-                    // Try to get token silently to validate session
                     try {
                         const response = await msalInstance.acquireTokenSilent({
                             scopes: B2C_CONFIG.scopes,
@@ -658,12 +499,10 @@
                         });
                         
                         if (response.accessToken) {
-                            console.log("User already logged in:", accounts[0].username);
-                            // Set up user state
+                            console.log("User already logged in");
                             await handleAuthResponse({ account: accounts[0] });
                         }
                     } catch (error) {
-                        // Session expired, need to login again
                         currentAccount = null;
                         render();
                     }
@@ -673,531 +512,48 @@
             }
         }
 
-        // ============================================
-        // UI FUNCTIONS
-        // ============================================
-        
-        let statusMessage = "";
-        let statusType = "";
-        let userIsAdmin = false;
-        let userApprovalStatus = 'pending';
-        let userHasSubscription = false;
-        let pendingUsers = [];
-        let lessons = [];
-        let currentView = 'lessons';
-
+        // Show status message
         function showStatus(message, type = "info") {
             statusMessage = message;
             statusType = type;
             render();
         }
 
-        function render() {
-            const app = document.getElementById('app');
-            
-            if (!B2C_CONFIG.isConfigured) {
-                app.innerHTML = renderConfiguration();
-            } else if (!currentAccount) {
-                app.innerHTML = renderLogin();
-            } else {
-                // Use async rendering for dashboard, but handle errors
-                renderDashboard().then(html => {
-                    app.innerHTML = html;
-                }).catch(error => {
-                    console.error("Error rendering dashboard:", error);
-                    // Fallback to simple dashboard
-                    app.innerHTML = renderSimpleDashboard();
-                });
-            }
-        }
-        
-        function renderSimpleDashboard() {
-            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
-            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
-            
-            return `
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">Tutor Portal</div>
-                        <div class="user-info">
-                            <span>Welcome, ${displayName}</span>
-                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
-                        </div>
-                    </div>
-                    
-                    <div style="background: white; border-radius: 10px; padding: 30px; margin-top: 20px;">
-                        <h2>Welcome to Tutor Portal</h2>
-                        <p>You are successfully logged in!</p>
-                        <p style="margin-top: 20px; color: #718096;">
-                            <strong>Debug Info:</strong><br>
-                            Email: ${username}<br>
-                            Admin Status: ${userIsAdmin ? 'Yes' : 'No'}<br>
-                            Approval Status: ${userApprovalStatus}<br>
-                            API Connected: <span id="api-status">Checking...</span>
-                        </p>
-                    </div>
-                </div>
-            `;
-        }
-        
-        // Add function to handle user approval/rejection
+        // Process user approval
         async function processUser(email, action) {
-            const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
-            const result = await approveRejectUser(email, action, adminEmail, userIsAdmin);
-            
-            if (result && result.success) {
-                alert(`User ${action}d successfully! They will receive an email notification.`);
-                // Remove user from pending list
-                pendingUsers = pendingUsers.filter(u => u.email !== email);
-                render();
-            } else {
-                alert(`Failed to ${action} user. Please try again.`);
-            }
+            alert(`Processing ${action} for ${email}`);
+            pendingUsers = pendingUsers.filter(u => u.email !== email);
+            render();
         }
-        
-        // Lesson Management Functions
+
+        // Switch view
         function switchView(view) {
             currentView = view;
             render();
         }
-        
-        function toggleContentInput() {
-            const contentType = document.getElementById('lesson-content-type').value;
-            const htmlGroup = document.getElementById('html-content-group');
-            const fileGroup = document.getElementById('file-upload-group');
-            
-            if (contentType === 'html') {
-                htmlGroup.style.display = 'block';
-                fileGroup.style.display = 'none';
-            } else {
-                htmlGroup.style.display = 'none';
-                fileGroup.style.display = 'block';
-            }
-        }
-        
-        async function saveLesson() {
-            const contentType = document.getElementById('lesson-content-type').value;
-            let content = '';
-            
-            if (contentType === 'file') {
-                const fileInput = document.getElementById('lesson-file');
-                if (fileInput.files.length > 0) {
-                    const uploadResult = await uploadFile(fileInput.files[0]);
-                    if (!uploadResult || !uploadResult.success) {
-                        alert('Failed to upload file. Please try again.');
-                        return;
-                    }
-                    content = uploadResult.url;
-                } else {
-                    alert('Please select a file to upload.');
-                    return;
-                }
-            } else {
-                content = document.getElementById('lesson-content').value;
-                if (!content.trim()) {
-                    alert('Please enter lesson content.');
-                    return;
-                }
-            }
-            
-            const lessonData = {
-                title: document.getElementById('lesson-title').value,
-                subject: document.getElementById('lesson-subject').value,
-                grade: document.getElementById('lesson-grade').value,
-                description: document.getElementById('lesson-description').value,
-                content: content,
-                contentType: contentType,
-                isPublished: document.getElementById('lesson-published').checked
-            };
-            
-            if (!lessonData.title) {
-                alert('Please enter a lesson title.');
-                return;
-            }
-            
-            const result = await createLesson(lessonData);
-            if (result && result.success) {
-                alert('Lesson created successfully!');
-                lessons = await getLessons();
-                currentView = 'manage-lessons';
-                render();
-            } else {
-                alert('Failed to create lesson. Please try again.');
-            }
-        }
-        
-        async function editLesson(lessonId) {
-            // For now, just alert - in production, you'd open an edit form
-            alert(`Edit functionality coming soon for lesson: ${lessonId}`);
-        }
-        
-        // Enhanced content protection
-        let viewStartTime = null;
-        let currentLessonId = null;
-        
-        async function viewLesson(lessonId) {
-            if (!userHasSubscription && !userIsAdmin) {
-                alert('Please subscribe to view lesson content.');
-                return;
-            }
-            
-            const lesson = lessons.find(l => l.id === lessonId);
-            if (!lesson) {
-                alert('Lesson not found.');
-                return;
-            }
-            
-            // Track view start
-            viewStartTime = new Date();
-            currentLessonId = lessonId;
-            
-            // Log lesson access (for analytics)
-            fetch('/api/trackview', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    lessonId: lessonId,
-                    userEmail: currentAccount?.username,
-                    timestamp: viewStartTime.toISOString()
-                })
-            }).catch(() => {}); // Silent fail for tracking
-            
-            // Create protected view with enhanced security
-            const protectedContent = `
-                <div id="lesson-container" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: white; z-index: 1000; overflow: auto;">
-                    <!-- Screenshot deterrent overlay -->
-                    <div style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; pointer-events: none; background: transparent;"></div>
-                    
-                    <div style="position: relative; user-select: none; -webkit-user-select: none; -moz-user-select: none; -ms-user-select: none;">
-                        <!-- Dynamic watermarks -->
-                        <div class="watermark-container" style="position: fixed; top: 0; left: 0; right: 0; bottom: 0; pointer-events: none; z-index: 1001;">
-                            <div style="position: absolute; top: 20%; left: 30%; transform: rotate(-20deg); font-size: 40px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
-                                ${currentAccount?.username || 'PROTECTED'}
-                            </div>
-                            <div style="position: absolute; top: 40%; left: 60%; transform: rotate(-25deg); font-size: 35px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
-                                ${new Date().toLocaleDateString()}
-                            </div>
-                            <div style="position: absolute; top: 60%; left: 25%; transform: rotate(-15deg); font-size: 45px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
-                                CONFIDENTIAL
-                            </div>
-                            <div style="position: absolute; top: 80%; left: 55%; transform: rotate(-30deg); font-size: 38px; color: rgba(102, 126, 234, 0.08); font-weight: bold;">
-                                ${currentAccount?.username || 'PROTECTED'}
-                            </div>
-                        </div>
-                        
-                        <!-- Session timeout warning -->
-                        <div id="timeout-warning" style="display: none; position: fixed; top: 20px; left: 50%; transform: translateX(-50%); 
-                                background: #f56565; color: white; padding: 10px 20px; border-radius: 5px; z-index: 1004;">
-                            Session expires in <span id="timeout-counter">60</span> seconds
-                        </div>
-                        
-                        <!-- Content -->
-                        <div style="padding: 40px; max-width: 800px; margin: 0 auto; position: relative; z-index: 1002;">
-                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                                <div>
-                                    <h1 style="color: #2d3748; margin-bottom: 10px;">${lesson.title}</h1>
-                                    <p style="color: #667eea; font-weight: 500;">
-                                        ${lesson.subject} - ${lesson.grade}
-                                    </p>
-                                </div>
-                                <button onclick="closeLesson()" style="background: #667eea; color: white; border: none; padding: 10px 20px; 
-                                        border-radius: 5px; cursor: pointer;">
-                                    Close
-                                </button>
-                            </div>
-                            
-                            <!-- View info banner -->
-                            <div style="background: #e6f7ff; border: 1px solid #91d5ff; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
-                                <small style="color: #003a8c;">
-                                    Viewing started at ${new Date().toLocaleTimeString()} | 
-                                    This content is protected and tracked | 
-                                    Authorized for: ${currentAccount?.username}
-                                </small>
-                            </div>
-                            
-                            ${lesson.contentType === 'file' ? 
-                                `<iframe id="lesson-iframe" src="${lesson.content}" style="width: 100%; height: 70vh; border: 1px solid #e2e8f0; border-radius: 5px;"></iframe>` :
-                                `<div style="line-height: 1.8; color: #4a5568; position: relative;">
-                                    <div style="position: absolute; top: 0; left: 0; right: 0; bottom: 0; z-index: 10000; background: transparent;"></div>
-                                    ${lesson.content}
-                                </div>`
-                            }
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Create viewer
-            const viewer = document.createElement('div');
-            viewer.innerHTML = protectedContent;
-            viewer.id = 'lesson-viewer';
-            document.body.appendChild(viewer);
-            
-            // Enhanced protection measures
-            setupContentProtection(viewer);
-            
-            // Start session timeout (5 minutes)
-            startSessionTimeout();
-            
-            // Detect developer tools
-            detectDevTools();
-        }
-        
-        function setupContentProtection(viewer) {
-            // Disable right-click
-            viewer.addEventListener('contextmenu', e => {
-                e.preventDefault();
-                showSecurityWarning('Right-click is disabled');
-                return false;
-            });
-            
-            // Disable text selection
-            viewer.addEventListener('selectstart', e => {
-                e.preventDefault();
-                return false;
-            });
-            
-            // Disable drag
-            viewer.addEventListener('dragstart', e => {
-                e.preventDefault();
-                return false;
-            });
-            
-            // Disable copy keyboard shortcuts
-            viewer.addEventListener('keydown', e => {
-                if ((e.ctrlKey || e.metaKey) && (e.key === 'c' || e.key === 'a' || e.key === 'x')) {
-                    e.preventDefault();
-                    showSecurityWarning('Copy/Select is disabled');
-                    return false;
-                }
-                // Disable F12 and other dev tools shortcuts
-                if (e.key === 'F12' || (e.ctrlKey && e.shiftKey && (e.key === 'I' || e.key === 'J' || e.key === 'C'))) {
-                    e.preventDefault();
-                    showSecurityWarning('Developer tools are disabled');
-                    return false;
-                }
-            });
-            
-            // Prevent screenshot on some browsers (limited effectiveness)
-            viewer.addEventListener('keyup', e => {
-                if (e.key === 'PrintScreen') {
-                    navigator.clipboard.writeText('Screenshot disabled');
-                    showSecurityWarning('Screenshots are not allowed');
-                }
-            });
-            
-            // Blur content when window loses focus (user might be taking screenshot)
-            window.addEventListener('blur', () => {
-                const container = document.getElementById('lesson-container');
-                if (container) {
-                    container.style.filter = 'blur(10px)';
-                }
-            });
-            
-            window.addEventListener('focus', () => {
-                const container = document.getElementById('lesson-container');
-                if (container) {
-                    container.style.filter = 'none';
-                }
-            });
-            
-            // Add CSS to prevent printing
-            const style = document.createElement('style');
-            style.innerHTML = `
-                @media print { 
-                    #lesson-viewer { display: none !important; } 
-                    body { display: none !important; }
-                }
-                #lesson-viewer * {
-                    -webkit-touch-callout: none;
-                    -webkit-user-select: none;
-                    -khtml-user-select: none;
-                    -moz-user-select: none;
-                    -ms-user-select: none;
-                    user-select: none;
-                }
-            `;
-            document.head.appendChild(style);
-        }
-        
-        function showSecurityWarning(message) {
-            const warning = document.createElement('div');
-            warning.style.cssText = `
-                position: fixed;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: #f56565;
-                color: white;
-                padding: 20px 30px;
-                border-radius: 10px;
-                z-index: 10000;
-                font-size: 18px;
-                box-shadow: 0 10px 30px rgba(0,0,0,0.3);
-            `;
-            warning.textContent = message;
-            document.body.appendChild(warning);
-            
-            setTimeout(() => warning.remove(), 2000);
-        }
-        
-        let sessionTimer;
-        let warningTimer;
-        
-        function startSessionTimeout() {
-            // Clear any existing timers
-            clearTimeout(sessionTimer);
-            clearTimeout(warningTimer);
-            
-            // Show warning after 4 minutes
-            warningTimer = setTimeout(() => {
-                const warning = document.getElementById('timeout-warning');
-                if (warning) {
-                    warning.style.display = 'block';
-                    let counter = 60;
-                    const countdown = setInterval(() => {
-                        counter--;
-                        const counterEl = document.getElementById('timeout-counter');
-                        if (counterEl) counterEl.textContent = counter;
-                        if (counter <= 0) {
-                            clearInterval(countdown);
-                        }
-                    }, 1000);
-                }
-            }, 4 * 60 * 1000);
-            
-            // Close after 5 minutes
-            sessionTimer = setTimeout(() => {
-                alert('Session expired for security. Please reopen the lesson if needed.');
-                closeLesson();
-            }, 5 * 60 * 1000);
-        }
-        
-        function detectDevTools() {
-            let devtools = {open: false, orientation: null};
-            const threshold = 160;
-            
-            setInterval(() => {
-                if (window.outerHeight - window.innerHeight > threshold || 
-                    window.outerWidth - window.innerWidth > threshold) {
-                    if (!devtools.open) {
-                        devtools.open = true;
-                        showSecurityWarning('Developer tools detected - Content protected');
-                        const container = document.getElementById('lesson-container');
-                        if (container) {
-                            container.style.filter = 'blur(20px)';
-                        }
-                    }
-                } else {
-                    if (devtools.open) {
-                        devtools.open = false;
-                        const container = document.getElementById('lesson-container');
-                        if (container) {
-                            container.style.filter = 'none';
-                        }
-                    }
-                }
-            }, 500);
-        }
-        
-        function closeLesson() {
-            // Clear timers
-            clearTimeout(sessionTimer);
-            clearTimeout(warningTimer);
-            
-            // Log view duration
-            if (viewStartTime && currentLessonId) {
-                const duration = Math.round((new Date() - viewStartTime) / 1000);
-                fetch('/api/trackview', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        lessonId: currentLessonId,
-                        userEmail: currentAccount?.username,
-                        action: 'close',
-                        duration: duration
-                    })
-                }).catch(() => {});
-            }
-            
-            // Remove viewer
-            const viewer = document.getElementById('lesson-viewer');
-            if (viewer) {
-                viewer.remove();
-            }
-            
-            // Re-enable window blur/focus listeners
-            window.removeEventListener('blur', null);
-            window.removeEventListener('focus', null);
+
+        // View lesson
+        function viewLesson(lessonId) {
+            alert(`Viewing lesson ${lessonId}`);
         }
 
-        function renderConfiguration() {
-            return `
-                <div class="auth-container fade-in">
-                    <h2>Configure Azure B2C</h2>
-                    
-                    <div class="config-section">
-                        <h3>⚠️ Configuration Required</h3>
-                        <p style="margin-bottom: 20px; color: #4a5568;">
-                            Please enter your Azure B2C configuration details. You can find these in the Azure Portal.
-                        </p>
-                        
-                        <div class="config-form">
-                            <label for="tenantName">B2C Tenant Name (without .onmicrosoft.com)</label>
-                            <input type="text" id="tenantName" placeholder="e.g., tutorportaltenant" value="${B2C_CONFIG.tenantName !== 'YOUR_TENANT_NAME' ? B2C_CONFIG.tenantName : ''}">
-                            
-                            <label for="clientId">Application (Client) ID</label>
-                            <input type="text" id="clientId" placeholder="e.g., 12345678-1234-1234-1234-123456789012" value="${B2C_CONFIG.clientId !== 'YOUR_CLIENT_ID' ? B2C_CONFIG.clientId : ''}">
-                            
-                            <label for="userFlow">User Flow Name</label>
-                            <input type="text" id="userFlow" placeholder="e.g., B2C_1_SignUpSignIn" value="${B2C_CONFIG.signInSignUpPolicyName}">
-                            
-                            <button class="btn" onclick="saveConfiguration()">Save Configuration</button>
-                        </div>
-                    </div>
-                    
-                    <div style="margin-top: 20px; padding: 15px; background: #f7fafc; border-radius: 5px;">
-                        <h4 style="color: #2d3748; margin-bottom: 10px;">📋 Setup Checklist:</h4>
-                        <ol style="margin-left: 20px; color: #4a5568; line-height: 1.8;">
-                            <li>Created Azure B2C tenant</li>
-                            <li>Created "Sign up and sign in" user flow</li>
-                            <li>Registered application as "Single-page application"</li>
-                            <li>Added redirect URI: <code>${window.location.origin}</code></li>
-                            <li>Copied Client ID and Tenant Name</li>
-                        </ol>
-                    </div>
-                </div>
-            `;
-        }
-
+        // Render functions
         function renderLogin() {
             return `
                 <div class="auth-container fade-in">
                     <h2>Tutor Portal Login</h2>
-                    
                     ${statusMessage ? `
                         <div class="auth-status ${statusType}">
                             ${statusMessage}
                             ${statusType === 'info' ? '<span class="loading"></span>' : ''}
                         </div>
                     ` : ''}
-                    
-                    <button class="btn" onclick="signIn()" style="width: 100%; margin-bottom: 15px;">
+                    <button class="btn" onclick="signIn()" style="width: 100%;">
                         Sign In with Azure B2C
                     </button>
-                    
-                    <p style="text-align: center; color: #718096; font-size: 14px;">
+                    <p style="text-align: center; margin-top: 20px; color: #718096; font-size: 14px;">
                         New users will sign up through the same button above
                     </p>
-                    
-                    <div style="margin-top: 30px; padding: 15px; background: #f7fafc; border-radius: 5px;">
-                        <h4 style="color: #2d3748; margin-bottom: 10px;">ℹ️ Authentication Status</h4>
-                        <p style="color: #4a5568; font-size: 14px; line-height: 1.6;">
-                            ${msalInstance ? '✅ MSAL initialized successfully' : '❌ MSAL not initialized'}<br>
-                            Authority: <code style="font-size: 12px;">${getAuthority()}</code><br>
-                            Redirect URI: <code style="font-size: 12px;">${B2C_CONFIG.redirectUri}</code>
-                        </p>
-                    </div>
                 </div>
             `;
         }
@@ -1206,7 +562,6 @@
             const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
             const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
             
-            // Load data
             if (userIsAdmin && pendingUsers.length === 0) {
                 pendingUsers = await getPendingUsers(true);
             }
@@ -1215,330 +570,120 @@
                 lessons = await getLessons();
             }
             
-            return `
-                <div class="container">
-                    <div class="header">
-                        <div class="logo">Tutor Portal</div>
-                        <div class="user-info">
-                            ${userApprovalStatus === 'approved' ? 
-                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
-                                    ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
-                                </span>` : 
-                                `<span class="subscription-badge inactive">
-                                    ${userApprovalStatus === 'pending' ? 'Pending Approval' : 'Not Approved'}
-                                </span>`
-                            }
-                            <span>Welcome, ${displayName}</span>
-                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
+            let html = '<div class="container">';
+            
+            // Header
+            html += `
+                <div class="header">
+                    <div class="logo">Tutor Portal</div>
+                    <div class="user-info">
+                        <span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
+                            ${userHasSubscription ? 'Active' : userApprovalStatus === 'pending' ? 'Pending' : 'No Subscription'}
+                        </span>
+                        <span>Welcome, ${displayName}</span>
+                        <button class="btn btn-secondary" onclick="signOut()">Logout</button>
+                    </div>
+                </div>
+            `;
+            
+            // Admin panel
+            if (userIsAdmin && pendingUsers.length > 0) {
+                html += `
+                    <div class="admin-panel">
+                        <h3 style="color: #f9844a;">Pending Approvals (${pendingUsers.length})</h3>
+                        ${pendingUsers.map(user => `
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px; margin-top: 10px;">
+                                <div>${user.email}</div>
+                                <div>
+                                    <button class="btn" style="background: #48bb78; margin-right: 5px;" onclick="processUser('${user.email}', 'approve')">Approve</button>
+                                    <button class="btn" style="background: #f56565;" onclick="processUser('${user.email}', 'reject')">Reject</button>
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            }
+            
+            // Main content
+            if (userApprovalStatus === 'pending') {
+                html += `
+                    <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center;">
+                        <h2 style="color: #c53030;">Account Pending Approval</h2>
+                        <p style="color: #742a2a;">Your account is being reviewed by an administrator.</p>
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="dashboard">
+                        <div class="sidebar">
+                            <h3>Navigation</h3>
+                            <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="switchView('lessons')">Lesson Plans</div>
+                            ${userIsAdmin ? '<div class="nav-item" onclick="switchView(\'manage\')">Manage Lessons</div>' : ''}
+                        </div>
+                        <div class="content-area">
+                            <div class="watermark">PROTECTED</div>
+                            <div class="content-wrapper">
+                                <h2>Lesson Plans</h2>
+                                ${lessons.length > 0 ? `
+                                    <div class="lesson-grid">
+                                        ${lessons.map(lesson => `
+                                            <div class="lesson-card" onclick="viewLesson('${lesson.id}')">
+                                                <h4>${lesson.title}</h4>
+                                                <p>${lesson.subject}</p>
+                                                <div class="lesson-meta">
+                                                    <span>View</span>
+                                                </div>
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                ` : '<p>No lessons available yet.</p>'}
+                            </div>
                         </div>
                     </div>
-
-                    ${userIsAdmin && pendingUsers.length > 0 ? `
-                        <div class="admin-panel fade-in" style="background: #fef5e7; border: 1px solid #f9c74f; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
-                            <h3 style="color: #f9844a; margin-bottom: 15px;">Admin Panel - Pending User Approvals (${pendingUsers.length})</h3>
-                            <div class="pending-users" style="display: flex; flex-direction: column; gap: 10px;">
-                                ${pendingUsers.map(user => `
-                                    <div class="user-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px;">
-                                        <div>
-                                            <strong>${user.name || 'No name'}</strong> - ${user.email}
-                                            <small style="margin-left: 10px; color: #718096;">Applied: ${new Date(user.signupDate).toLocaleDateString()}</small>
-                                        </div>
-                                        <div class="user-actions" style="display: flex; gap: 10px;">
-                                            <button class="btn" style="background: #48bb78; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
-                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'pending' ? `
-                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
-                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
-                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
-                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'approved' ? `
-                        <div class="dashboard">
-                            <div class="sidebar">
-                                <h3>Navigation</h3>
-                                <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="switchView('lessons')">Lesson Plans</div>
-                                ${userIsAdmin ? `
-                                    <div class="nav-item ${currentView === 'manage-lessons' ? 'active' : ''}" onclick="switchView('manage-lessons')">Manage Lessons</div>
-                                    <div class="nav-item ${currentView === 'add-lesson' ? 'active' : ''}" onclick="switchView('add-lesson')">Add New Lesson</div>
-                                ` : ''}
-                                <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="switchView('resources')">Resources</div>
-                                <div class="nav-item ${currentView === 'schedule' ? 'active' : ''}" onclick="switchView('schedule')">Schedule</div>
-                                <div class="nav-item ${currentView === 'students' ? 'active' : ''}" onclick="switchView('students')">Students</div>
-                            </div>
-
-                            <div class="content-area">
-                                <div class="watermark">PROTECTED</div>
-                                <div class="content-wrapper">
-                                    ${currentView === 'lessons' ? `
-                                        <h2>Lesson Plans</h2>
-                                        ${userHasSubscription || userIsAdmin ? `
-                                            <div class="lesson-grid">
-                                                ${lessons.filter(l => l.isPublished || userIsAdmin).map(lesson => `
-                                                    <div class="lesson-card" onclick="viewLesson('${lesson.id}')" 
-                                                         style="position: relative; user-select: none;">
-                                                        <h4>${lesson.title}</h4>
-                                                        <p style="color: #667eea; font-weight: 500;">${lesson.subject} - ${lesson.grade}</p>
-                                                        <p>${lesson.description || 'No description'}</p>
-                                                        <div class="lesson-meta">
-                                                            <span>${new Date(lesson.createdDate).toLocaleDateString()}</span>
-                                                            ${!lesson.isPublished && userIsAdmin ? '<span style="color: #f56565;">Draft</span>' : ''}
-                                                            <span style="color: #667eea;">View →</span>
-                                                        </div>
-                                                    </div>
-                                                `).join('')}
-                                            </div>
-                                            ${lessons.filter(l => l.isPublished || userIsAdmin).length === 0 ? 
-                                                '<p style="text-align: center; color: #718096; margin-top: 40px;">No lessons available yet.</p>' : ''}
-                                        ` : `
-                                            <div style="text-align: center; padding: 60px 20px; color: #718096;">
-                                                <h3 style="color: #4a5568; margin-bottom: 20px;">Subscribe to Access Content</h3>
-                                                <p>Get unlimited access to all lesson plans and teaching resources</p>
-                                                <button class="btn" onclick="alert('Stripe integration coming next!')" style="margin-top: 20px;">
-                                                    Start Subscription - £9.99/month
-                                                </button>
-                                            </div>
-                                        `}
-                                    ` : currentView === 'manage-lessons' && userIsAdmin ? `
-                                        <h2>Manage Lessons</h2>
-                                        <table style="width: 100%; margin-top: 20px; border-collapse: collapse;">
-                                            <thead>
-                                                <tr style="border-bottom: 2px solid #e2e8f0;">
-                                                    <th style="text-align: left; padding: 10px;">Title</th>
-                                                    <th style="text-align: left; padding: 10px;">Subject</th>
-                                                    <th style="text-align: left; padding: 10px;">Grade</th>
-                                                    <th style="text-align: left; padding: 10px;">Status</th>
-                                                    <th style="text-align: left; padding: 10px;">Actions</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody>
-                                                ${lessons.map(lesson => `
-                                                    <tr style="border-bottom: 1px solid #e2e8f0;">
-                                                        <td style="padding: 10px;">${lesson.title}</td>
-                                                        <td style="padding: 10px;">${lesson.subject}</td>
-                                                        <td style="padding: 10px;">${lesson.grade}</td>
-                                                        <td style="padding: 10px;">
-                                                            <span style="background: ${lesson.isPublished ? '#48bb78' : '#f56565'}; 
-                                                                       color: white; padding: 2px 8px; border-radius: 4px; font-size: 12px;">
-                                                                ${lesson.isPublished ? 'Published' : 'Draft'}
-                                                            </span>
-                                                        </td>
-                                                        <td style="padding: 10px;">
-                                                            <button onclick="editLesson('${lesson.id}')" style="margin-right: 5px; padding: 5px 10px; background: #667eea; color: white; border: none; border-radius: 4px; cursor: pointer;">Edit</button>
-                                                            <button onclick="deleteLesson('${lesson.id}').then(() => location.reload())" style="padding: 5px 10px; background: #f56565; color: white; border: none; border-radius: 4px; cursor: pointer;">Delete</button>
-                                                        </td>
-                                                    </tr>
-                                                `).join('')}
-                                            </tbody>
-                                        </table>
-                                        ${lessons.length === 0 ? '<p style="text-align: center; color: #718096; margin-top: 40px;">No lessons created yet.</p>' : ''}
-                                    ` : currentView === 'add-lesson' && userIsAdmin ? `
-                                        <h2>Add New Lesson</h2>
-                                        <div style="max-width: 600px; margin-top: 20px;">
-                                            <div class="form-group">
-                                                <label>Title</label>
-                                                <input type="text" id="lesson-title" placeholder="Enter lesson title">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Subject</label>
-                                                <select id="lesson-subject">
-                                                    <option>Mathematics</option>
-                                                    <option>English</option>
-                                                    <option>Science</option>
-                                                    <option>History</option>
-                                                    <option>Geography</option>
-                                                    <option>Verbal Reasoning</option>
-                                                    <option>Non-Verbal Reasoning</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Grade</label>
-                                                <select id="lesson-grade">
-                                                    <option>Year 3</option>
-                                                    <option>Year 4</option>
-                                                    <option>Year 5</option>
-                                                    <option>Year 6</option>
-                                                    <option>11+</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Description</label>
-                                                <textarea id="lesson-description" rows="3" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px;"></textarea>
-                                            </div>
-                                            <div class="form-group">
-                                                <label>Content Type</label>
-                                                <select id="lesson-content-type" onchange="toggleContentInput()">
-                                                    <option value="html">HTML Content</option>
-                                                    <option value="file">Upload File (PDF/Word)</option>
-                                                </select>
-                                            </div>
-                                            <div class="form-group" id="html-content-group">
-                                                <label>Lesson Content</label>
-                                                <textarea id="lesson-content" rows="10" style="width: 100%; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px; font-family: monospace;"></textarea>
-                                            </div>
-                                            <div class="form-group" id="file-upload-group" style="display: none;">
-                                                <label>Upload File</label>
-                                                <input type="file" id="lesson-file" accept=".pdf,.doc,.docx">
-                                            </div>
-                                            <div class="form-group">
-                                                <label>
-                                                    <input type="checkbox" id="lesson-published"> Publish immediately
-                                                </label>
-                                            </div>
-                                            <button class="btn" onclick="saveLesson()">Save Lesson</button>
-                                        </div>
-                                    ` : `
-                                        <h2>${currentView.charAt(0).toUpperCase() + currentView.slice(1)}</h2>
-                                        <p style="color: #718096; margin-top: 20px;">This section is coming soon.</p>
-                                    `}
-                                </div>
-                                <div class="content-protection"></div>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        };" 
-                                                onclick="processUser('${user.email}', 'approve')">Approve</button>
-                                            <button class="btn" style="background: #f56565; padding: 5px 15px; font-size: 14px;" 
-                                                onclick="processUser('${user.email}', 'reject')">Reject</button>
-                                        </div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'pending' ? `
-                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
-                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
-                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
-                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
-                        </div>
-                    ` : ''}
-
-                    ${userApprovalStatus === 'approved' ? `
-                        <div class="dashboard">
-                            <div class="sidebar">
-                                <h3>Navigation</h3>
-                                <div class="nav-item active">Lesson Plans</div>
-                                <div class="nav-item">Resources</div>
-                                <div class="nav-item">Schedule</div>
-                                <div class="nav-item">Students</div>
-                                ${userIsAdmin ? '<div class="nav-item">Admin Settings</div>' : ''}
-                            </div>
-
-                            <div class="content-area">
-                                <div class="watermark">PROTECTED</div>
-                                <div class="content-wrapper">
-                                    <h2>Lesson Plans</h2>
-                                    ${userHasSubscription ? `
-                                        <p style="color: #4a5568; margin-top: 20px;">Content will be available here once you have an active subscription.</p>
-                                    ` : `
-                                        <div style="text-align: center; padding: 60px 20px; color: #718096;">
-                                            <h3 style="color: #4a5568; margin-bottom: 20px;">Subscribe to Access Content</h3>
-                                            <p>Get unlimited access to all lesson plans and teaching resources</p>
-                                            <button class="btn" onclick="alert('Stripe integration coming next!')" style="margin-top: 20px;">
-                                                Start Subscription - £9.99/month
-                                            </button>
-                                        </div>
-                                    `}
-                                </div>
-                            </div>
-                        </div>
-                    ` : ''}
-                </div>
-            `;
-        }
-
-        function saveConfiguration() {
-            const tenantName = document.getElementById('tenantName').value.trim();
-            const clientId = document.getElementById('clientId').value.trim();
-            const userFlow = document.getElementById('userFlow').value.trim();
-            
-            if (!tenantName || !clientId || !userFlow) {
-                showStatus("Please fill in all configuration fields", "error");
-                return;
+                `;
             }
             
-            // Update configuration
-            B2C_CONFIG.tenantName = tenantName;
-            B2C_CONFIG.clientId = clientId;
-            B2C_CONFIG.signInSignUpPolicyName = userFlow;
-            B2C_CONFIG.isConfigured = true;
+            html += '</div>';
+            return html;
+        }
+
+        function render() {
+            const app = document.getElementById('app');
             
-            // No need to save to localStorage anymore since we're using hardcoded values
-            
-            // Initialize MSAL with new config
-            if (initializeMSAL()) {
-                showStatus("Configuration saved successfully! Initializing authentication...", "success");
-                setTimeout(() => {
-                    checkExistingLogin();
-                    render();
-                }, 1500);
+            if (!currentAccount) {
+                app.innerHTML = renderLogin();
             } else {
-                showStatus("Error initializing authentication. Please check your configuration.", "error");
+                renderDashboard().then(html => {
+                    app.innerHTML = html;
+                }).catch(error => {
+                    console.error("Render error:", error);
+                    app.innerHTML = '<div class="container"><h2>Error loading dashboard</h2></div>';
+                });
             }
         }
 
-        // ============================================
-        // INITIALIZATION
-        // ============================================
-        
-        // Initialize app when page loads
+        // Initialize on load
         window.addEventListener('load', async () => {
-            // Prevent print shortcuts
-            document.addEventListener('keydown', (e) => {
-                if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
-                    e.preventDefault();
-                    alert('Printing and saving are disabled for content protection.');
-                    return false;
-                }
-            });
-
-            // Clear any old saved configuration to use the hardcoded values
-            localStorage.removeItem('b2cConfig');
-            
-            // Initialize MSAL with the hardcoded configuration
-            console.log("Initializing MSAL with configuration:", B2C_CONFIG);
             if (initializeMSAL()) {
-                console.log("MSAL initialized successfully");
+                console.log("MSAL initialized");
                 
-                // IMPORTANT: Handle redirect FIRST before any rendering
                 try {
                     const response = await msalInstance.handleRedirectPromise();
-                    console.log("Redirect response:", response);
-                    
                     if (response && response.account) {
-                        // Coming back from a redirect login
                         await handleAuthResponse(response);
                     } else {
-                        // Not coming from redirect, check for existing login
                         await checkExistingLogin();
                     }
                 } catch (error) {
                     console.error("Error handling redirect:", error);
                 }
-            } else {
-                console.error("Failed to initialize MSAL");
             }
             
-            // Initial render
             render();
         });
 
-        // Prevent context menu
-        document.addEventListener('contextmenu', (e) => {
+        // Prevent right-click
+        document.addEventListener('contextmenu', e => {
             e.preventDefault();
             return false;
         });
