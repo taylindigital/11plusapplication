@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Portal - Private Tuition Platform</title>
+    <title>Bright Stars Education - Private Tuition Platform</title>
     
     <!-- MSAL Browser Library for Azure B2C Authentication -->
     <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
@@ -17,7 +17,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
             min-height: 100vh;
             user-select: none;
             -webkit-user-select: none;
@@ -50,7 +50,16 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #667eea;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "⭐";
+            font-size: 28px;
+            color: #fbbf24;
         }
 
         .user-info {
@@ -60,7 +69,7 @@
         }
 
         .subscription-badge {
-            background: #48bb78;
+            background: #059669;
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -68,11 +77,11 @@
         }
 
         .subscription-badge.inactive {
-            background: #f56565;
+            background: #dc2626;
         }
 
         .btn {
-            background: #667eea;
+            background: #1e40af;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -83,9 +92,9 @@
         }
 
         .btn:hover {
-            background: #5a67d8;
+            background: #1d4ed8;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.4);
         }
 
         .btn:disabled {
@@ -234,7 +243,7 @@
         .lesson-card:hover {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transform: translateY(-3px);
-            border-color: #667eea;
+            border-color: #1e40af;
         }
 
         .lesson-card h4 {
@@ -440,7 +449,7 @@
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
             font-size: 80px;
-            color: rgba(102, 126, 234, 0.05);
+            color: rgba(30, 64, 175, 0.05);
             font-weight: bold;
             pointer-events: none;
             z-index: 0;
@@ -459,7 +468,7 @@
 
         .watermark-text {
             position: absolute;
-            color: rgba(102, 126, 234, 0.1);
+            color: rgba(30, 64, 175, 0.1);
             font-weight: bold;
             font-size: 14px;
             pointer-events: none;
@@ -531,11 +540,11 @@
             top: 0;
             left: 0;
             right: 0;
-            background: rgba(102, 126, 234, 0.1);
+            background: rgba(30, 64, 175, 0.1);
             padding: 8px 15px;
             font-size: 12px;
             color: #4a5568;
-            border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+            border-bottom: 1px solid rgba(30, 64, 175, 0.2);
             z-index: 3;
         }
 
@@ -641,13 +650,13 @@
         }
 
         .category-filter.active {
-            background: #667eea;
+            background: #1e40af;
             color: white;
-            border-color: #667eea;
+            border-color: #1e40af;
         }
 
         .category-filter:hover {
-            border-color: #667eea;
+            border-color: #1e40af;
         }
     </style>
 </head>
@@ -1715,7 +1724,7 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Tutor Portal</div>
+                        <div class="logo">Bright Stars Education</div>
                         <div class="user-info">
                             <span>Welcome, ${displayName}</span>
                             <button class="btn btn-secondary" onclick="signOut()">Logout</button>
@@ -1723,7 +1732,7 @@
                     </div>
                     
                     <div style="background: white; border-radius: 10px; padding: 30px; margin-top: 20px;">
-                        <h2>Welcome to Tutor Portal</h2>
+                        <h2>Welcome to Bright Stars Education</h2>
                         <p>You are successfully logged in!</p>
                     </div>
                 </div>
@@ -1774,7 +1783,7 @@
         function renderLogin() {
             return `
                 <div class="auth-container fade-in">
-                    <h2>Tutor Portal Login</h2>
+                    <h2>Bright Stars Education Login</h2>
                     
                     ${statusMessage ? `
                         <div class="auth-status ${statusType}">
@@ -1805,7 +1814,7 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Tutor Portal</div>
+                        <div class="logo">Bright Stars Education</div>
                         <div class="user-info">
                             ${userApprovalStatus === 'approved' ? 
                                 `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
@@ -2075,6 +2084,7 @@
             // Setup enhanced protection
             setupKeyboardProtection();
             setupWindowProtection();
+            setupActivityTracking(); // Add activity tracking
             detectDevTools();
 
             // Prevent print shortcuts
