@@ -8,9 +8,11 @@
   },
   "dependencies": {
     "@azure/communication-email": "^1.0.0",
+    "@azure/cosmos": "^4.4.1",
     "@azure/data-tables": "^13.2.2",
     "@azure/functions": "^4.0.0",
-    "@azure/storage-blob": "^12.27.0"
+    "@azure/storage-blob": "^12.27.0",
+    "stripe": "^18.5.0"
   },
   "main": "src/{index.js,functions/*.js}"
 }

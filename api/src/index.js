@@ -1,14 +1,23 @@
 const { app } = require('@azure/functions');
 
-// Import your function handlers
+// Import your existing function handlers
 const checkUserStatus = require('./functions/checkuserstatus');
 const getPendingUsers = require('./functions/getpendingusers');
 const approveUser = require('./functions/approveuser');
 const onUserSignUp = require('./functions/onusersignup');
 const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
+const trackview = require('./functions/trackview'); // Fix: was pointing to upload
 
-// Register the functions
+// Import new Stripe function handlers
+const stripeCreateCustomer = require('./functions/stripe-create-customer');
+const stripeCreateSubscription = require('./functions/stripe-create-subscription');
+const stripeGetSubscription = require('./functions/stripe-get-subscription');
+const stripeCancelSubscription = require('./functions/stripe-cancel-subscription');
+const stripeUpdatePaymentMethod = require('./functions/stripe-update-payment-method');
+const stripeWebhook = require('./functions/stripe-webhook');
+
+// Register existing functions
 app.http('checkuserstatus', {
     methods: ['POST', 'GET'],
     authLevel: 'anonymous',
@@ -48,10 +57,47 @@ app.http('upload', {
 app.http('trackview', {
     methods: ['POST'],
     authLevel: 'anonymous',
-    handler: upload
+    handler: trackview // Fixed: was pointing to upload
 });
 
-// Add a test endpoint
+// Register new Stripe functions
+app.http('stripe-create-customer', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCreateCustomer
+});
+
+app.http('stripe-create-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCreateSubscription
+});
+
+app.http('stripe-get-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeGetSubscription
+});
+
+app.http('stripe-cancel-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCancelSubscription
+});
+
+app.http('stripe-update-payment-method', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeUpdatePaymentMethod
+});
+
+app.http('stripe-webhook', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeWebhook
+});
+
+// Test endpoint
 app.http('test', {
     methods: ['GET'],
     authLevel: 'anonymous',

@@ -11,6 +11,9 @@
     <!-- MSAL Browser Library for Azure B2C Authentication -->
     <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
     
+    <!-- Stripe.js Library -->
+    <script src="https://js.stripe.com/v3/"></script>
+    
     <style>
         * {
             margin: 0;
@@ -569,9 +572,133 @@
             -ms-user-select: none;
         }
 
-        .content-wrapper {
-            position: relative;
-            z-index: 1;
+        .pricing-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #1e40af;
+            transform: scale(1.05);
+        }
+
+        .pricing-card h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1e40af;
+            margin: 20px 0;
+        }
+
+        .pricing-card .period {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .pricing-card .features {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        .pricing-card .features li {
+            padding: 8px 0;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pricing-card .features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-card .features li::before {
+            content: "✓";
+            color: #059669;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .subscription-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .subscription-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-form {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .payment-form h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .payment-errors {
+            color: #f56565;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .subscription-status {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .subscription-status h4 {
+            color: #22543d;
+            margin-bottom: 10px;
         }
 
         .lesson-viewer {
@@ -737,10 +864,267 @@
         </div>
     </div>
 
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="subscription-modal">
+        <div class="payment-form">
+            <h3>Subscribe to Bright Stars Education</h3>
+            <p style="text-align: center; color: #718096; margin-bottom: 30px;">Get unlimited access to all lesson plans and resources</p>
+            
+            <form id="payment-form">
+                <div class="form-row">
+                    <label for="card-element">Card Details</label>
+                    <div id="card-element">
+                        <!-- Stripe Elements will create form elements here -->
+                    </div>
+                    <div id="card-errors" class="payment-errors" role="alert"></div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="billing-name">Full Name</label>
+                    <input type="text" id="billing-name" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="billing-email">Email</label>
+                    <input type="email" id="billing-email" required>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeSubscriptionModal()">Cancel</button>
+                    <button type="submit" id="submit-payment" class="btn">
+                        Subscribe - £<span id="selected-price">9.99</span>/month
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
     <script>
         // ============================================
-        // AZURE B2C CONFIGURATION
+        // STRIPE CONFIGURATION & INTEGRATION
         // ============================================
+        
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_YOUR_STRIPE_PUBLISHABLE_KEY_HERE'; // Replace with your key
+        let stripe = null;
+        let elements = null;
+        let card = null;
+        let selectedPlan = null;
+
+        // Subscription plans
+        const SUBSCRIPTION_PLANS = {
+            monthly: {
+                priceId: 'price_monthly_id_here', // Replace with your Stripe price ID
+                price: 9.99,
+                period: 'month',
+                name: 'Monthly Plan'
+            },
+            annual: {
+                priceId: 'price_annual_id_here', // Replace with your Stripe price ID  
+                price: 99.99,
+                period: 'year',
+                name: 'Annual Plan'
+            }
+        };
+
+        function initializeStripe() {
+            try {
+                stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+                elements = stripe.elements();
+                
+                // Create card element
+                card = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#2d3748',
+                            '::placeholder': {
+                                color: '#a0aec0',
+                            },
+                        },
+                    },
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Stripe initialization error:', error);
+                return false;
+            }
+        }
+
+        function openSubscriptionModal(planType = 'monthly') {
+            if (!stripe) {
+                alert('Payment system is not available. Please try again later.');
+                return;
+            }
+            
+            selectedPlan = SUBSCRIPTION_PLANS[planType];
+            document.getElementById('selected-price').textContent = selectedPlan.price;
+            document.getElementById('billing-email').value = currentAccount?.username || '';
+            document.getElementById('billing-name').value = currentAccount?.name || '';
+            
+            // Mount card element
+            card.mount('#card-element');
+            
+            // Listen for real-time validation errors from the card Element
+            card.on('change', ({error}) => {
+                const displayError = document.getElementById('card-errors');
+                if (error) {
+                    displayError.textContent = error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+            
+            document.getElementById('subscriptionModal').classList.add('active');
+        }
+
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionModal').classList.remove('active');
+            if (card) {
+                card.unmount();
+            }
+        }
+
+        async function handleSubscriptionPayment(event) {
+            event.preventDefault();
+            
+            const submitButton = document.getElementById('submit-payment');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            
+            try {
+                const billingName = document.getElementById('billing-name').value;
+                const billingEmail = document.getElementById('billing-email').value;
+                
+                if (!billingName || !billingEmail) {
+                    throw new Error('Please fill in all required fields');
+                }
+                
+                // Create customer first
+                const customer = await createStripeCustomer(billingEmail, billingName);
+                if (!customer) {
+                    throw new Error('Failed to create customer');
+                }
+                
+                // Create payment method
+                const {token, error} = await stripe.createToken(card);
+                if (error) {
+                    throw new Error(error.message);
+                }
+                
+                // Create subscription
+                const subscription = await createSubscription(customer.id, selectedPlan.priceId, token.id);
+                if (!subscription) {
+                    throw new Error('Failed to create subscription');
+                }
+                
+                // Update UI
+                userHasSubscription = true;
+                showStatus('Subscription activated successfully! Welcome to Bright Stars Education.', 'success');
+                closeSubscriptionModal();
+                render();
+                
+            } catch (error) {
+                console.error('Payment error:', error);
+                document.getElementById('card-errors').textContent = error.message;
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+
+        // ============================================
+        // STRIPE API FUNCTIONS
+        // ============================================
+        
+        async function createStripeCustomer(email, name) {
+            try {
+                const response = await fetch('/api/stripe-create-customer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, name }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.customer;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error creating customer:', error);
+                return null;
+            }
+        }
+
+        async function createSubscription(customerId, priceId, paymentMethodId) {
+            try {
+                const response = await fetch('/api/stripe-create-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customerId,
+                        priceId,
+                        paymentMethodId
+                    }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.subscription;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error creating subscription:', error);
+                return null;
+            }
+        }
+
+        async function getSubscriptionStatus(email) {
+            try {
+                const response = await fetch('/api/stripe-get-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting subscription:', error);
+                return null;
+            }
+        }
+
+        async function cancelSubscription(subscriptionId) {
+            try {
+                const response = await fetch('/api/stripe-cancel-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subscriptionId }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.success;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error canceling subscription:', error);
+                return false;
+            }
+        }
         
         const B2C_CONFIG = {
             tenantName: "brightstars11plus",
@@ -869,17 +1253,17 @@
             });
         }
 
-        //function setupActivityTracking() {
-        //    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+        function setupActivityTracking() {
+            const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
             
-        //    events.forEach(event => {
-        //        document.addEventListener(event, () => {
-        //            if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
-        //                resetInactivityTimer();
-        //            }
-        //        }, true);
-        //    });
-        //}
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
+                        resetInactivityTimer();
+                    }
+                }, true);
+            });
+        }
 
         function createDynamicWatermarks(username, date) {
             const watermarkText = `${username} - ${date}`;
@@ -1897,6 +2281,9 @@
                                         ⚙️ Manage Lessons
                                     </div>
                                 ` : ''}
+                                <div class="nav-item ${currentView === 'subscription' ? 'active' : ''}" onclick="setCurrentView('subscription')">
+                                    💳 Subscription
+                                </div>
                                 <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="setCurrentView('resources')">
                                     📖 Resources
                                 </div>
@@ -1931,6 +2318,8 @@
                     return renderLessonsView();
                 case 'admin-lessons':
                     return renderAdminLessonsView();
+                case 'subscription':
+                    return renderSubscriptionView();
                 case 'resources':
                     return renderResourcesView();
                 case 'schedule':
@@ -1951,7 +2340,7 @@
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                     <h2>Lesson Plans</h2>
                     ${!userHasSubscription && !userIsAdmin ? `
-                        <button class="btn" onclick="alert('Stripe integration coming next!')">
+                        <button class="btn" onclick="openSubscriptionModal('monthly')">
                             Subscribe - £9.99/month
                         </button>
                     ` : ''}
@@ -1974,12 +2363,41 @@
                         <!-- Lessons will be rendered here by renderLessonGrid() -->
                     </div>
                 ` : `
-                    <div class="empty-state">
-                        <h3>Subscribe to Access Content</h3>
-                        <p>Get unlimited access to all lesson plans and teaching resources</p>
-                        <button class="btn" onclick="alert('Stripe integration coming next!')" style="margin-top: 20px;">
-                            Start Subscription - £9.99/month
-                        </button>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+                        <div class="pricing-card">
+                            <h3>Monthly Plan</h3>
+                            <div class="price">£9.99<span class="period">/month</span></div>
+                            <ul class="features">
+                                <li>Unlimited lesson access</li>
+                                <li>Download resources</li>
+                                <li>KS1 to KS4 content</li>
+                                <li>11+ preparation</li>
+                                <li>Cancel anytime</li>
+                            </ul>
+                            <button class="btn" onclick="openSubscriptionModal('monthly')" style="width: 100%;">
+                                Start Monthly Plan
+                            </button>
+                        </div>
+                        
+                        <div class="pricing-card popular">
+                            <h3>Annual Plan <span style="background: #1e40af; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">SAVE 17%</span></h3>
+                            <div class="price">£99.99<span class="period">/year</span></div>
+                            <ul class="features">
+                                <li>Everything in Monthly</li>
+                                <li>2 months FREE</li>
+                                <li>Priority support</li>
+                                <li>Early access to new content</li>
+                                <li>Best value option</li>
+                            </ul>
+                            <button class="btn" onclick="openSubscriptionModal('annual')" style="width: 100%;">
+                                Start Annual Plan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                        <h4 style="color: #2d3748; margin-bottom: 10px;">🔒 Secure Payment</h4>
+                        <p style="color: #4a5568;">Powered by Stripe. Your payment information is encrypted and secure.</p>
                     </div>
                 `}
             `;
@@ -2021,6 +2439,81 @@
                     <!-- Admin lesson grid will be rendered here -->
                 </div>
             `;
+        }
+
+        function renderSubscriptionView() {
+            return `
+                <h2>Subscription Management</h2>
+                
+                ${userHasSubscription ? `
+                    <div class="subscription-status">
+                        <h4>✅ Active Subscription</h4>
+                        <p>You have full access to all Bright Stars Education content.</p>
+                        <p><strong>Plan:</strong> Monthly (£9.99/month)</p>
+                        <p><strong>Next billing:</strong> March 15, 2024</p>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-secondary" onclick="updatePaymentMethod()">Update Payment Method</button>
+                            <button class="btn btn-danger" onclick="confirmCancelSubscription()">Cancel Subscription</button>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h3 style="color: #4a5568; margin-bottom: 20px;">No Active Subscription</h3>
+                        <p style="color: #718096; margin-bottom: 30px;">Subscribe to get unlimited access to all lesson plans and resources.</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 800px; margin: 0 auto;">
+                            <div class="pricing-card">
+                                <h3>Monthly Plan</h3>
+                                <div class="price">£9.99<span class="period">/month</span></div>
+                                <ul class="features">
+                                    <li>Unlimited lesson access</li>
+                                    <li>Download resources</li>
+                                    <li>KS1 to KS4 content</li>
+                                    <li>11+ preparation</li>
+                                    <li>Cancel anytime</li>
+                                </ul>
+                                <button class="btn" onclick="openSubscriptionModal('monthly')" style="width: 100%;">
+                                    Subscribe Monthly
+                                </button>
+                            </div>
+                            
+                            <div class="pricing-card popular">
+                                <h3>Annual Plan <span style="background: #1e40af; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">SAVE 17%</span></h3>
+                                <div class="price">£99.99<span class="period">/year</span></div>
+                                <ul class="features">
+                                    <li>Everything in Monthly</li>
+                                    <li>2 months FREE</li>
+                                    <li>Priority support</li>
+                                    <li>Early access to new content</li>
+                                    <li>Best value option</li>
+                                </ul>
+                                <button class="btn" onclick="openSubscriptionModal('annual')" style="width: 100%;">
+                                    Subscribe Annually
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `}
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">Payment Information</h4>
+                    <p style="color: #4a5568; margin-bottom: 10px;">💳 Secure payments processed by Stripe</p>
+                    <p style="color: #4a5568; margin-bottom: 10px;">🔒 Your payment information is encrypted and secure</p>
+                    <p style="color: #4a5568; margin-bottom: 10px;">📧 Receipts sent automatically to your email</p>
+                    <p style="color: #4a5568;">❌ Cancel anytime - no long-term commitments</p>
+                </div>
+            `;
+        }
+
+        function updatePaymentMethod() {
+            alert('Payment method update functionality coming soon!');
+        }
+
+        function confirmCancelSubscription() {
+            if (confirm('Are you sure you want to cancel your subscription? You will lose access to all lesson content at the end of your billing period.')) {
+                // In a real implementation, you would call the cancel API
+                alert('Subscription cancellation functionality coming soon!');
+            }
         }
 
         function renderResourcesView() {
@@ -2109,6 +2602,9 @@
         // ============================================
         
         window.addEventListener('load', async () => {
+            // Initialize Stripe
+            initializeStripe();
+            
             // Setup enhanced protection
             setupKeyboardProtection();
             setupWindowProtection();
@@ -2161,6 +2657,14 @@
             }
             
             render();
+        });
+
+        // Setup payment form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('payment-form');
+            if (form) {
+                form.addEventListener('submit', handleSubscriptionPayment);
+            }
         });
 
         // Prevent context menu
