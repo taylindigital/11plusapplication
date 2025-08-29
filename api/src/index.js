@@ -45,6 +45,12 @@ app.http('upload', {
     handler: upload
 });
 
+app.http('trackview', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: upload
+});
+
 // Add a test endpoint
 app.http('test', {
     methods: ['GET'],

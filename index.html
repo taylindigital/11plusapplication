@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tutor Portal - Private Tuition Platform</title>
+    <title>Bright Stars Education - Private Tuition Platform</title>
     
     <!-- MSAL Browser Library for Azure B2C Authentication -->
     <script src="https://alcdn.msauth.net/browser/2.38.0/js/msal-browser.min.js"></script>
@@ -17,7 +17,7 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 50%, #60a5fa 100%);
             min-height: 100vh;
             user-select: none;
             -webkit-user-select: none;
@@ -50,7 +50,16 @@
         .logo {
             font-size: 24px;
             font-weight: bold;
-            color: #667eea;
+            color: #1e40af;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo::before {
+            content: "⭐";
+            font-size: 28px;
+            color: #fbbf24;
         }
 
         .user-info {
@@ -60,7 +69,7 @@
         }
 
         .subscription-badge {
-            background: #48bb78;
+            background: #059669;
             color: white;
             padding: 5px 15px;
             border-radius: 20px;
@@ -68,11 +77,11 @@
         }
 
         .subscription-badge.inactive {
-            background: #f56565;
+            background: #dc2626;
         }
 
         .btn {
-            background: #667eea;
+            background: #1e40af;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -83,9 +92,9 @@
         }
 
         .btn:hover {
-            background: #5a67d8;
+            background: #1d4ed8;
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 5px 15px rgba(30, 64, 175, 0.4);
         }
 
         .btn:disabled {
@@ -234,7 +243,7 @@
         .lesson-card:hover {
             box-shadow: 0 5px 15px rgba(0,0,0,0.1);
             transform: translateY(-3px);
-            border-color: #667eea;
+            border-color: #1e40af;
         }
 
         .lesson-card h4 {
@@ -440,11 +449,121 @@
             left: 50%;
             transform: translate(-50%, -50%) rotate(-45deg);
             font-size: 80px;
-            color: rgba(102, 126, 234, 0.05);
+            color: rgba(30, 64, 175, 0.05);
             font-weight: bold;
             pointer-events: none;
             z-index: 0;
             user-select: none;
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .watermark-text {
+            position: absolute;
+            color: rgba(30, 64, 175, 0.1);
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.0);
+            pointer-events: none;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .security-overlay.active {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .security-warning {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f56565;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .security-warning.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .session-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 1002;
+            text-align: center;
+            display: none;
+            min-width: 300px;
+        }
+
+        .session-warning.show {
+            display: block;
+        }
+
+        .session-info-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 64, 175, 0.1);
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #4a5568;
+            border-bottom: 1px solid rgba(30, 64, 175, 0.2);
+            z-index: 3;
+        }
+
+        .content-protection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .lesson-viewer.protected {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
         }
 
         .content-wrapper {
@@ -531,13 +650,13 @@
         }
 
         .category-filter.active {
-            background: #667eea;
+            background: #1e40af;
             color: white;
-            border-color: #667eea;
+            border-color: #1e40af;
         }
 
         .category-filter:hover {
-            border-color: #667eea;
+            border-color: #1e40af;
         }
     </style>
 </head>
@@ -683,8 +802,228 @@
         }
 
         // ============================================
-        // LESSON MANAGEMENT
+        // ENHANCED PROTECTION & SECURITY
         // ============================================
+        
+        let sessionTimer = null;
+        let warningTimer = null;
+        let sessionStartTime = null;
+        let isDevToolsOpen = false;
+        let securityOverlay = null;
+        let currentViewSession = null;
+
+        // Security detection functions
+        function detectDevTools() {
+            const threshold = 160;
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!isDevToolsOpen) {
+                        isDevToolsOpen = true;
+                        triggerSecurityWarning('Developer tools detected');
+                        blurContent(true);
+                    }
+                } else {
+                    if (isDevToolsOpen) {
+                        isDevToolsOpen = false;
+                        blurContent(false);
+                    }
+                }
+            }, 1000);
+        }
+
+        function setupKeyboardProtection() {
+            document.addEventListener('keydown', (e) => {
+                // Block common shortcuts
+                if (
+                    (e.ctrlKey && (e.key === 'c' || e.key === 'a' || e.key === 's' || e.key === 'p')) ||
+                    e.key === 'F12' ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                    (e.ctrlKey && e.key === 'u')
+                ) {
+                    e.preventDefault();
+                    triggerSecurityWarning('Action blocked for content protection');
+                    return false;
+                }
+            });
+        }
+
+        function setupWindowProtection() {
+            window.addEventListener('blur', () => {
+                if (document.getElementById('lessonViewModal').classList.contains('active')) {
+                    triggerSecurityWarning('Window focus lost - potential screenshot attempt');
+                    blurContent(true);
+                    setTimeout(() => blurContent(false), 3000);
+                }
+            });
+
+            // Detect print attempts
+            window.addEventListener('beforeprint', (e) => {
+                e.preventDefault();
+                triggerSecurityWarning('Printing blocked for content protection');
+                return false;
+            });
+        }
+
+        function createDynamicWatermarks(username, date) {
+            const watermarkText = `${username} - ${date}`;
+            const positions = [
+                { top: '15%', left: '10%', rotation: -30 },
+                { top: '35%', right: '15%', rotation: 45 },
+                { top: '55%', left: '20%', rotation: -15 },
+                { top: '75%', right: '25%', rotation: 30 },
+                { top: '25%', left: '70%', rotation: -45 },
+                { top: '65%', left: '5%', rotation: 15 }
+            ];
+
+            return positions.map((pos, index) => {
+                const style = `
+                    top: ${pos.top};
+                    ${pos.left ? `left: ${pos.left};` : `right: ${pos.right};`}
+                    transform: rotate(${pos.rotation}deg);
+                `;
+                return `<div class="watermark-text" style="${style}">${watermarkText}</div>`;
+            }).join('');
+        }
+
+        function blurContent(blur) {
+            if (!securityOverlay) {
+                securityOverlay = document.createElement('div');
+                securityOverlay.className = 'security-overlay';
+                document.body.appendChild(securityOverlay);
+            }
+            
+            if (blur) {
+                securityOverlay.classList.add('active');
+            } else {
+                securityOverlay.classList.remove('active');
+            }
+        }
+
+        function triggerSecurityWarning(message) {
+            let warning = document.getElementById('securityWarning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.id = 'securityWarning';
+                warning.className = 'security-warning';
+                document.body.appendChild(warning);
+            }
+
+            warning.textContent = `🛡️ Security Alert: ${message}`;
+            warning.classList.add('show');
+
+            // Track security event
+            trackViewEvent('security_alert', { message, timestamp: new Date().toISOString() });
+
+            setTimeout(() => {
+                warning.classList.remove('show');
+            }, 4000);
+        }
+
+        function startSessionTimer() {
+            clearSessionTimer();
+            sessionStartTime = new Date();
+            
+            // Warning after 4 minutes
+            warningTimer = setTimeout(() => {
+                showSessionWarning();
+            }, 4 * 60 * 1000);
+            
+            // Auto-close after 5 minutes
+            sessionTimer = setTimeout(() => {
+                closeLessonViewModal();
+                triggerSecurityWarning('Session expired - lesson closed automatically');
+            }, 5 * 60 * 1000);
+        }
+
+        function clearSessionTimer() {
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+                sessionTimer = null;
+            }
+            if (warningTimer) {
+                clearTimeout(warningTimer);
+                warningTimer = null;
+            }
+            hideSessionWarning();
+        }
+
+        function showSessionWarning() {
+            let warning = document.getElementById('sessionWarning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.id = 'sessionWarning';
+                warning.className = 'session-warning';
+                warning.innerHTML = `
+                    <h3 style="color: #f56565; margin-bottom: 15px;">⏰ Session Warning</h3>
+                    <p>Your viewing session will expire in <strong id="countdown">60</strong> seconds.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-small" onclick="extendSession()">Extend Session</button>
+                        <button class="btn btn-small btn-secondary" onclick="closeLessonViewModal()">Close Lesson</button>
+                    </div>
+                `;
+                document.body.appendChild(warning);
+            }
+            
+            warning.classList.add('show');
+            startCountdown();
+        }
+
+        function hideSessionWarning() {
+            const warning = document.getElementById('sessionWarning');
+            if (warning) {
+                warning.classList.remove('show');
+            }
+        }
+
+        function startCountdown() {
+            let seconds = 60;
+            const countdownElement = document.getElementById('countdown');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        function extendSession() {
+            hideSessionWarning();
+            startSessionTimer();
+            triggerSecurityWarning('Session extended - 5 more minutes granted');
+        }
+
+        // View tracking functions
+        async function trackViewEvent(eventType, data = {}) {
+            try {
+                const eventData = {
+                    eventType,
+                    userId: currentAccount?.username || 'unknown',
+                    timestamp: new Date().toISOString(),
+                    lessonId: currentViewSession?.lessonId || 'unknown',
+                    sessionId: currentViewSession?.sessionId || 'unknown',
+                    ...data
+                };
+
+                // Silent API call - don't await or handle errors prominently
+                fetch('/api/trackview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData)
+                }).catch(() => {}); // Silent fail
+
+                console.log('View event tracked:', eventData);
+            } catch (error) {
+                // Silent tracking - don't interrupt user experience
+                console.log('Tracking failed silently');
+            }
+        }
         
         let lessons = [];
         let currentLesson = null;
@@ -796,6 +1135,23 @@
             const lesson = lessons.find(l => l.id === lessonId);
             if (!lesson) return;
 
+            // Start new viewing session
+            currentViewSession = {
+                sessionId: Date.now().toString(),
+                lessonId: lessonId,
+                startTime: new Date()
+            };
+
+            // Track lesson open
+            trackViewEvent('lesson_opened', { 
+                lessonTitle: lesson.title,
+                lessonCategory: lesson.category
+            });
+
+            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || 'User';
+            const viewDate = new Date().toLocaleDateString();
+            const viewTime = new Date().toLocaleTimeString();
+
             document.getElementById('viewLessonTitle').textContent = lesson.title;
             document.getElementById('lessonContentView').textContent = lesson.content || 'No content available.';
             
@@ -810,7 +1166,7 @@
                                 <strong>${file.name}</strong>
                                 <small style="color: #718096; margin-left: 10px;">${file.size}</small>
                             </div>
-                            <button class="btn btn-small" onclick="downloadFile('${file.name}')">Download</button>
+                            <button class="btn btn-small" onclick="downloadFile('${file.name}', '${file.url || ''}')">Download</button>
                         </div>
                     `).join('')}
                 `;
@@ -818,11 +1174,70 @@
                 filesContainer.innerHTML = '';
             }
 
+            // Add session info banner and enhanced protection
+            const lessonViewer = document.querySelector('#lessonViewModal .lesson-viewer');
+            lessonViewer.className = 'lesson-viewer protected';
+            lessonViewer.innerHTML = `
+                <div class="session-info-banner">
+                    🔒 Authorized User: ${username} | Session Started: ${viewTime} | View Duration: <span id="viewDuration">00:00</span>
+                </div>
+                <div class="watermark">PROTECTED</div>
+                <div class="watermark-overlay">${createDynamicWatermarks(username, viewDate)}</div>
+                <div class="content-protection"></div>
+                <div id="lessonContentView" class="lesson-content">${lesson.content || 'No content available.'}</div>
+                <div id="lessonFiles" style="margin-top: 20px;">${filesContainer.innerHTML}</div>
+            `;
+
+            // Start session timer and duration tracking
+            startSessionTimer();
+            startDurationTracking();
+
             document.getElementById('lessonViewModal').classList.add('active');
         }
 
         function closeLessonViewModal() {
+            // Track lesson close and duration
+            if (currentViewSession) {
+                const endTime = new Date();
+                const duration = Math.round((endTime - currentViewSession.startTime) / 1000); // seconds
+                
+                trackViewEvent('lesson_closed', { 
+                    viewDuration: duration,
+                    endTime: endTime.toISOString()
+                });
+            }
+
             document.getElementById('lessonViewModal').classList.remove('active');
+            clearSessionTimer();
+            stopDurationTracking();
+            currentViewSession = null;
+        }
+
+        let durationInterval = null;
+
+        function startDurationTracking() {
+            stopDurationTracking();
+            
+            durationInterval = setInterval(() => {
+                if (currentViewSession) {
+                    const now = new Date();
+                    const elapsed = Math.floor((now - currentViewSession.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                    const seconds = (elapsed % 60).toString().padStart(2, '0');
+                    
+                    const durationElement = document.getElementById('viewDuration');
+                    if (durationElement) {
+                        durationElement.textContent = `${minutes}:${seconds}`;
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopDurationTracking() {
+            if (durationInterval) {
+                clearInterval(durationInterval);
+                durationInterval = null;
+            }
         }
 
         function handleFileUpload(event) {
@@ -842,6 +1257,29 @@
             });
             
             displayUploadedFiles(uploadedFiles);
+        }
+
+        async function uploadFileToAzure(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('isAdmin', userIsAdmin.toString());
+
+            try {
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                if (response.ok) {
+                    const result = await response.json();
+                    return result;
+                } else {
+                    throw new Error('Upload failed');
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                throw error;
+            }
         }
 
         function displayUploadedFiles(files) {
@@ -870,7 +1308,7 @@
             return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
         }
 
-        function saveLessonForm(event) {
+        async function saveLessonForm(event) {
             event.preventDefault();
             
             const title = document.getElementById('lessonTitle').value;
@@ -878,34 +1316,69 @@
             const description = document.getElementById('lessonDescription').value;
             const content = document.getElementById('lessonContent').value;
             
-            const lessonData = {
-                id: currentLesson ? currentLesson.id : Date.now().toString(),
-                title,
-                category,
-                description,
-                content,
-                files: uploadedFiles.map(f => ({
-                    name: f.name,
-                    type: f.type,
-                    size: f.size
-                })),
-                createdDate: currentLesson ? currentLesson.createdDate : new Date(),
-                author: currentAccount?.name || 'Admin'
-            };
+            // Show saving status
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
             
-            if (currentLesson) {
-                // Update existing lesson
-                const index = lessons.findIndex(l => l.id === currentLesson.id);
-                lessons[index] = { ...lessons[index], ...lessonData };
-                showStatus('Lesson updated successfully!', 'success');
-            } else {
-                // Create new lesson
-                lessons.push(lessonData);
-                showStatus('Lesson created successfully!', 'success');
+            try {
+                // Upload files to Azure Storage
+                const uploadedFileUrls = [];
+                for (const fileData of uploadedFiles) {
+                    if (fileData.file) { // Only upload new files
+                        try {
+                            const uploadResult = await uploadFileToAzure(fileData.file);
+                            uploadedFileUrls.push({
+                                name: fileData.name,
+                                type: fileData.type,
+                                size: fileData.size,
+                                url: uploadResult.url,
+                                fileName: uploadResult.fileName
+                            });
+                        } catch (error) {
+                            alert(`Failed to upload ${fileData.name}. Please try again.`);
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                    } else {
+                        // Existing file, keep as is
+                        uploadedFileUrls.push(fileData);
+                    }
+                }
+                
+                const lessonData = {
+                    id: currentLesson ? currentLesson.id : Date.now().toString(),
+                    title,
+                    category,
+                    description,
+                    content,
+                    files: uploadedFileUrls,
+                    createdDate: currentLesson ? currentLesson.createdDate : new Date(),
+                    author: currentAccount?.name || 'Admin'
+                };
+                
+                if (currentLesson) {
+                    // Update existing lesson
+                    const index = lessons.findIndex(l => l.id === currentLesson.id);
+                    lessons[index] = { ...lessons[index], ...lessonData };
+                    showStatus('Lesson updated successfully!', 'success');
+                } else {
+                    // Create new lesson
+                    lessons.push(lessonData);
+                    showStatus('Lesson created successfully!', 'success');
+                }
+                
+                closeLessonModal();
+                render();
+                
+            } catch (error) {
+                console.error('Error saving lesson:', error);
+                alert('Failed to save lesson. Please try again.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
             }
-            
-            closeLessonModal();
-            render();
         }
 
         function deleteLesson(lessonId) {
@@ -916,8 +1389,13 @@
             }
         }
 
-        function downloadFile(filename) {
-            alert(`In a real implementation, this would download: ${filename}`);
+        function downloadFile(fileName, fileUrl) {
+            if (fileUrl) {
+                // Open Azure Storage URL in new tab
+                window.open(fileUrl, '_blank');
+            } else {
+                alert(`In a real implementation, this would download: ${fileName}`);
+            }
         }
 
         // ============================================
@@ -1246,7 +1724,7 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Tutor Portal</div>
+                        <div class="logo">Bright Stars Education</div>
                         <div class="user-info">
                             <span>Welcome, ${displayName}</span>
                             <button class="btn btn-secondary" onclick="signOut()">Logout</button>
@@ -1254,7 +1732,7 @@
                     </div>
                     
                     <div style="background: white; border-radius: 10px; padding: 30px; margin-top: 20px;">
-                        <h2>Welcome to Tutor Portal</h2>
+                        <h2>Welcome to Bright Stars Education</h2>
                         <p>You are successfully logged in!</p>
                     </div>
                 </div>
@@ -1305,7 +1783,7 @@
         function renderLogin() {
             return `
                 <div class="auth-container fade-in">
-                    <h2>Tutor Portal Login</h2>
+                    <h2>Bright Stars Education Login</h2>
                     
                     ${statusMessage ? `
                         <div class="auth-status ${statusType}">
@@ -1336,7 +1814,7 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Tutor Portal</div>
+                        <div class="logo">Bright Stars Education</div>
                         <div class="user-info">
                             ${userApprovalStatus === 'approved' ? 
                                 `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
@@ -1603,6 +2081,12 @@
         // ============================================
         
         window.addEventListener('load', async () => {
+            // Setup enhanced protection
+            setupKeyboardProtection();
+            setupWindowProtection();
+            setupActivityTracking(); // Add activity tracking
+            detectDevTools();
+
             // Prevent print shortcuts
             document.addEventListener('keydown', (e) => {
                 if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
