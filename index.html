@@ -869,6 +869,18 @@
             });
         }
 
+        //function setupActivityTracking() {
+        //    const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            
+        //    events.forEach(event => {
+        //        document.addEventListener(event, () => {
+        //            if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
+        //                resetInactivityTimer();
+        //            }
+        //        }, true);
+        //    });
+        //}
+
         function createDynamicWatermarks(username, date) {
             const watermarkText = `${username} - ${date}`;
             const positions = [
@@ -1000,6 +1012,19 @@
             hideSessionWarning();
             startSessionTimer();
             triggerSecurityWarning('Session extended - 5 more minutes granted');
+        }
+
+        // Track user activity to reset timers
+        function setupActivityTracking() {
+            const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
+                        resetInactivityTimer();
+                    }
+                }, true);
+            });
         }
 
         // View tracking functions
