@@ -6,6 +6,5 @@
     "debug.internalConsoleOptions": "neverOpen",
     "azureFunctions.projectLanguageModel": 4,
     "azureFunctions.preDeployTask": "npm prune (functions)",
-    "html.validate.scripts": false,
-    "javascript.validate.enable": false
+    
 }
