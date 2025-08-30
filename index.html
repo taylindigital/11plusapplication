@@ -1001,23 +1001,37 @@
                     throw new Error('Please fill in all required fields');
                 }
                 
+                console.log('Creating customer...');
                 // Create customer first
                 const customer = await createStripeCustomer(billingEmail, billingName);
                 if (!customer) {
                     throw new Error('Failed to create customer');
                 }
+                console.log('Customer created:', customer);
                 
-                // Create payment method
-                const {token, error} = await stripe.createToken(card);
+                console.log('Creating payment method...');
+                // Create payment method (updated for latest Stripe.js)
+                const {paymentMethod, error} = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: card,
+                    billing_details: {
+                        name: billingName,
+                        email: billingEmail,
+                    },
+                });
+                
                 if (error) {
                     throw new Error(error.message);
                 }
+                console.log('Payment method created:', paymentMethod);
                 
+                console.log('Creating subscription...');
                 // Create subscription
-                const subscription = await createSubscription(customer.id, selectedPlan.priceId, token.id);
+                const subscription = await createSubscription(customer.id, selectedPlan.priceId, paymentMethod.id);
                 if (!subscription) {
                     throw new Error('Failed to create subscription');
                 }
+                console.log('Subscription created:', subscription);
                 
                 // Update UI
                 userHasSubscription = true;
@@ -1026,7 +1040,7 @@
                 render();
                 
             } catch (error) {
-                console.error('Payment error:', error);
+                console.error('Payment error details:', error);
                 document.getElementById('card-errors').textContent = error.message;
             } finally {
                 submitButton.disabled = false;
@@ -1040,6 +1054,8 @@
         
         async function createStripeCustomer(email, name) {
             try {
+                console.log('Sending customer request:', { email, name });
+                
                 const response = await fetch('/api/stripe-create-customer', {
                     method: 'POST',
                     headers: {
@@ -1048,11 +1064,18 @@
                     body: JSON.stringify({ email, name }),
                 });
                 
+                console.log('Customer response status:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Customer response data:', data);
                     return data.customer;
+                } else {
+                    // Log the error response
+                    const errorData = await response.text();
+                    console.error('Customer error response:', response.status, errorData);
+                    return null;
                 }
-                return null;
             } catch (error) {
                 console.error('Error creating customer:', error);
                 return null;
@@ -1061,6 +1084,8 @@
 
         async function createSubscription(customerId, priceId, paymentMethodId) {
             try {
+                console.log('Sending subscription request:', { customerId, priceId, paymentMethodId });
+                
                 const response = await fetch('/api/stripe-create-subscription', {
                     method: 'POST',
                     headers: {
@@ -1073,11 +1098,18 @@
                     }),
                 });
                 
+                console.log('Subscription response status:', response.status);
+                
                 if (response.ok) {
                     const data = await response.json();
+                    console.log('Subscription response data:', data);
                     return data.subscription;
+                } else {
+                    // Log the error response
+                    const errorData = await response.text();
+                    console.error('Subscription error response:', response.status, errorData);
+                    return null;
                 }
-                return null;
             } catch (error) {
                 console.error('Error creating subscription:', error);
                 return null;
