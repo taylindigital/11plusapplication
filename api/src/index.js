@@ -9,8 +9,13 @@ const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
 const trackview = require('./functions/trackview');
 
-// Import Stripe function handlers (adding back one by one)
+// Import Stripe function handlers (create these files next)
 const stripeCreateCustomer = require('./functions/stripe-create-customer');
+const stripeCreateSubscription = require('./functions/stripe-create-subscription');
+const stripeGetSubscription = require('./functions/stripe-get-subscription');
+const stripeCancelSubscription = require('./functions/stripe-cancel-subscription');
+const stripeUpdatePaymentMethod = require('./functions/stripe-update-payment-method');
+const stripeWebhook = require('./functions/stripe-webhook');
 
 // Register existing functions
 app.http('checkuserstatus', {
@@ -55,11 +60,41 @@ app.http('trackview', {
     handler: trackview
 });
 
-// Register first Stripe function
+// Register new Stripe functions
 app.http('stripe-create-customer', {
     methods: ['POST'],
     authLevel: 'anonymous',
     handler: stripeCreateCustomer
+});
+
+app.http('stripe-create-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCreateSubscription
+});
+
+app.http('stripe-get-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeGetSubscription
+});
+
+app.http('stripe-cancel-subscription', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCancelSubscription
+});
+
+app.http('stripe-update-payment-method', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeUpdatePaymentMethod
+});
+
+app.http('stripe-webhook', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeWebhook
 });
 
 // Test endpoint
@@ -76,7 +111,9 @@ app.http('test', {
                 functions: [
                     'checkuserstatus', 'getpendingusers', 'approveuser', 
                     'onusersignup', 'lessons', 'upload', 'trackview',
-                    'stripe-create-customer'
+                    'stripe-create-customer', 'stripe-create-subscription',
+                    'stripe-get-subscription', 'stripe-cancel-subscription',
+                    'stripe-update-payment-method', 'stripe-webhook'
                 ]
             }
         };
