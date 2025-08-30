@@ -1,15 +1,15 @@
 const { app } = require('@azure/functions');
 
-// Import your existing function handlers
+// Import existing function handlers
 const checkUserStatus = require('./functions/checkuserstatus');
 const getPendingUsers = require('./functions/getpendingusers');
 const approveUser = require('./functions/approveuser');
 const onUserSignUp = require('./functions/onusersignup');
 const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
-const trackview = require('./functions/trackview'); // Fix: was pointing to upload
+const trackview = require('./functions/trackview');
 
-// Import new Stripe function handlers
+// Import Stripe function handlers (create these files next)
 const stripeCreateCustomer = require('./functions/stripe-create-customer');
 const stripeCreateSubscription = require('./functions/stripe-create-subscription');
 const stripeGetSubscription = require('./functions/stripe-get-subscription');
@@ -57,7 +57,7 @@ app.http('upload', {
 app.http('trackview', {
     methods: ['POST'],
     authLevel: 'anonymous',
-    handler: trackview // Fixed: was pointing to upload
+    handler: trackview
 });
 
 // Register new Stripe functions
@@ -106,8 +106,15 @@ app.http('test', {
         return {
             status: 200,
             jsonBody: {
-                message: "API is working!",
-                timestamp: new Date().toISOString()
+                message: "Static Web App API is working!",
+                timestamp: new Date().toISOString(),
+                functions: [
+                    'checkuserstatus', 'getpendingusers', 'approveuser', 
+                    'onusersignup', 'lessons', 'upload', 'trackview',
+                    'stripe-create-customer', 'stripe-create-subscription',
+                    'stripe-get-subscription', 'stripe-cancel-subscription',
+                    'stripe-update-payment-method', 'stripe-webhook'
+                ]
             }
         };
     }
