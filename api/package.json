@@ -14,5 +14,5 @@
     "@azure/storage-blob": "^12.27.0",
     "stripe": "^18.5.0"
   },
-  "main": "api/src/{index.js,functions/*.js}"
+  "main": "src/{index.js,functions/*.js}"
 }
