@@ -1,154 +1,92 @@
-// stripe-create-subscription.js - CORRECTED VERSION
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { CosmosClient } = require('@azure/cosmos');
 
 module.exports = async function (request, context) {
-    context.log('Create Stripe subscription request');
+    context.log('Create Stripe customer request');
     
     try {
-        const { customerId, priceId, paymentMethodId } = await request.json();
+        const { email, name } = await request.json();
         
-        if (!customerId || !priceId || !paymentMethodId) {
+        if (!email || !name) {
             return {
                 status: 400,
-                jsonBody: { error: "CustomerId, priceId, and paymentMethodId are required" }
+                jsonBody: { error: "Email and name are required" }
             };
         }
 
-        // Get customer details
-        const customer = await stripe.customers.retrieve(customerId);
-        if (!customer) {
+        // Check if customer already exists in Stripe
+        const existingCustomers = await stripe.customers.list({
+            email: email,
+            limit: 1
+        });
+        
+        if (existingCustomers.data.length > 0) {
             return {
-                status: 404,
-                jsonBody: { error: "Customer not found" }
+                status: 200,
+                jsonBody: { 
+                    customer: existingCustomers.data[0],
+                    message: "Customer already exists"
+                }
             };
         }
-
-        // Attach payment method to customer
-        await stripe.paymentMethods.attach(paymentMethodId, {
-            customer: customerId,
-        });
-
-        // Set as default payment method
-        await stripe.customers.update(customerId, {
-            invoice_settings: {
-                default_payment_method: paymentMethodId,
-            },
-        });
-
-        // Create subscription
-        const subscription = await stripe.subscriptions.create({
-            customer: customerId,
-            items: [{ price: priceId }],
-            default_payment_method: paymentMethodId,
-            expand: ['latest_invoice.payment_intent'],
+        
+        // Create new Stripe customer
+        const customer = await stripe.customers.create({
+            email: email,
+            name: name,
             metadata: {
                 platform: 'bright-stars-education',
                 created_via: 'tutor_portal'
             }
         });
-
+        
         // Update user record in Cosmos DB (CORRECTED CONNECTION)
         try {
             const cosmosClient = new CosmosClient(process.env.COSMOS_DB_CONNECTION_STRING);
             const database = cosmosClient.database('TutorPortal');
             const usersContainer = database.container('Users');
-            const subscriptionsContainer = database.container('Subscriptions');
             
-            const userEmail = customer.email;
-            
-            await usersContainer.item(userEmail, userEmail).patch([
-                {
-                    op: 'replace',
-                    path: '/subscriptionStatus',
-                    value: subscription.status
-                },
-                {
-                    op: 'replace',
-                    path: '/stripeSubscriptionId',
-                    value: subscription.id
-                },
-                {
-                    op: 'replace',
-                    path: '/hasSubscription',
-                    value: subscription.status === 'active'
-                },
-                {
-                    op: 'replace',
-                    path: '/subscriptionStartDate',
-                    value: new Date().toISOString()
-                },
-                {
-                    op: 'replace',
-                    path: '/lastPaymentDate',
-                    value: new Date().toISOString()
-                }
-            ]);
-            
-            // Create subscription record for analytics
-            await subscriptionsContainer.items.create({
-                id: subscription.id,
-                userId: userEmail,
-                stripeSubscriptionId: subscription.id,
-                stripeCustomerId: customerId,
-                priceId: priceId,
-                status: subscription.status,
-                amount: subscription.items.data[0].price.unit_amount,
-                currency: subscription.items.data[0].price.currency,
-                createdDate: new Date().toISOString(),
-                events: [{
-                    type: 'created',
-                    date: new Date().toISOString(),
-                    status: subscription.status
-                }]
-            });
+            // Try to update existing user record
+            try {
+                await usersContainer.item(email, email).patch([
+                    {
+                        op: 'replace',
+                        path: '/stripeCustomerId',
+                        value: customer.id
+                    }
+                ]);
+            } catch (patchError) {
+                // If user doesn't exist, create new record
+                await usersContainer.items.create({
+                    id: email,
+                    email: email,
+                    name: name,
+                    stripeCustomerId: customer.id,
+                    subscriptionStatus: 'none',
+                    hasSubscription: false,
+                    createdDate: new Date().toISOString()
+                });
+            }
             
         } catch (dbError) {
             context.log('Database update error (non-critical):', dbError);
+            // Continue even if DB update fails - Stripe customer was created successfully
         }
-
-        // Handle payment intent status
-        const paymentIntent = subscription.latest_invoice?.payment_intent;
-        let responseData = {
-            subscription: subscription,
-            status: subscription.status,
-            message: "Subscription created successfully"
-        };
-
-        if (paymentIntent) {
-            if (paymentIntent.status === 'requires_action') {
-                responseData.client_secret = paymentIntent.client_secret;
-                responseData.requires_action = true;
-                responseData.message = "Additional authentication required";
-            } else if (paymentIntent.status === 'succeeded') {
-                responseData.message = "Subscription activated successfully";
-            }
-        }
-
+        
         return {
             status: 200,
-            jsonBody: responseData
+            jsonBody: { 
+                customer: customer,
+                message: "Customer created successfully"
+            }
         };
         
     } catch (error) {
-        context.log('Create subscription error:', error);
-        
-        // Handle specific Stripe errors
-        if (error.type === 'StripeCardError') {
-            return {
-                status: 402,
-                jsonBody: { 
-                    error: "Payment failed",
-                    message: error.message,
-                    code: error.code
-                }
-            };
-        }
-        
+        context.log('Create customer error:', error);
         return {
             status: 500,
             jsonBody: { 
-                error: "Failed to create subscription",
+                error: "Failed to create customer",
                 message: error.message
             }
         };

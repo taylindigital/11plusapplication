@@ -47,15 +47,12 @@ module.exports = async function (request, context) {
             }
         });
 
-        // Update user record in Cosmos DB
+        // Update user record in Cosmos DB (CORRECTED CONNECTION)
         try {
-            const cosmosClient = new CosmosClient({
-                endpoint: process.env.COSMOS_DB_ENDPOINT,
-                key: process.env.COSMOS_DB_KEY,
-            });
-            
+            const cosmosClient = new CosmosClient(process.env.COSMOS_DB_CONNECTION_STRING);
             const database = cosmosClient.database('TutorPortal');
             const usersContainer = database.container('Users');
+            const subscriptionsContainer = database.container('Subscriptions');
             
             const userEmail = customer.email;
             
@@ -88,7 +85,6 @@ module.exports = async function (request, context) {
             ]);
             
             // Create subscription record for analytics
-            const subscriptionsContainer = database.container('Subscriptions');
             await subscriptionsContainer.items.create({
                 id: subscription.id,
                 userId: userEmail,

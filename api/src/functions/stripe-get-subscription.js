@@ -1,5 +1,4 @@
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
-const { CosmosClient } = require('@azure/cosmos');
 
 module.exports = async function (request, context) {
     context.log('Get Stripe subscription request');
@@ -19,7 +18,7 @@ module.exports = async function (request, context) {
         let hasActiveSubscription = false;
         let subscriptionDetails = null;
 
-        // First, try to get customer from Stripe
+        // Get customer from Stripe
         const customers = await stripe.customers.list({
             email: email,
             limit: 1
@@ -60,8 +59,7 @@ module.exports = async function (request, context) {
                         currency: price.currency,
                         interval: price.recurring.interval,
                         product: price.product
-                    },
-                    payment_method: null
+                    }
                 };
 
                 // Get payment method details if available
@@ -85,59 +83,6 @@ module.exports = async function (request, context) {
                     }
                 }
             }
-
-            // Get recent invoices
-            const invoices = await stripe.invoices.list({
-                customer: customer.id,
-                limit: 5
-            });
-
-            subscriptionDetails.recent_invoices = invoices.data.map(invoice => ({
-                id: invoice.id,
-                amount_paid: invoice.amount_paid,
-                currency: invoice.currency,
-                status: invoice.status,
-                created: new Date(invoice.created * 1000),
-                hosted_invoice_url: invoice.hosted_invoice_url,
-                invoice_pdf: invoice.invoice_pdf
-            }));
-        }
-
-        // Update local database with current subscription status
-        try {
-            const cosmosClient = new CosmosClient({
-                endpoint: process.env.COSMOS_DB_ENDPOINT,
-                key: process.env.COSMOS_DB_KEY,
-            });
-            
-            const database = cosmosClient.database('TutorPortal');
-            const usersContainer = database.container('Users');
-            
-            try {
-                await usersContainer.item(email, email).patch([
-                    {
-                        op: 'replace',
-                        path: '/hasSubscription',
-                        value: hasActiveSubscription
-                    },
-                    {
-                        op: 'replace',
-                        path: '/subscriptionStatus',
-                        value: subscription ? subscription.status : 'none'
-                    },
-                    {
-                        op: 'replace',
-                        path: '/lastChecked',
-                        value: new Date().toISOString()
-                    }
-                ]);
-            } catch (patchError) {
-                // User might not exist in our database yet
-                context.log('User not found in database:', patchError);
-            }
-            
-        } catch (dbError) {
-            context.log('Database update error (non-critical):', dbError);
         }
 
         return {

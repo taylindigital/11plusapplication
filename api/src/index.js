@@ -1,6 +1,6 @@
 const { app } = require('@azure/functions');
 
-// Import existing function handlers (no Stripe functions yet)
+// Import existing function handlers
 const checkUserStatus = require('./functions/checkuserstatus');
 const getPendingUsers = require('./functions/getpendingusers');
 const approveUser = require('./functions/approveuser');
@@ -9,7 +9,10 @@ const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
 const trackview = require('./functions/trackview');
 
-// Register existing functions only
+// Import Stripe function handlers (adding back one by one)
+const stripeCreateCustomer = require('./functions/stripe-create-customer');
+
+// Register existing functions
 app.http('checkuserstatus', {
     methods: ['POST', 'GET'],
     authLevel: 'anonymous',
@@ -52,6 +55,13 @@ app.http('trackview', {
     handler: trackview
 });
 
+// Register first Stripe function
+app.http('stripe-create-customer', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: stripeCreateCustomer
+});
+
 // Test endpoint
 app.http('test', {
     methods: ['GET'],
@@ -65,7 +75,8 @@ app.http('test', {
                 timestamp: new Date().toISOString(),
                 functions: [
                     'checkuserstatus', 'getpendingusers', 'approveuser', 
-                    'onusersignup', 'lessons', 'upload', 'trackview'
+                    'onusersignup', 'lessons', 'upload', 'trackview',
+                    'stripe-create-customer'
                 ]
             }
         };

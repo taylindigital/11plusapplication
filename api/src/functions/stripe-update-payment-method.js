@@ -73,7 +73,6 @@ module.exports = async function (request, context) {
     } catch (error) {
         context.log('Update payment method error:', error);
         
-        // Handle specific Stripe errors
         if (error.code === 'resource_missing') {
             return {
                 status: 404,

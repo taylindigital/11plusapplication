@@ -31,10 +31,7 @@ module.exports = async function (request, context) {
 
         // Update user record in Cosmos DB
         try {
-            const cosmosClient = new CosmosClient({
-                endpoint: process.env.COSMOS_DB_ENDPOINT,
-                key: process.env.COSMOS_DB_KEY,
-            });
+            const cosmosClient = new CosmosClient(process.env.COSMOS_DB_CONNECTION_STRING);
             
             const database = cosmosClient.database('TutorPortal');
             const usersContainer = database.container('Users');
