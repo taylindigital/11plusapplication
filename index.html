@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        function<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -1037,7 +1037,11 @@
                 userHasSubscription = true;
                 showStatus('Subscription activated successfully! Welcome to Bright Stars Education.', 'success');
                 closeSubscriptionModal();
-                render();
+                
+                // Force re-render to show updated subscription status
+                setTimeout(() => {
+                    render();
+                }, 100);
                 
             } catch (error) {
                 console.error('Payment error details:', error);
@@ -2548,32 +2552,315 @@
             }
         }
 
+        function openAddStudentModal() {
+            alert('Student registration form coming soon! This will include:\n\n• Student details\n• Parent contact info\n• Subject preferences\n• Scheduling availability');
+        }
+
+        function openScheduleModal() {
+            alert('Lesson booking system coming soon! Features will include:\n\n• Calendar integration\n• Available time slots\n• Student selection\n• Recurring lessons\n• Email confirmations');
+        }
+
         function renderResourcesView() {
             return `
-                <h2>Resources</h2>
-                <div class="empty-state">
-                    <h3>Coming Soon</h3>
-                    <p>Additional teaching resources and materials will be available here.</p>
+                <h2>Teaching Resources</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div class="lesson-card">
+                        <h4>📊 Assessment Tools</h4>
+                        <p>Progress tracking sheets, rubrics, and evaluation forms for student assessment.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Download Pack</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🎯 11+ Practice Tests</h4>
+                        <p>Complete practice papers for 11+ preparation with marking schemes and guidance.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">View Tests</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>📚 Reading Lists</h4>
+                        <p>Curated reading recommendations by age group and ability level.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">View Lists</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🧮 Maths Tools</h4>
+                        <p>Interactive calculators, formula sheets, and problem-solving frameworks.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Access Tools</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>✍️ Writing Templates</h4>
+                        <p>Essay structures, creative writing prompts, and grammar guides.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Download</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🎭 Interactive Activities</h4>
+                        <p>Games, quizzes, and hands-on activities to make learning engaging.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Explore</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">📋 Resource Request</h4>
+                    <p style="color: #4a5568; margin-bottom: 15px;">Need a specific teaching resource? Let us know what you're looking for!</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" placeholder="Describe the resource you need..." style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px;">
+                        <button class="btn">Submit Request</button>
+                    </div>
                 </div>
             `;
         }
 
         function renderScheduleView() {
             return `
-                <h2>Schedule</h2>
-                <div class="empty-state">
-                    <h3>Coming Soon</h3>
-                    <p>Schedule management and calendar integration will be available here.</p>
+                <h2>Schedule Management</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 300px; gap: 30px; margin-top: 20px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>This Week's Lessons</h3>
+                            <button class="btn" onclick="openScheduleModal()">📅 Book New Lesson</button>
+                        </div>
+                        
+                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div class="schedule-day">
+                                <div style="background: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0;">
+                                    <strong>Monday, September 2nd</strong>
+                                </div>
+                                <div style="padding: 15px;">
+                                    <div class="schedule-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #ebf4ff; border-radius: 5px; margin-bottom: 10px;">
+                                            <div>
+                                                <strong>10:00 AM - 11:00 AM</strong><br>
+                                                <span style="color: #4a5568;">Mathematics - Year 6</span><br>
+                                                <small style="color: #718096;">Student: Emma Thompson</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small btn-secondary">Reschedule</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="schedule-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f0fff4; border-radius: 5px;">
+                                            <div>
+                                                <strong>2:00 PM - 3:00 PM</strong><br>
+                                                <span style="color: #4a5568;">English - 11+ Prep</span><br>
+                                                <small style="color: #718096;">Student: James Wilson</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small btn-secondary">Reschedule</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="schedule-day">
+                                <div style="background: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0;">
+                                    <strong>Tuesday, September 3rd</strong>
+                                </div>
+                                <div style="padding: 15px;">
+                                    <div style="color: #718096; text-align: center; padding: 20px;">
+                                        No lessons scheduled
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3>Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                            <button class="btn" onclick="alert('Availability calendar coming soon!')">📅 Set Availability</button>
+                            <button class="btn btn-secondary" onclick="alert('Student directory coming soon!')">👥 View Students</button>
+                            <button class="btn btn-secondary" onclick="alert('Recurring lessons coming soon!')">🔄 Recurring Lessons</button>
+                            <button class="btn btn-secondary" onclick="alert('Calendar sync coming soon!')">📱 Sync Calendar</button>
+                        </div>
+                        
+                        <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                            <h4 style="color: #2d3748; margin-bottom: 15px;">📊 This Week</h4>
+                            <div style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Total Lessons:</span>
+                                    <strong>8</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Hours Scheduled:</span>
+                                    <strong>12</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Active Students:</span>
+                                    <strong>6</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Availability:</span>
+                                    <strong style="color: #059669;">85%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             `;
         }
 
         function renderStudentsView() {
             return `
-                <h2>Students</h2>
-                <div class="empty-state">
-                    <h3>Coming Soon</h3>
-                    <p>Student management and progress tracking will be available here.</p>
+                <h2>Student Management</h2>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <input type="text" class="search-box" placeholder="🔍 Search students..." style="width: 300px; margin: 0;">
+                    </div>
+                    <button class="btn" onclick="openAddStudentModal()">➕ Add New Student</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">Emma Thompson</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 6 • Mathematics & English</p>
+                            </div>
+                            <span class="subscription-badge" style="font-size: 12px;">Active</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Next Lesson:</strong><br>
+                                    <span style="color: #4a5568;">Mon, 2 Sept 10:00 AM</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #059669;">Excellent</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Sarah Thompson</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07123 456789</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">📅 Schedule</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">James Wilson</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 5 • 11+ Preparation</p>
+                            </div>
+                            <span class="subscription-badge" style="font-size: 12px;">Active</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Next Lesson:</strong><br>
+                                    <span style="color: #4a5568;">Mon, 2 Sept 2:00 PM</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #f59e0b;">Good</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Michael Wilson</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07987 654321</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">📅 Schedule</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">Sophie Chen</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 4 • Mathematics</p>
+                            </div>
+                            <span class="subscription-badge inactive" style="font-size: 12px;">Paused</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Last Lesson:</strong><br>
+                                    <span style="color: #718096;">25 Aug</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #059669;">Very Good</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Lisa Chen</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07456 123789</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small btn-success">▶️ Resume</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">📈 Student Statistics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #1e40af;">12</div>
+                            <div style="font-size: 14px; color: #718096;">Active Students</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #059669;">95%</div>
+                            <div style="font-size: 14px; color: #718096;">Attendance Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">8.5</div>
+                            <div style="font-size: 14px; color: #718096;">Avg Progress Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #8b5cf6;">24</div>
+                            <div style="font-size: 14px; color: #718096;">Lessons This Week</div>
+                        </div>
+                    </div>
                 </div>
             `;
         }
@@ -2583,21 +2870,100 @@
             
             return `
                 <h2>Admin Settings</h2>
-                <div style="display: grid; gap: 20px;">
-                    <div style="background: #f7fafc; padding: 20px; border-radius: 8px;">
-                        <h3 style="color: #2d3748; margin-bottom: 15px;">User Management</h3>
-                        <p style="color: #4a5568; margin-bottom: 15px;">Pending user approvals are shown at the top of the dashboard when available.</p>
-                        <button class="btn btn-secondary" onclick="alert('User management features coming soon!')">
-                            View All Users
-                        </button>
+                
+                <div style="display: grid; gap: 30px;">
+                    <div style="background: #f7fafc; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px;">👥 User Management</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #1e40af;">47</div>
+                                <div style="font-size: 14px; color: #718096;">Total Users</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #059669;">42</div>
+                                <div style="font-size: 14px; color: #718096;">Active Subscriptions</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">3</div>
+                                <div style="font-size: 14px; color: #718096;">Pending Approval</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #ef4444;">2</div>
+                                <div style="font-size: 14px; color: #718096;">Suspended</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <button class="btn" onclick="alert('User list coming soon!')">📋 View All Users</button>
+                            <button class="btn btn-secondary" onclick="alert('Bulk actions coming soon!')">⚡ Bulk Actions</button>
+                            <button class="btn btn-secondary" onclick="alert('Export coming soon!')">📤 Export Users</button>
+                            <button class="btn btn-secondary" onclick="alert('User analytics coming soon!')">📊 User Analytics</button>
+                        </div>
                     </div>
                     
-                    <div style="background: #f7fafc; padding: 20px; border-radius: 8px;">
-                        <h3 style="color: #2d3748; margin-bottom: 15px;">Platform Settings</h3>
-                        <p style="color: #4a5568; margin-bottom: 15px;">Configure platform-wide settings and preferences.</p>
-                        <button class="btn btn-secondary" onclick="alert('Settings panel coming soon!')">
-                            Open Settings
-                        </button>
+                    <div style="background: #f7fafc; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px;">⚙️ Platform Settings</h3>
+                        
+                        <div style="display: grid; gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">💳 Payment Configuration</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    <div style="margin-bottom: 8px;">Monthly Price: <strong>£9.99</strong></div>
+                                    <div style="margin-bottom: 8px;">Annual Price: <strong>£99.99</strong></div>
+                                    <div style="margin-bottom: 8px;">Currency: <strong>GBP</strong></div>
+                                    <div>Stripe Mode: <strong style="color: #f59e0b;">Test</strong></div>
+                                </div>
+                                <button class="btn btn-secondary btn-small" onclick="alert('Payment settings coming soon!')">⚙️ Modify Pricing</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">📧 Email Templates</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    Customize automated emails sent to users for approvals, subscriptions, and notifications.
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Welcome email template coming soon!')">Welcome Email</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Approval email template coming soon!')">Approval Email</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Payment email template coming soon!')">Payment Failed</button>
+                                </div>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">🔐 Security Settings</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    <div style="margin-bottom: 8px;">Session Timeout: <strong>15 minutes (inactive)</strong></div>
+                                    <div style="margin-bottom: 8px;">Content Protection: <strong>✅ Enabled</strong></div>
+                                    <div style="margin-bottom: 8px;">View Tracking: <strong>✅ Active</strong></div>
+                                    <div>Failed Login Attempts: <strong>5 max</strong></div>
+                                </div>
+                                <button class="btn btn-secondary btn-small" onclick="alert('Security settings coming soon!')">⚙️ Configure Security</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">📊 Analytics & Reporting</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    Monitor platform usage, subscription metrics, and user engagement.
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Revenue analytics coming soon!')">💰 Revenue Report</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Usage analytics coming soon!')">📈 Usage Stats</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Export analytics coming soon!')">📤 Export Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff5f5; border: 1px solid #fed7d7; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #c53030; margin-bottom: 15px;">⚠️ System Actions</h3>
+                        <p style="color: #742a2a; margin-bottom: 20px;">
+                            These actions affect the entire platform. Use with caution.
+                        </p>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <button class="btn btn-danger btn-small" onclick="confirm('Are you sure? This will clear all cache.') && alert('Cache cleared!')">🗑️ Clear Cache</button>
+                            <button class="btn btn-danger btn-small" onclick="alert('Maintenance mode coming soon!')">🚧 Maintenance Mode</button>
+                            <button class="btn btn-danger btn-small" onclick="alert('Backup system coming soon!')">💾 System Backup</button>
+                        </div>
                     </div>
                 </div>
             `;
