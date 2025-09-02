@@ -1033,15 +1033,21 @@
                 }
                 console.log('Subscription created:', subscription);
                 
+                // Check and update subscription status from Stripe
+                const subscriptionStatus = await getSubscriptionStatus(billingEmail);
+                if (subscriptionStatus && subscriptionStatus.hasActiveSubscription) {
+                    userHasSubscription = true;
+                    console.log('Subscription status confirmed:', subscriptionStatus);
+                }
+                
                 // Update UI
-                userHasSubscription = true;
                 showStatus('Subscription activated successfully! Welcome to Bright Stars Education.', 'success');
                 closeSubscriptionModal();
                 
                 // Force re-render to show updated subscription status
                 setTimeout(() => {
                     render();
-                }, 100);
+                }, 500);
                 
             } catch (error) {
                 console.error('Payment error details:', error);
@@ -1120,7 +1126,18 @@
             }
         }
 
-        async function getSubscriptionStatus(email) {
+        async function refreshSubscriptionStatus() {
+            if (!currentAccount) return;
+            
+            const email = currentAccount.username || currentAccount.idTokenClaims?.emails?.[0];
+            if (email) {
+                const status = await getSubscriptionStatus(email);
+                if (status) {
+                    userHasSubscription = status.hasActiveSubscription;
+                    render();
+                }
+            }
+        }
             try {
                 const response = await fetch('/api/stripe-get-subscription', {
                     method: 'POST',
@@ -1237,8 +1254,20 @@
 
         // Security detection functions
         function detectDevTools() {
+            // Don't run on mobile devices
+            const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+            if (isMobile) {
+                console.log('Mobile device detected - skipping dev tools detection');
+                return;
+            }
+            
             const threshold = 160;
             setInterval(() => {
+                // Only check if we're in a lesson viewing modal
+                if (!document.getElementById('lessonViewModal').classList.contains('active')) {
+                    return;
+                }
+                
                 if (window.outerHeight - window.innerHeight > threshold || 
                     window.outerWidth - window.innerWidth > threshold) {
                     if (!isDevToolsOpen) {
@@ -1979,8 +2008,50 @@
             }
         }
 
+        async function getSubscriptionStatus(email) {
+            try {
+                const response = await fetch('/api/stripe-get-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting subscription:', error);
+                return null;
+            }
+        }
+
+        async function cancelSubscription(subscriptionId) {
+            try {
+                const response = await fetch('/api/stripe-cancel-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subscriptionId }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.success;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error canceling subscription:', error);
+                return false;
+            }
+        }
+
         // ============================================
-        // AUTHENTICATION FUNCTIONS
+        // AZURE B2C CONFIGURATION
         // ============================================
         
         async function signIn() {
@@ -2310,7 +2381,7 @@
                         <div class="logo">Bright Stars Education</div>
                         <div class="user-info">
                             ${userApprovalStatus === 'approved' ? 
-                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
+                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}" onclick="refreshSubscriptionStatus()" style="cursor: pointer;" title="Click to refresh">
                                     ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
                                 </span>` : 
                                 `<span class="subscription-badge inactive">
