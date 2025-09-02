@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+        function<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -254,4 +254,2873 @@
 
         .lesson-card h4 {
             color: #2d3748;
-            margin-bottom: 10
+            margin-bottom: 10px;
+        }
+
+        .lesson-card p {
+            color: #718096;
+            font-size: 14px;
+            margin-bottom: 15px;
+        }
+
+        .lesson-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 12px;
+            color: #a0aec0;
+            margin-bottom: 15px;
+        }
+
+        .lesson-actions {
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        .config-section {
+            background: #fffaf0;
+            border: 2px solid #feb2b2;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .config-section h3 {
+            color: #c53030;
+            margin-bottom: 15px;
+        }
+
+        .config-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .config-form input {
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+
+        .config-form label {
+            font-weight: 600;
+            color: #4a5568;
+            font-size: 14px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .file-upload-area {
+            border: 2px dashed #e2e8f0;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            background: #f7fafc;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload-area:hover {
+            border-color: #667eea;
+            background: #ebf4ff;
+        }
+
+        .file-upload-area.dragover {
+            border-color: #667eea;
+            background: #ebf4ff;
+        }
+
+        .uploaded-files {
+            margin-top: 15px;
+        }
+
+        .uploaded-file {
+            display: flex;
+            align-items: center;
+            justify-content: between;
+            padding: 10px;
+            background: #f7fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            flex-grow: 1;
+        }
+
+        .file-remove {
+            background: #f56565;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 12px;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-left: 10px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .watermark {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%) rotate(-45deg);
+            font-size: 80px;
+            color: rgba(30, 64, 175, 0.05);
+            font-weight: bold;
+            pointer-events: none;
+            z-index: 0;
+            user-select: none;
+        }
+
+        .watermark-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            pointer-events: none;
+            z-index: 2;
+        }
+
+        .watermark-text {
+            position: absolute;
+            color: rgba(30, 64, 175, 0.1);
+            font-weight: bold;
+            font-size: 14px;
+            pointer-events: none;
+            user-select: none;
+            white-space: nowrap;
+        }
+
+        .security-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.0);
+            pointer-events: none;
+            z-index: 1;
+            transition: all 0.3s ease;
+        }
+
+        .security-overlay.active {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+        }
+
+        .security-warning {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #f56565;
+            color: white;
+            padding: 15px 20px;
+            border-radius: 8px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            z-index: 1001;
+            display: none;
+            animation: slideIn 0.3s ease;
+        }
+
+        .security-warning.show {
+            display: block;
+        }
+
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+
+        .session-warning {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+            z-index: 1002;
+            text-align: center;
+            display: none;
+            min-width: 300px;
+        }
+
+        .session-warning.show {
+            display: block;
+        }
+
+        .session-info-banner {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: rgba(30, 64, 175, 0.1);
+            padding: 8px 15px;
+            font-size: 12px;
+            color: #4a5568;
+            border-bottom: 1px solid rgba(30, 64, 175, 0.2);
+            z-index: 3;
+        }
+
+        .content-protection {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: transparent;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        .lesson-viewer.protected {
+            user-select: none;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+        }
+
+        .pricing-card {
+            background: white;
+            border-radius: 10px;
+            padding: 30px;
+            margin: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            text-align: center;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .pricing-card.popular {
+            border-color: #1e40af;
+            transform: scale(1.05);
+        }
+
+        .pricing-card h3 {
+            color: #2d3748;
+            margin-bottom: 15px;
+        }
+
+        .pricing-card .price {
+            font-size: 48px;
+            font-weight: bold;
+            color: #1e40af;
+            margin: 20px 0;
+        }
+
+        .pricing-card .period {
+            color: #718096;
+            font-size: 16px;
+        }
+
+        .pricing-card .features {
+            list-style: none;
+            padding: 0;
+            margin: 30px 0;
+        }
+
+        .pricing-card .features li {
+            padding: 8px 0;
+            color: #4a5568;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .pricing-card .features li:last-child {
+            border-bottom: none;
+        }
+
+        .pricing-card .features li::before {
+            content: "✓";
+            color: #059669;
+            font-weight: bold;
+            margin-right: 10px;
+        }
+
+        .subscription-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+        }
+
+        .subscription-modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .payment-form {
+            background: white;
+            padding: 40px;
+            border-radius: 10px;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .payment-form h3 {
+            color: #2d3748;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-row label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        #card-element {
+            padding: 12px;
+            border: 1px solid #e2e8f0;
+            border-radius: 5px;
+            background: white;
+        }
+
+        .payment-errors {
+            color: #f56565;
+            margin-top: 10px;
+            font-size: 14px;
+        }
+
+        .subscription-status {
+            background: #f0fff4;
+            border: 1px solid #9ae6b4;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+
+        .subscription-status h4 {
+            color: #22543d;
+            margin-bottom: 10px;
+        }
+
+        .lesson-viewer {
+            background: #f7fafc;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .lesson-content {
+            white-space: pre-wrap;
+            line-height: 1.6;
+            color: #2d3748;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #718096;
+        }
+
+        .empty-state h3 {
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.5s ease;
+        }
+
+        .admin-badge {
+            background: #9f7aea;
+            color: white;
+            padding: 2px 8px;
+            border-radius: 10px;
+            font-size: 12px;
+            margin-left: 10px;
+        }
+
+        .file-icon {
+            width: 20px;
+            height: 20px;
+            margin-right: 10px;
+            display: inline-block;
+            background-size: contain;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .lesson-categories {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .category-filter {
+            padding: 8px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            background: white;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .category-filter.active {
+            background: #1e40af;
+            color: white;
+            border-color: #1e40af;
+        }
+
+        .category-filter:hover {
+            border-color: #1e40af;
+        }
+    </style>
+</head>
+<body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
+    <div id="app"></div>
+
+    <!-- Lesson Editor Modal -->
+    <div id="lessonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Create New Lesson</h3>
+                <button class="modal-close" onclick="closeLessonModal()">&times;</button>
+            </div>
+            <form id="lessonForm" onsubmit="saveLessonForm(event)">
+                <div class="form-group">
+                    <label for="lessonTitle">Lesson Title</label>
+                    <input type="text" id="lessonTitle" required>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonCategory">Category</label>
+                    <select id="lessonCategory" required>
+                        <option value="">Select Category</option>
+                        <option value="Mathematics">Mathematics</option>
+                        <option value="English">English</option>
+                        <option value="Science">Science</option>
+                        <option value="History">History</option>
+                        <option value="Geography">Geography</option>
+                        <option value="Art">Art</option>
+                        <option value="Music">Music</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonDescription">Description</label>
+                    <textarea id="lessonDescription" placeholder="Brief description of the lesson content"></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="lessonContent">Lesson Content</label>
+                    <textarea id="lessonContent" rows="8" placeholder="Enter the main lesson content here..."></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label>Attach Files (PDF, Word Documents, Images)</label>
+                    <div class="file-upload-area" onclick="document.getElementById('fileInput').click()">
+                        <p>📎 Click to upload files or drag and drop</p>
+                        <p style="font-size: 12px; color: #718096; margin-top: 5px;">Supported: PDF, DOC, DOCX, JPG, PNG (Max 10MB each)</p>
+                    </div>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.jpg,.jpeg,.png" style="display: none;" onchange="handleFileUpload(event)">
+                    <div id="uploadedFiles" class="uploaded-files"></div>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: flex-end; margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeLessonModal()">Cancel</button>
+                    <button type="submit" class="btn">Save Lesson</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Lesson Viewer Modal -->
+    <div id="lessonViewModal" class="modal">
+        <div class="modal-content" style="max-width: 800px;">
+            <div class="modal-header">
+                <h3 id="viewLessonTitle">Lesson Title</h3>
+                <button class="modal-close" onclick="closeLessonViewModal()">&times;</button>
+            </div>
+            <div class="lesson-viewer">
+                <div class="watermark">PROTECTED</div>
+                <div id="lessonContentView" class="lesson-content"></div>
+                <div id="lessonFiles" style="margin-top: 20px;"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Subscription Modal -->
+    <div id="subscriptionModal" class="subscription-modal">
+        <div class="payment-form">
+            <h3>Subscribe to Bright Stars Education</h3>
+            <p style="text-align: center; color: #718096; margin-bottom: 30px;">Get unlimited access to all lesson plans and resources</p>
+            
+            <form id="payment-form">
+                <div class="form-row">
+                    <label for="card-element">Card Details</label>
+                    <div id="card-element">
+                        <!-- Stripe Elements will create form elements here -->
+                    </div>
+                    <div id="card-errors" class="payment-errors" role="alert"></div>
+                </div>
+                
+                <div class="form-row">
+                    <label for="billing-name">Full Name</label>
+                    <input type="text" id="billing-name" required>
+                </div>
+                
+                <div class="form-row">
+                    <label for="billing-email">Email</label>
+                    <input type="email" id="billing-email" required>
+                </div>
+                
+                <div style="display: flex; gap: 10px; justify-content: center; margin-top: 30px;">
+                    <button type="button" class="btn btn-secondary" onclick="closeSubscriptionModal()">Cancel</button>
+                    <button type="submit" id="submit-payment" class="btn">
+                        Subscribe - £<span id="selected-price">9.99</span>/month
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // ============================================
+        // STRIPE CONFIGURATION & INTEGRATION
+        // ============================================
+        
+        const STRIPE_PUBLISHABLE_KEY = 'pk_test_51S1njN48I6RWiV5sOrV1M1BGnNjtEFzVmDrCuf2mDhVtiqT5yLt1rdGSRoCvG1kX6Rx6siPoS3mFm0YEyKkAsCOV007nGWTOHD';
+        let stripe = null;
+        let elements = null;
+        let card = null;
+        let selectedPlan = null;
+
+        // Subscription plans
+        const SUBSCRIPTION_PLANS = {
+            monthly: {
+                priceId: 'price_1S1no748I6RWiV5sYxPy9oLR',
+                price: 9.99,
+                period: 'month',
+                name: 'Monthly Plan'
+            },
+            annual: {
+                priceId: 'price_1S1nom48I6RWiV5s5kv450kV',
+                price: 99.99,
+                period: 'year',
+                name: 'Annual Plan'
+            }
+        };
+
+        function initializeStripe() {
+            try {
+                stripe = Stripe(STRIPE_PUBLISHABLE_KEY);
+                elements = stripe.elements();
+                
+                // Create card element
+                card = elements.create('card', {
+                    style: {
+                        base: {
+                            fontSize: '16px',
+                            color: '#2d3748',
+                            '::placeholder': {
+                                color: '#a0aec0',
+                            },
+                        },
+                    },
+                });
+                
+                return true;
+            } catch (error) {
+                console.error('Stripe initialization error:', error);
+                return false;
+            }
+        }
+
+        function openSubscriptionModal(planType = 'monthly') {
+            if (!stripe) {
+                alert('Payment system is not available. Please try again later.');
+                return;
+            }
+            
+            selectedPlan = SUBSCRIPTION_PLANS[planType];
+            document.getElementById('selected-price').textContent = selectedPlan.price;
+            document.getElementById('billing-email').value = currentAccount?.username || '';
+            document.getElementById('billing-name').value = currentAccount?.name || '';
+            
+            // Mount card element
+            card.mount('#card-element');
+            
+            // Listen for real-time validation errors from the card Element
+            card.on('change', ({error}) => {
+                const displayError = document.getElementById('card-errors');
+                if (error) {
+                    displayError.textContent = error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+            
+            document.getElementById('subscriptionModal').classList.add('active');
+        }
+
+        function closeSubscriptionModal() {
+            document.getElementById('subscriptionModal').classList.remove('active');
+            if (card) {
+                card.unmount();
+            }
+        }
+
+        async function handleSubscriptionPayment(event) {
+            event.preventDefault();
+            
+            const submitButton = document.getElementById('submit-payment');
+            const originalText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Processing...';
+            
+            try {
+                const billingName = document.getElementById('billing-name').value;
+                const billingEmail = document.getElementById('billing-email').value;
+                
+                if (!billingName || !billingEmail) {
+                    throw new Error('Please fill in all required fields');
+                }
+                
+                console.log('Creating customer...');
+                // Create customer first
+                const customer = await createStripeCustomer(billingEmail, billingName);
+                if (!customer) {
+                    throw new Error('Failed to create customer');
+                }
+                console.log('Customer created:', customer);
+                
+                console.log('Creating payment method...');
+                // Create payment method (updated for latest Stripe.js)
+                const {paymentMethod, error} = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: card,
+                    billing_details: {
+                        name: billingName,
+                        email: billingEmail,
+                    },
+                });
+                
+                if (error) {
+                    throw new Error(error.message);
+                }
+                console.log('Payment method created:', paymentMethod);
+                
+                console.log('Creating subscription...');
+                // Create subscription
+                const subscription = await createSubscription(customer.id, selectedPlan.priceId, paymentMethod.id);
+                if (!subscription) {
+                    throw new Error('Failed to create subscription');
+                }
+                console.log('Subscription created:', subscription);
+                
+                // Check and update subscription status from Stripe
+                const subscriptionStatus = await getSubscriptionStatus(billingEmail);
+                if (subscriptionStatus && subscriptionStatus.hasActiveSubscription) {
+                    userHasSubscription = true;
+                    console.log('Subscription status confirmed:', subscriptionStatus);
+                }
+                
+                // Update UI
+                showStatus('Subscription activated successfully! Welcome to Bright Stars Education.', 'success');
+                closeSubscriptionModal();
+                
+                // Force re-render to show updated subscription status
+                setTimeout(() => {
+                    render();
+                }, 500);
+                
+            } catch (error) {
+                console.error('Payment error details:', error);
+                document.getElementById('card-errors').textContent = error.message;
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalText;
+            }
+        }
+
+        // ============================================
+        // STRIPE API FUNCTIONS
+        // ============================================
+        
+        async function createStripeCustomer(email, name) {
+            try {
+                console.log('Sending customer request:', { email, name });
+                
+                const response = await fetch('/api/stripe-create-customer', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email, name }),
+                });
+                
+                console.log('Customer response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Customer response data:', data);
+                    return data.customer;
+                } else {
+                    // Log the error response
+                    const errorData = await response.text();
+                    console.error('Customer error response:', response.status, errorData);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error creating customer:', error);
+                return null;
+            }
+        }
+
+        async function createSubscription(customerId, priceId, paymentMethodId) {
+            try {
+                console.log('Sending subscription request:', { customerId, priceId, paymentMethodId });
+                
+                const response = await fetch('/api/stripe-create-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        customerId,
+                        priceId,
+                        paymentMethodId
+                    }),
+                });
+                
+                console.log('Subscription response status:', response.status);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Subscription response data:', data);
+                    return data.subscription;
+                } else {
+                    // Log the error response
+                    const errorData = await response.text();
+                    console.error('Subscription error response:', response.status, errorData);
+                    return null;
+                }
+            } catch (error) {
+                console.error('Error creating subscription:', error);
+                return null;
+            }
+        }
+
+        async function getSubscriptionStatus(email) {
+            try {
+                const response = await fetch('/api/stripe-get-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ email }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data;
+                }
+                return null;
+            } catch (error) {
+                console.error('Error getting subscription:', error);
+                return null;
+            }
+        }
+
+        async function cancelSubscription(subscriptionId) {
+            try {
+                const response = await fetch('/api/stripe-cancel-subscription', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ subscriptionId }),
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.success;
+                }
+                return false;
+            } catch (error) {
+                console.error('Error canceling subscription:', error);
+                return false;
+            }
+        }
+        
+        const B2C_CONFIG = {
+            tenantName: "brightstars11plus",
+            tenantId: "d96d2f4e-d080-4c2f-90e1-cce96e64b6ba",
+            clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
+            signInSignUpPolicyName: "SignUpSignIn",
+            redirectUri: window.location.origin,
+            scopes: ["openid", "profile"],
+            cacheLocation: "sessionStorage",
+            isConfigured: true
+        };
+
+        const getAuthority = () => {
+            return `https://${B2C_CONFIG.tenantName}.ciamlogin.com/${B2C_CONFIG.tenantId}`;
+        };
+
+        // ============================================
+        // MSAL Setup
+        // ============================================
+        
+        let msalInstance = null;
+        let currentAccount = null;
+
+        function initializeMSAL() {
+            if (!B2C_CONFIG.isConfigured) {
+                console.log("B2C not configured yet");
+                return false;
+            }
+
+            try {
+                const msalConfig = {
+                    auth: {
+                        clientId: B2C_CONFIG.clientId,
+                        authority: getAuthority(),
+                        knownAuthorities: [`${B2C_CONFIG.tenantName}.ciamlogin.com`],
+                        redirectUri: B2C_CONFIG.redirectUri,
+                        postLogoutRedirectUri: B2C_CONFIG.redirectUri,
+                        navigateToLoginRequestUrl: false
+                    },
+                    cache: {
+                        cacheLocation: B2C_CONFIG.cacheLocation,
+                        storeAuthStateInCookie: false
+                    },
+                    system: {
+                        loggerOptions: {
+                            loggerCallback: (level, message, containsPii) => {
+                                if (containsPii) return;
+                                console.log(message);
+                            },
+                            logLevel: msal.LogLevel.Info,
+                            piiLoggingEnabled: false
+                        }
+                    }
+                };
+
+                msalInstance = new msal.PublicClientApplication(msalConfig);
+                return true;
+            } catch (error) {
+                console.error("Error initializing MSAL:", error);
+                return false;
+            }
+        }
+
+        // ============================================
+        // ENHANCED PROTECTION & SECURITY
+        // ============================================
+        
+        let sessionTimer = null;
+        let warningTimer = null;
+        let sessionStartTime = null;
+        let isDevToolsOpen = false;
+        let securityOverlay = null;
+        let currentViewSession = null;
+
+        // Security detection functions
+        function detectDevTools() {
+            const threshold = 160;
+            setInterval(() => {
+                if (window.outerHeight - window.innerHeight > threshold || 
+                    window.outerWidth - window.innerWidth > threshold) {
+                    if (!isDevToolsOpen) {
+                        isDevToolsOpen = true;
+                        triggerSecurityWarning('Developer tools detected');
+                        blurContent(true);
+                    }
+                } else {
+                    if (isDevToolsOpen) {
+                        isDevToolsOpen = false;
+                        blurContent(false);
+                    }
+                }
+            }, 1000);
+        }
+
+        function setupKeyboardProtection() {
+            document.addEventListener('keydown', (e) => {
+                // Block common shortcuts
+                if (
+                    (e.ctrlKey && (e.key === 'c' || e.key === 'a' || e.key === 's' || e.key === 'p')) ||
+                    e.key === 'F12' ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
+                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
+                    (e.ctrlKey && e.key === 'u')
+                ) {
+                    e.preventDefault();
+                    triggerSecurityWarning('Action blocked for content protection');
+                    return false;
+                }
+            });
+        }
+
+        function setupWindowProtection() {
+            window.addEventListener('blur', () => {
+                if (document.getElementById('lessonViewModal').classList.contains('active')) {
+                    triggerSecurityWarning('Window focus lost - potential screenshot attempt');
+                    blurContent(true);
+                    setTimeout(() => blurContent(false), 3000);
+                }
+            });
+
+            // Detect print attempts
+            window.addEventListener('beforeprint', (e) => {
+                e.preventDefault();
+                triggerSecurityWarning('Printing blocked for content protection');
+                return false;
+            });
+        }
+
+        function setupActivityTracking() {
+            const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
+                        resetInactivityTimer();
+                    }
+                }, true);
+            });
+        }
+
+        function createDynamicWatermarks(username, date) {
+            const watermarkText = `${username} - ${date}`;
+            const positions = [
+                { top: '15%', left: '10%', rotation: -30 },
+                { top: '35%', right: '15%', rotation: 45 },
+                { top: '55%', left: '20%', rotation: -15 },
+                { top: '75%', right: '25%', rotation: 30 },
+                { top: '25%', left: '70%', rotation: -45 },
+                { top: '65%', left: '5%', rotation: 15 }
+            ];
+
+            return positions.map((pos, index) => {
+                const style = `
+                    top: ${pos.top};
+                    ${pos.left ? `left: ${pos.left};` : `right: ${pos.right};`}
+                    transform: rotate(${pos.rotation}deg);
+                `;
+                return `<div class="watermark-text" style="${style}">${watermarkText}</div>`;
+            }).join('');
+        }
+
+        function blurContent(blur) {
+            if (!securityOverlay) {
+                securityOverlay = document.createElement('div');
+                securityOverlay.className = 'security-overlay';
+                document.body.appendChild(securityOverlay);
+            }
+            
+            if (blur) {
+                securityOverlay.classList.add('active');
+            } else {
+                securityOverlay.classList.remove('active');
+            }
+        }
+
+        function triggerSecurityWarning(message) {
+            let warning = document.getElementById('securityWarning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.id = 'securityWarning';
+                warning.className = 'security-warning';
+                document.body.appendChild(warning);
+            }
+
+            warning.textContent = `🛡️ Security Alert: ${message}`;
+            warning.classList.add('show');
+
+            // Track security event
+            trackViewEvent('security_alert', { message, timestamp: new Date().toISOString() });
+
+            setTimeout(() => {
+                warning.classList.remove('show');
+            }, 4000);
+        }
+
+        function startSessionTimer() {
+            clearSessionTimer();
+            sessionStartTime = new Date();
+            
+            // Warning after 4 minutes
+            warningTimer = setTimeout(() => {
+                showSessionWarning();
+            }, 4 * 60 * 1000);
+            
+            // Auto-close after 5 minutes
+            sessionTimer = setTimeout(() => {
+                closeLessonViewModal();
+                triggerSecurityWarning('Session expired - lesson closed automatically');
+            }, 5 * 60 * 1000);
+        }
+
+        function clearSessionTimer() {
+            if (sessionTimer) {
+                clearTimeout(sessionTimer);
+                sessionTimer = null;
+            }
+            if (warningTimer) {
+                clearTimeout(warningTimer);
+                warningTimer = null;
+            }
+            hideSessionWarning();
+        }
+
+        function showSessionWarning() {
+            let warning = document.getElementById('sessionWarning');
+            if (!warning) {
+                warning = document.createElement('div');
+                warning.id = 'sessionWarning';
+                warning.className = 'session-warning';
+                warning.innerHTML = `
+                    <h3 style="color: #f56565; margin-bottom: 15px;">⏰ Session Warning</h3>
+                    <p>Your viewing session will expire in <strong id="countdown">60</strong> seconds.</p>
+                    <div style="margin-top: 20px;">
+                        <button class="btn btn-small" onclick="extendSession()">Extend Session</button>
+                        <button class="btn btn-small btn-secondary" onclick="closeLessonViewModal()">Close Lesson</button>
+                    </div>
+                `;
+                document.body.appendChild(warning);
+            }
+            
+            warning.classList.add('show');
+            startCountdown();
+        }
+
+        function hideSessionWarning() {
+            const warning = document.getElementById('sessionWarning');
+            if (warning) {
+                warning.classList.remove('show');
+            }
+        }
+
+        function startCountdown() {
+            let seconds = 60;
+            const countdownElement = document.getElementById('countdown');
+            
+            const interval = setInterval(() => {
+                seconds--;
+                if (countdownElement) {
+                    countdownElement.textContent = seconds;
+                }
+                
+                if (seconds <= 0) {
+                    clearInterval(interval);
+                }
+            }, 1000);
+        }
+
+        function extendSession() {
+            hideSessionWarning();
+            startSessionTimer();
+            triggerSecurityWarning('Session extended - 5 more minutes granted');
+        }
+
+        // Track user activity to reset timers
+        function setupActivityTracking() {
+            const events = ['mousedown', 'mousemove', 'keypress', 'scroll', 'touchstart', 'click'];
+            
+            events.forEach(event => {
+                document.addEventListener(event, () => {
+                    if (currentViewSession && document.getElementById('lessonViewModal').classList.contains('active')) {
+                        resetInactivityTimer();
+                    }
+                }, true);
+            });
+        }
+
+        // View tracking functions
+        async function trackViewEvent(eventType, data = {}) {
+            try {
+                const eventData = {
+                    eventType,
+                    userId: currentAccount?.username || 'unknown',
+                    timestamp: new Date().toISOString(),
+                    lessonId: currentViewSession?.lessonId || 'unknown',
+                    sessionId: currentViewSession?.sessionId || 'unknown',
+                    ...data
+                };
+
+                // Silent API call - don't await or handle errors prominently
+                fetch('/api/trackview', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(eventData)
+                }).catch(() => {}); // Silent fail
+
+                console.log('View event tracked:', eventData);
+            } catch (error) {
+                // Silent tracking - don't interrupt user experience
+                console.log('Tracking failed silently');
+            }
+        }
+        
+        let lessons = [];
+        let currentLesson = null;
+        let uploadedFiles = [];
+        let lessonFilter = 'all';
+
+        // Mock lesson data for demonstration
+        function initializeLessons() {
+            if (userIsAdmin) {
+                lessons = [
+                    {
+                        id: '1',
+                        title: 'Introduction to Algebra',
+                        category: 'Mathematics',
+                        description: 'Basic algebraic concepts and solving linear equations',
+                        content: 'This lesson covers the fundamentals of algebra including:\n\n1. Variables and Constants\n2. Basic Operations\n3. Solving Linear Equations\n4. Practice Problems\n\nVariables are letters that represent unknown numbers...',
+                        createdDate: new Date('2024-01-15'),
+                        files: [
+                            { name: 'algebra_worksheet.pdf', type: 'application/pdf', size: '245 KB' }
+                        ],
+                        author: 'Admin'
+                    },
+                    {
+                        id: '2',
+                        title: 'Creative Writing Techniques',
+                        category: 'English',
+                        description: 'Explore different writing styles and narrative techniques',
+                        content: 'In this lesson, we will explore various creative writing techniques:\n\n1. Character Development\n2. Plot Structure\n3. Dialogue Writing\n4. Setting Description\n\nGood creative writing starts with understanding your audience...',
+                        createdDate: new Date('2024-01-10'),
+                        files: [
+                            { name: 'writing_prompts.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: '120 KB' },
+                            { name: 'example_story.pdf', type: 'application/pdf', size: '180 KB' }
+                        ],
+                        author: 'Admin'
+                    },
+                    {
+                        id: '3',
+                        title: 'The Solar System',
+                        category: 'Science',
+                        description: 'Comprehensive guide to planets, moons, and space exploration',
+                        content: 'Welcome to our journey through the Solar System!\n\nThe Solar System consists of:\n1. The Sun (our star)\n2. Eight Planets\n3. Moons and Asteroids\n4. Comets and Meteoroids\n\nLet\'s start with the Sun, which is the center of our solar system...',
+                        createdDate: new Date('2024-01-05'),
+                        files: [
+                            { name: 'solar_system_diagram.jpg', type: 'image/jpeg', size: '890 KB' },
+                            { name: 'planet_facts.pdf', type: 'application/pdf', size: '320 KB' }
+                        ],
+                        author: 'Admin'
+                    }
+                ];
+            } else {
+                // For regular users, show lessons if they have subscription
+                if (userHasSubscription) {
+                    lessons = [
+                        {
+                            id: '1',
+                            title: 'Introduction to Algebra',
+                            category: 'Mathematics',
+                            description: 'Basic algebraic concepts and solving linear equations',
+                            createdDate: new Date('2024-01-15'),
+                            author: 'Tutor'
+                        },
+                        {
+                            id: '2',
+                            title: 'Creative Writing Techniques',
+                            category: 'English',
+                            description: 'Explore different writing styles and narrative techniques',
+                            createdDate: new Date('2024-01-10'),
+                            author: 'Tutor'
+                        }
+                    ];
+                }
+            }
+        }
+
+        function openLessonModal(lessonId = null) {
+            const modal = document.getElementById('lessonModal');
+            const modalTitle = document.getElementById('modalTitle');
+            
+            if (lessonId) {
+                currentLesson = lessons.find(l => l.id === lessonId);
+                modalTitle.textContent = 'Edit Lesson';
+                
+                // Populate form
+                document.getElementById('lessonTitle').value = currentLesson.title;
+                document.getElementById('lessonCategory').value = currentLesson.category;
+                document.getElementById('lessonDescription').value = currentLesson.description;
+                document.getElementById('lessonContent').value = currentLesson.content || '';
+                
+                // Show existing files
+                displayUploadedFiles(currentLesson.files || []);
+            } else {
+                currentLesson = null;
+                modalTitle.textContent = 'Create New Lesson';
+                document.getElementById('lessonForm').reset();
+                document.getElementById('uploadedFiles').innerHTML = '';
+                uploadedFiles = [];
+            }
+            
+            modal.classList.add('active');
+        }
+
+        function closeLessonModal() {
+            document.getElementById('lessonModal').classList.remove('active');
+            currentLesson = null;
+            uploadedFiles = [];
+        }
+
+        function openLessonView(lessonId) {
+            const lesson = lessons.find(l => l.id === lessonId);
+            if (!lesson) return;
+
+            // Start new viewing session
+            currentViewSession = {
+                sessionId: Date.now().toString(),
+                lessonId: lessonId,
+                startTime: new Date()
+            };
+
+            // Track lesson open
+            trackViewEvent('lesson_opened', { 
+                lessonTitle: lesson.title,
+                lessonCategory: lesson.category
+            });
+
+            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || 'User';
+            const viewDate = new Date().toLocaleDateString();
+            const viewTime = new Date().toLocaleTimeString();
+
+            document.getElementById('viewLessonTitle').textContent = lesson.title;
+            document.getElementById('lessonContentView').textContent = lesson.content || 'No content available.';
+            
+            // Display files
+            const filesContainer = document.getElementById('lessonFiles');
+            if (lesson.files && lesson.files.length > 0) {
+                filesContainer.innerHTML = `
+                    <h4 style="margin-bottom: 15px; color: #2d3748;">Attached Files:</h4>
+                    ${lesson.files.map(file => `
+                        <div class="uploaded-file">
+                            <div class="file-info">
+                                <strong>${file.name}</strong>
+                                <small style="color: #718096; margin-left: 10px;">${file.size}</small>
+                            </div>
+                            <button class="btn btn-small" onclick="downloadFile('${file.name}', '${file.url || ''}')">Download</button>
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                filesContainer.innerHTML = '';
+            }
+
+            // Add session info banner and enhanced protection
+            const lessonViewer = document.querySelector('#lessonViewModal .lesson-viewer');
+            lessonViewer.className = 'lesson-viewer protected';
+            lessonViewer.innerHTML = `
+                <div class="session-info-banner">
+                    🔒 Authorized User: ${username} | Session Started: ${viewTime} | View Duration: <span id="viewDuration">00:00</span>
+                </div>
+                <div class="watermark">PROTECTED</div>
+                <div class="watermark-overlay">${createDynamicWatermarks(username, viewDate)}</div>
+                <div class="content-protection"></div>
+                <div id="lessonContentView" class="lesson-content">${lesson.content || 'No content available.'}</div>
+                <div id="lessonFiles" style="margin-top: 20px;">${filesContainer.innerHTML}</div>
+            `;
+
+            // Start session timer and duration tracking
+            startSessionTimer();
+            startDurationTracking();
+
+            document.getElementById('lessonViewModal').classList.add('active');
+        }
+
+        function closeLessonViewModal() {
+            // Track lesson close and duration
+            if (currentViewSession) {
+                const endTime = new Date();
+                const duration = Math.round((endTime - currentViewSession.startTime) / 1000); // seconds
+                
+                trackViewEvent('lesson_closed', { 
+                    viewDuration: duration,
+                    endTime: endTime.toISOString()
+                });
+            }
+
+            document.getElementById('lessonViewModal').classList.remove('active');
+            clearSessionTimer();
+            stopDurationTracking();
+            currentViewSession = null;
+        }
+
+        let durationInterval = null;
+
+        function startDurationTracking() {
+            stopDurationTracking();
+            
+            durationInterval = setInterval(() => {
+                if (currentViewSession) {
+                    const now = new Date();
+                    const elapsed = Math.floor((now - currentViewSession.startTime) / 1000);
+                    const minutes = Math.floor(elapsed / 60).toString().padStart(2, '0');
+                    const seconds = (elapsed % 60).toString().padStart(2, '0');
+                    
+                    const durationElement = document.getElementById('viewDuration');
+                    if (durationElement) {
+                        durationElement.textContent = `${minutes}:${seconds}`;
+                    }
+                }
+            }, 1000);
+        }
+
+        function stopDurationTracking() {
+            if (durationInterval) {
+                clearInterval(durationInterval);
+                durationInterval = null;
+            }
+        }
+
+        function handleFileUpload(event) {
+            const files = Array.from(event.target.files);
+            files.forEach(file => {
+                if (file.size > 10 * 1024 * 1024) { // 10MB limit
+                    alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+                    return;
+                }
+                
+                uploadedFiles.push({
+                    name: file.name,
+                    type: file.type,
+                    size: formatFileSize(file.size),
+                    file: file
+                });
+            });
+            
+            displayUploadedFiles(uploadedFiles);
+        }
+
+        async function uploadFileToAzure(file) {
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('isAdmin', userIsAdmin.toString());
+
+            try {
+                console.log('Uploading file:', file.name, file.size, 'bytes');
+                console.log('User is admin:', userIsAdmin);
+                
+                const response = await fetch('/api/upload', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Upload response status:', response.status);
+
+                if (response.ok) {
+                    const result = await response.json();
+                    console.log('Upload success:', result);
+                    if (result.debug) {
+                        console.log('Debug info:', result.debug);
+                    }
+                    return result;
+                } else {
+                    const errorText = await response.text();
+                    console.error('Upload error response:', response.status, errorText);
+                    
+                    // Try to parse error details
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        if (errorData.details) {
+                            console.error('Error details:', errorData.details);
+                        }
+                    } catch (e) {
+                        console.error('Raw error text:', errorText);
+                    }
+                    
+                    throw new Error('Upload failed: ' + response.status);
+                }
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                throw error;
+            }
+        }
+
+        function displayUploadedFiles(files) {
+            const container = document.getElementById('uploadedFiles');
+            container.innerHTML = files.map((file, index) => `
+                <div class="uploaded-file">
+                    <div class="file-info">
+                        <strong>${file.name}</strong>
+                        <small style="color: #718096; margin-left: 10px;">${file.size}</small>
+                    </div>
+                    <button class="file-remove" onclick="removeFile(${index})">Remove</button>
+                </div>
+            `).join('');
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            displayUploadedFiles(uploadedFiles);
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function saveLessonForm(event) {
+            event.preventDefault();
+            
+            const title = document.getElementById('lessonTitle').value;
+            const category = document.getElementById('lessonCategory').value;
+            const description = document.getElementById('lessonDescription').value;
+            const content = document.getElementById('lessonContent').value;
+            
+            // Show saving status
+            const submitBtn = event.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Saving...';
+            submitBtn.disabled = true;
+            
+            try {
+                // Upload files to Azure Storage
+                const uploadedFileUrls = [];
+                for (const fileData of uploadedFiles) {
+                    if (fileData.file) { // Only upload new files
+                        try {
+                            const uploadResult = await uploadFileToAzure(fileData.file);
+                            uploadedFileUrls.push({
+                                name: fileData.name,
+                                type: fileData.type,
+                                size: fileData.size,
+                                url: uploadResult.url,
+                                fileName: uploadResult.fileName
+                            });
+                        } catch (error) {
+                            alert(`Failed to upload ${fileData.name}. Please try again.`);
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
+                        }
+                    } else {
+                        // Existing file, keep as is
+                        uploadedFileUrls.push(fileData);
+                    }
+                }
+                
+                const lessonData = {
+                    id: currentLesson ? currentLesson.id : Date.now().toString(),
+                    title,
+                    category,
+                    description,
+                    content,
+                    files: uploadedFileUrls,
+                    createdDate: currentLesson ? currentLesson.createdDate : new Date(),
+                    author: currentAccount?.name || 'Admin'
+                };
+                
+                if (currentLesson) {
+                    // Update existing lesson
+                    const index = lessons.findIndex(l => l.id === currentLesson.id);
+                    lessons[index] = { ...lessons[index], ...lessonData };
+                    showStatus('Lesson updated successfully!', 'success');
+                } else {
+                    // Create new lesson
+                    lessons.push(lessonData);
+                    showStatus('Lesson created successfully!', 'success');
+                }
+                
+                closeLessonModal();
+                render();
+                
+            } catch (error) {
+                console.error('Error saving lesson:', error);
+                alert('Failed to save lesson. Please try again.');
+                submitBtn.textContent = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        function deleteLesson(lessonId) {
+            if (confirm('Are you sure you want to delete this lesson? This action cannot be undone.')) {
+                lessons = lessons.filter(l => l.id !== lessonId);
+                showStatus('Lesson deleted successfully!', 'success');
+                render();
+            }
+        }
+
+        async function downloadFile(fileName, fileUrl) {
+            // If we have a direct URL (from before security update), use it
+            if (fileUrl && fileUrl.includes('?')) {
+                window.open(fileUrl, '_blank');
+                return;
+            }
+            
+            // Use secure download for new files
+            try {
+                const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+                
+                const response = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileName: fileName,
+                        userEmail: userEmail
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    window.open(data.downloadUrl, '_blank');
+                } else {
+                    alert('Failed to generate secure download link');
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Download failed. Please try again.');
+            }
+        }
+
+        // ============================================
+        // API FUNCTIONS (same as before)
+        // ============================================
+        
+        async function checkUserStatus(email) {
+            try {
+                const response = await fetch('/api/checkuserstatus', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email })
+                });
+                
+                if (response.ok) {
+                    return await response.json();
+                }
+                return null;
+            } catch (error) {
+                console.error('Error checking user status:', error);
+                return null;
+            }
+        }
+        
+        async function notifyNewSignup(email, name) {
+            try {
+                const response = await fetch('/api/onusersignup', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, name })
+                });
+                
+                if (response.ok) {
+                    console.log('Admin notified of new signup');
+                }
+            } catch (error) {
+                console.error('Error notifying signup:', error);
+            }
+        }
+        
+        async function getPendingUsers(isAdmin) {
+            try {
+                const response = await fetch('/api/getpendingusers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ isAdmin })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    return data.users || [];
+                }
+                return [];
+            } catch (error) {
+                console.error('Error getting pending users:', error);
+                return [];
+            }
+        }
+        
+        async function approveRejectUser(email, action, adminEmail, isAdmin) {
+            try {
+                const response = await fetch('/api/approveuser', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        email, 
+                        action, 
+                        adminEmail,
+                        isAdmin 
+                    })
+                });
+                
+                if (response.ok) {
+                    return await response.json();
+                }
+                return null;
+            } catch (error) {
+                console.error('Error processing user:', error);
+                return null;
+            }
+        }
+
+        // ============================================
+        // AUTHENTICATION FUNCTIONS
+        // ============================================
+        
+        async function signIn() {
+            if (!msalInstance) {
+                showStatus("Please configure Azure B2C settings first", "error");
+                return;
+            }
+
+            try {
+                showStatus("Redirecting to Azure B2C login...", "info");
+                
+                const loginRequest = {
+                    scopes: B2C_CONFIG.scopes,
+                    extraQueryParameters: {
+                        p: B2C_CONFIG.signInSignUpPolicyName
+                    },
+                    prompt: "select_account"
+                };
+
+                await msalInstance.loginRedirect(loginRequest);
+                
+            } catch (error) {
+                console.error("Login error:", error);
+                showStatus(`Login failed: ${error.message}`, "error");
+            }
+        }
+
+        async function signOut() {
+            if (!msalInstance) return;
+
+            try {
+                const logoutRequest = {
+                    postLogoutRedirectUri: B2C_CONFIG.redirectUri,
+                    mainWindowRedirectUri: B2C_CONFIG.redirectUri
+                };
+
+                await msalInstance.logoutPopup(logoutRequest);
+                currentAccount = null;
+                render();
+            } catch (error) {
+                console.error("Logout error:", error);
+                await msalInstance.logoutRedirect(logoutRequest);
+            }
+        }
+
+        async function handleAuthResponse(response) {
+            if (response && response.account) {
+                currentAccount = response.account;
+                
+                const email = response.account.username || response.account.idTokenClaims?.emails?.[0];
+                const name = response.account.name || response.account.idTokenClaims?.name || '';
+                
+                console.log("User logged in:", email);
+                console.log("Checking user status...");
+                
+                const userStatus = await checkUserStatus(email);
+                console.log("User status:", userStatus);
+                
+                if (userStatus) {
+                    if (userStatus.status === 'pending') {
+                        await notifyNewSignup(email, name);
+                        showStatus('Your account is pending approval. You will receive an email once approved.', 'info');
+                    } else if (userStatus.status === 'approved') {
+                        showStatus(`Successfully logged in as ${email}`, 'success');
+                    } else if (userStatus.status === 'rejected') {
+                        showStatus('Your account application was not approved. Please contact support.', 'error');
+                        setTimeout(() => {
+                            signOut();
+                        }, 3000);
+                        return;
+                    }
+                } else {
+                    console.log("Could not check user status - API may not be deployed");
+                    showStatus(`Logged in as ${email}`, 'success');
+                }
+                
+                console.log("Token claims:", response.account.idTokenClaims);
+                userIsAdmin = response.account.idTokenClaims?.roles?.includes('isAdmin') || false;
+                console.log("User is admin:", userIsAdmin);
+                userApprovalStatus = userStatus?.status || 'approved';
+                userHasSubscription = userStatus?.hasSubscription || false;
+                
+                // Initialize lessons based on user role
+                initializeLessons();
+                
+                setTimeout(() => {
+                    render();
+                }, 1500);
+            }
+        }
+
+        async function checkExistingLogin() {
+            if (!msalInstance) return;
+
+            try {
+                const accounts = msalInstance.getAllAccounts();
+                if (accounts.length > 0) {
+                    currentAccount = accounts[0];
+                    
+                    try {
+                        const response = await msalInstance.acquireTokenSilent({
+                            scopes: B2C_CONFIG.scopes,
+                            account: accounts[0]
+                        });
+                        
+                        if (response.accessToken) {
+                            console.log("User already logged in:", accounts[0].username);
+                            await handleAuthResponse({ account: accounts[0] });
+                        }
+                    } catch (error) {
+                        currentAccount = null;
+                        render();
+                    }
+                }
+            } catch (error) {
+                console.error("Error checking existing login:", error);
+            }
+        }
+
+        // ============================================
+        // UI FUNCTIONS
+        // ============================================
+        
+        let statusMessage = "";
+        let statusType = "";
+        let userIsAdmin = false;
+        let userApprovalStatus = 'pending';
+        let userHasSubscription = false;
+        let pendingUsers = [];
+        let currentView = 'lessons';
+
+        function showStatus(message, type = "info") {
+            statusMessage = message;
+            statusType = type;
+            render();
+        }
+
+        function setCurrentView(view) {
+            currentView = view;
+            render();
+        }
+
+        function setLessonFilter(filter) {
+            lessonFilter = filter;
+            render();
+        }
+
+        function searchLessons(query) {
+            if (!query) {
+                render();
+                return;
+            }
+            
+            const filteredLessons = lessons.filter(lesson => 
+                lesson.title.toLowerCase().includes(query.toLowerCase()) ||
+                lesson.description.toLowerCase().includes(query.toLowerCase()) ||
+                lesson.category.toLowerCase().includes(query.toLowerCase())
+            );
+            
+            // Re-render with filtered lessons
+            renderLessonGrid(filteredLessons);
+        }
+
+        function renderLessonGrid(lessonsToShow = null) {
+            const lessonsData = lessonsToShow || (lessonFilter === 'all' ? lessons : lessons.filter(l => l.category === lessonFilter));
+            
+            const container = document.querySelector('.lesson-grid');
+            if (!container) return;
+            
+            if (lessonsData.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state" style="grid-column: 1 / -1;">
+                        <h3>No lessons found</h3>
+                        <p>There are no lessons available in this category.</p>
+                        ${userIsAdmin ? '<button class="btn" onclick="openLessonModal()">Create First Lesson</button>' : ''}
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = lessonsData.map(lesson => `
+                <div class="lesson-card fade-in">
+                    <div class="lesson-meta">
+                        <span class="category-filter">${lesson.category}</span>
+                        <span>${new Date(lesson.createdDate).toLocaleDateString()}</span>
+                    </div>
+                    <h4>${lesson.title}</h4>
+                    <p>${lesson.description}</p>
+                    <div style="margin-bottom: 15px;">
+                        <small style="color: #a0aec0;">By ${lesson.author}</small>
+                        ${lesson.files && lesson.files.length > 0 ? 
+                            `<small style="color: #667eea; margin-left: 15px;">📎 ${lesson.files.length} file${lesson.files.length > 1 ? 's' : ''}</small>` : ''
+                        }
+                    </div>
+                    <div class="lesson-actions">
+                        ${userHasSubscription || userIsAdmin ? 
+                            `<button class="btn btn-small" onclick="openLessonView('${lesson.id}')">View</button>` :
+                            `<button class="btn btn-small" disabled title="Subscription required">🔒 View</button>`
+                        }
+                        ${userIsAdmin ? `
+                            <button class="btn btn-small btn-secondary" onclick="openLessonModal('${lesson.id}')">Edit</button>
+                            <button class="btn btn-small btn-danger" onclick="deleteLesson('${lesson.id}')">Delete</button>
+                        ` : ''}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function render() {
+            const app = document.getElementById('app');
+            
+            if (!B2C_CONFIG.isConfigured) {
+                app.innerHTML = renderConfiguration();
+            } else if (!currentAccount) {
+                app.innerHTML = renderLogin();
+            } else {
+                renderDashboard().then(html => {
+                    app.innerHTML = html;
+                    // Re-render lesson grid if we're on lessons view
+                    if (currentView === 'lessons') {
+                        setTimeout(() => renderLessonGrid(), 100);
+                    }
+                }).catch(error => {
+                    console.error("Error rendering dashboard:", error);
+                    app.innerHTML = renderSimpleDashboard();
+                });
+            }
+        }
+        
+        function renderSimpleDashboard() {
+            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
+            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
+            
+            return `
+                <div class="container">
+                    <div class="header">
+                        <div class="logo">Bright Stars Education</div>
+                        <div class="user-info">
+                            <span>Welcome, ${displayName}</span>
+                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: white; border-radius: 10px; padding: 30px; margin-top: 20px;">
+                        <h2>Welcome to Bright Stars Education</h2>
+                        <p>You are successfully logged in!</p>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function processUser(email, action) {
+            const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+            const result = await approveRejectUser(email, action, adminEmail, userIsAdmin);
+            
+            if (result && result.success) {
+                alert(`User ${action}d successfully! They will receive an email notification.`);
+                pendingUsers = pendingUsers.filter(u => u.email !== email);
+                render();
+            } else {
+                alert(`Failed to ${action} user. Please try again.`);
+            }
+        }
+
+        function renderConfiguration() {
+            return `
+                <div class="auth-container fade-in">
+                    <h2>Configure Azure B2C</h2>
+                    
+                    <div class="config-section">
+                        <h3>⚠️ Configuration Required</h3>
+                        <p style="margin-bottom: 20px; color: #4a5568;">
+                            Please enter your Azure B2C configuration details. You can find these in the Azure Portal.
+                        </p>
+                        
+                        <div class="config-form">
+                            <label for="tenantName">B2C Tenant Name (without .onmicrosoft.com)</label>
+                            <input type="text" id="tenantName" placeholder="e.g., tutorportaltenant" value="${B2C_CONFIG.tenantName !== 'YOUR_TENANT_NAME' ? B2C_CONFIG.tenantName : ''}">
+                            
+                            <label for="clientId">Application (Client) ID</label>
+                            <input type="text" id="clientId" placeholder="e.g., 12345678-1234-1234-1234-123456789012" value="${B2C_CONFIG.clientId !== 'YOUR_CLIENT_ID' ? B2C_CONFIG.clientId : ''}">
+                            
+                            <label for="userFlow">User Flow Name</label>
+                            <input type="text" id="userFlow" placeholder="e.g., B2C_1_SignUpSignIn" value="${B2C_CONFIG.signInSignUpPolicyName}">
+                            
+                            <button class="btn" onclick="saveConfiguration()">Save Configuration</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderLogin() {
+            return `
+                <div class="auth-container fade-in">
+                    <h2>Bright Stars Education Login</h2>
+                    
+                    ${statusMessage ? `
+                        <div class="auth-status ${statusType}">
+                            ${statusMessage}
+                            ${statusType === 'info' ? '<span class="loading"></span>' : ''}
+                        </div>
+                    ` : ''}
+                    
+                    <button class="btn" onclick="signIn()" style="width: 100%; margin-bottom: 15px;">
+                        Sign In with Azure B2C
+                    </button>
+                    
+                    <p style="text-align: center; color: #718096; font-size: 14px;">
+                        New users will sign up through the same button above
+                    </p>
+                </div>
+            `;
+        }
+
+        async function renderDashboard() {
+            const username = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0] || "User";
+            const displayName = currentAccount?.name || currentAccount?.idTokenClaims?.name || username;
+            
+            if (userIsAdmin && pendingUsers.length === 0) {
+                pendingUsers = await getPendingUsers(true);
+            }
+            
+            return `
+                <div class="container">
+                    <div class="header">
+                        <div class="logo">Bright Stars Education</div>
+                        <div class="user-info">
+                            ${userApprovalStatus === 'approved' ? 
+                                `<span class="subscription-badge ${userHasSubscription ? '' : 'inactive'}">
+                                    ${userHasSubscription ? 'Active Subscription' : 'No Subscription'}
+                                </span>` : 
+                                `<span class="subscription-badge inactive">
+                                    ${userApprovalStatus === 'pending' ? 'Pending Approval' : 'Not Approved'}
+                                </span>`
+                            }
+                            <span>Welcome, ${displayName}${userIsAdmin ? '<span class="admin-badge">Admin</span>' : ''}</span>
+                            <button class="btn btn-secondary" onclick="signOut()">Logout</button>
+                        </div>
+                    </div>
+
+                    ${userIsAdmin && pendingUsers.length > 0 ? `
+                        <div class="admin-panel fade-in" style="background: #fef5e7; border: 1px solid #f9c74f; border-radius: 8px; padding: 20px; margin-bottom: 20px;">
+                            <h3 style="color: #f9844a; margin-bottom: 15px;">Admin Panel - Pending User Approvals (${pendingUsers.length})</h3>
+                            <div class="pending-users" style="display: flex; flex-direction: column; gap: 10px;">
+                                ${pendingUsers.map(user => `
+                                    <div class="user-item" style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px;">
+                                        <div>
+                                            <strong>${user.name || 'No name'}</strong> - ${user.email}
+                                            <small style="margin-left: 10px; color: #718096;">Applied: ${new Date(user.signupDate).toLocaleDateString()}</small>
+                                        </div>
+                                        <div class="user-actions" style="display: flex; gap: 10px;">
+                                            <button class="btn btn-small btn-success" onclick="processUser('${user.email}', 'approve')">Approve</button>
+                                            <button class="btn btn-small btn-danger" onclick="processUser('${user.email}', 'reject')">Reject</button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'pending' ? `
+                        <div style="background: #fff5f5; border: 2px solid #feb2b2; border-radius: 10px; padding: 30px; text-align: center; margin-bottom: 20px;">
+                            <h2 style="color: #c53030; margin-bottom: 15px;">Account Pending Approval</h2>
+                            <p style="color: #742a2a; font-size: 18px;">Your account is currently being reviewed by an administrator.</p>
+                            <p style="color: #742a2a;">You will receive an email once your account has been approved.</p>
+                        </div>
+                    ` : ''}
+
+                    ${userApprovalStatus === 'approved' ? `
+                        <div class="dashboard">
+                            <div class="sidebar">
+                                <h3>Navigation</h3>
+                                <div class="nav-item ${currentView === 'lessons' ? 'active' : ''}" onclick="setCurrentView('lessons')">
+                                    📚 Lesson Plans
+                                </div>
+                                ${userIsAdmin ? `
+                                    <div class="nav-item ${currentView === 'admin-lessons' ? 'active' : ''}" onclick="setCurrentView('admin-lessons')">
+                                        ⚙️ Manage Lessons
+                                    </div>
+                                ` : ''}
+                                <div class="nav-item ${currentView === 'subscription' ? 'active' : ''}" onclick="setCurrentView('subscription')">
+                                    💳 Subscription
+                                </div>
+                                <div class="nav-item ${currentView === 'resources' ? 'active' : ''}" onclick="setCurrentView('resources')">
+                                    📖 Resources
+                                </div>
+                                <div class="nav-item ${currentView === 'schedule' ? 'active' : ''}" onclick="setCurrentView('schedule')">
+                                    📅 Schedule
+                                </div>
+                                <div class="nav-item ${currentView === 'students' ? 'active' : ''}" onclick="setCurrentView('students')">
+                                    👥 Students
+                                </div>
+                                ${userIsAdmin ? `
+                                    <div class="nav-item ${currentView === 'admin' ? 'active' : ''}" onclick="setCurrentView('admin')">
+                                        🛡️ Admin Settings
+                                    </div>
+                                ` : ''}
+                            </div>
+
+                            <div class="content-area">
+                                <div class="watermark">PROTECTED</div>
+                                <div class="content-wrapper">
+                                    ${renderContentArea()}
+                                </div>
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+        }
+
+        function renderContentArea() {
+            switch (currentView) {
+                case 'lessons':
+                    return renderLessonsView();
+                case 'admin-lessons':
+                    return renderAdminLessonsView();
+                case 'subscription':
+                    return renderSubscriptionView();
+                case 'resources':
+                    return renderResourcesView();
+                case 'schedule':
+                    return renderScheduleView();
+                case 'students':
+                    return renderStudentsView();
+                case 'admin':
+                    return renderAdminView();
+                default:
+                    return renderLessonsView();
+            }
+        }
+
+        function renderLessonsView() {
+            const categories = [...new Set(lessons.map(l => l.category))];
+            
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Lesson Plans</h2>
+                    ${!userHasSubscription && !userIsAdmin ? `
+                        <button class="btn" onclick="openSubscriptionModal('monthly')">
+                            Subscribe - £9.99/month
+                        </button>
+                    ` : ''}
+                </div>
+
+                ${userHasSubscription || userIsAdmin ? `
+                    <input type="text" class="search-box" placeholder="🔍 Search lessons..." 
+                           onkeyup="searchLessons(this.value)">
+                    
+                    <div class="lesson-categories">
+                        <div class="category-filter ${lessonFilter === 'all' ? 'active' : ''}" 
+                             onclick="setLessonFilter('all')">All Lessons</div>
+                        ${categories.map(cat => `
+                            <div class="category-filter ${lessonFilter === cat ? 'active' : ''}" 
+                                 onclick="setLessonFilter('${cat}')">${cat}</div>
+                        `).join('')}
+                    </div>
+                    
+                    <div class="lesson-grid">
+                        <!-- Lessons will be rendered here by renderLessonGrid() -->
+                    </div>
+                ` : `
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 30px;">
+                        <div class="pricing-card">
+                            <h3>Monthly Plan</h3>
+                            <div class="price">£9.99<span class="period">/month</span></div>
+                            <ul class="features">
+                                <li>Unlimited lesson access</li>
+                                <li>Download resources</li>
+                                <li>KS1 to KS4 content</li>
+                                <li>11+ preparation</li>
+                                <li>Cancel anytime</li>
+                            </ul>
+                            <button class="btn" onclick="openSubscriptionModal('monthly')" style="width: 100%;">
+                                Start Monthly Plan
+                            </button>
+                        </div>
+                        
+                        <div class="pricing-card popular">
+                            <h3>Annual Plan <span style="background: #1e40af; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">SAVE 17%</span></h3>
+                            <div class="price">£99.99<span class="period">/year</span></div>
+                            <ul class="features">
+                                <li>Everything in Monthly</li>
+                                <li>2 months FREE</li>
+                                <li>Priority support</li>
+                                <li>Early access to new content</li>
+                                <li>Best value option</li>
+                            </ul>
+                            <button class="btn" onclick="openSubscriptionModal('annual')" style="width: 100%;">
+                                Start Annual Plan
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                        <h4 style="color: #2d3748; margin-bottom: 10px;">🔒 Secure Payment</h4>
+                        <p style="color: #4a5568;">Powered by Stripe. Your payment information is encrypted and secure.</p>
+                    </div>
+                `}
+            `;
+        }
+
+        function renderAdminLessonsView() {
+            if (!userIsAdmin) return '<p>Access denied.</p>';
+            
+            return `
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2>Manage Lessons</h2>
+                    <button class="btn" onclick="openLessonModal()">
+                        ➕ Create New Lesson
+                    </button>
+                </div>
+
+                <div style="background: #f7fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px;">
+                    <h4 style="color: #2d3748; margin-bottom: 10px;">📊 Statistics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #667eea;">${lessons.length}</div>
+                            <div style="font-size: 14px; color: #718096;">Total Lessons</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #48bb78;">${[...new Set(lessons.map(l => l.category))].length}</div>
+                            <div style="font-size: 14px; color: #718096;">Categories</div>
+                        </div>
+                        <div style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: bold; color: #ed8936;">${lessons.reduce((acc, l) => acc + (l.files?.length || 0), 0)}</div>
+                            <div style="font-size: 14px; color: #718096;">Total Files</div>
+                        </div>
+                    </div>
+                </div>
+
+                <input type="text" class="search-box" placeholder="🔍 Search lessons to manage..." 
+                       onkeyup="searchLessons(this.value)">
+                
+                <div class="lesson-grid">
+                    <!-- Admin lesson grid will be rendered here -->
+                </div>
+            `;
+        }
+
+        function renderSubscriptionView() {
+            return `
+                <h2>Subscription Management</h2>
+                
+                ${userHasSubscription ? `
+                    <div class="subscription-status">
+                        <h4>✅ Active Subscription</h4>
+                        <p>You have full access to all Bright Stars Education content.</p>
+                        <p><strong>Plan:</strong> Monthly (£9.99/month)</p>
+                        <p><strong>Next billing:</strong> March 15, 2024</p>
+                        <div style="margin-top: 20px;">
+                            <button class="btn btn-secondary" onclick="updatePaymentMethod()">Update Payment Method</button>
+                            <button class="btn btn-danger" onclick="confirmCancelSubscription()">Cancel Subscription</button>
+                        </div>
+                    </div>
+                ` : `
+                    <div style="text-align: center; padding: 40px 20px;">
+                        <h3 style="color: #4a5568; margin-bottom: 20px;">No Active Subscription</h3>
+                        <p style="color: #718096; margin-bottom: 30px;">Subscribe to get unlimited access to all lesson plans and resources.</p>
+                        
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px; max-width: 800px; margin: 0 auto;">
+                            <div class="pricing-card">
+                                <h3>Monthly Plan</h3>
+                                <div class="price">£9.99<span class="period">/month</span></div>
+                                <ul class="features">
+                                    <li>Unlimited lesson access</li>
+                                    <li>Download resources</li>
+                                    <li>KS1 to KS4 content</li>
+                                    <li>11+ preparation</li>
+                                    <li>Cancel anytime</li>
+                                </ul>
+                                <button class="btn" onclick="openSubscriptionModal('monthly')" style="width: 100%;">
+                                    Subscribe Monthly
+                                </button>
+                            </div>
+                            
+                            <div class="pricing-card popular">
+                                <h3>Annual Plan <span style="background: #1e40af; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px;">SAVE 17%</span></h3>
+                                <div class="price">£99.99<span class="period">/year</span></div>
+                                <ul class="features">
+                                    <li>Everything in Monthly</li>
+                                    <li>2 months FREE</li>
+                                    <li>Priority support</li>
+                                    <li>Early access to new content</li>
+                                    <li>Best value option</li>
+                                </ul>
+                                <button class="btn" onclick="openSubscriptionModal('annual')" style="width: 100%;">
+                                    Subscribe Annually
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `}
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">Payment Information</h4>
+                    <p style="color: #4a5568; margin-bottom: 10px;">💳 Secure payments processed by Stripe</p>
+                    <p style="color: #4a5568; margin-bottom: 10px;">🔒 Your payment information is encrypted and secure</p>
+                    <p style="color: #4a5568; margin-bottom: 10px;">📧 Receipts sent automatically to your email</p>
+                    <p style="color: #4a5568;">❌ Cancel anytime - no long-term commitments</p>
+                </div>
+            `;
+        }
+
+        function updatePaymentMethod() {
+            alert('Payment method update functionality coming soon!');
+        }
+
+        function confirmCancelSubscription() {
+            if (confirm('Are you sure you want to cancel your subscription? You will lose access to all lesson content at the end of your billing period.')) {
+                // In a real implementation, you would call the cancel API
+                alert('Subscription cancellation functionality coming soon!');
+            }
+        }
+
+        function openAddStudentModal() {
+            alert('Student registration form coming soon! This will include:\n\n• Student details\n• Parent contact info\n• Subject preferences\n• Scheduling availability');
+        }
+
+        function openScheduleModal() {
+            alert('Lesson booking system coming soon! Features will include:\n\n• Calendar integration\n• Available time slots\n• Student selection\n• Recurring lessons\n• Email confirmations');
+        }
+
+        function renderResourcesView() {
+            return `
+                <h2>Teaching Resources</h2>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                    <div class="lesson-card">
+                        <h4>📊 Assessment Tools</h4>
+                        <p>Progress tracking sheets, rubrics, and evaluation forms for student assessment.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Download Pack</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🎯 11+ Practice Tests</h4>
+                        <p>Complete practice papers for 11+ preparation with marking schemes and guidance.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">View Tests</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>📚 Reading Lists</h4>
+                        <p>Curated reading recommendations by age group and ability level.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">View Lists</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🧮 Maths Tools</h4>
+                        <p>Interactive calculators, formula sheets, and problem-solving frameworks.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Access Tools</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>✍️ Writing Templates</h4>
+                        <p>Essay structures, creative writing prompts, and grammar guides.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Download</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card">
+                        <h4>🎭 Interactive Activities</h4>
+                        <p>Games, quizzes, and hands-on activities to make learning engaging.</p>
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">Explore</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">📋 Resource Request</h4>
+                    <p style="color: #4a5568; margin-bottom: 15px;">Need a specific teaching resource? Let us know what you're looking for!</p>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <input type="text" placeholder="Describe the resource you need..." style="flex: 1; min-width: 200px; padding: 10px; border: 1px solid #e2e8f0; border-radius: 5px;">
+                        <button class="btn">Submit Request</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderScheduleView() {
+            return `
+                <h2>Schedule Management</h2>
+                
+                <div style="display: grid; grid-template-columns: 1fr 300px; gap: 30px; margin-top: 20px;">
+                    <div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3>This Week's Lessons</h3>
+                            <button class="btn" onclick="openScheduleModal()">📅 Book New Lesson</button>
+                        </div>
+                        
+                        <div style="background: white; border: 1px solid #e2e8f0; border-radius: 8px;">
+                            <div class="schedule-day">
+                                <div style="background: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0;">
+                                    <strong>Monday, September 2nd</strong>
+                                </div>
+                                <div style="padding: 15px;">
+                                    <div class="schedule-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #ebf4ff; border-radius: 5px; margin-bottom: 10px;">
+                                            <div>
+                                                <strong>10:00 AM - 11:00 AM</strong><br>
+                                                <span style="color: #4a5568;">Mathematics - Year 6</span><br>
+                                                <small style="color: #718096;">Student: Emma Thompson</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small btn-secondary">Reschedule</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="schedule-item">
+                                        <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: #f0fff4; border-radius: 5px;">
+                                            <div>
+                                                <strong>2:00 PM - 3:00 PM</strong><br>
+                                                <span style="color: #4a5568;">English - 11+ Prep</span><br>
+                                                <small style="color: #718096;">Student: James Wilson</small>
+                                            </div>
+                                            <div>
+                                                <button class="btn btn-small btn-secondary">Reschedule</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="schedule-day">
+                                <div style="background: #f8fafc; padding: 15px; border-bottom: 1px solid #e2e8f0;">
+                                    <strong>Tuesday, September 3rd</strong>
+                                </div>
+                                <div style="padding: 15px;">
+                                    <div style="color: #718096; text-align: center; padding: 20px;">
+                                        No lessons scheduled
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div>
+                        <h3>Quick Actions</h3>
+                        <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 20px;">
+                            <button class="btn" onclick="alert('Availability calendar coming soon!')">📅 Set Availability</button>
+                            <button class="btn btn-secondary" onclick="alert('Student directory coming soon!')">👥 View Students</button>
+                            <button class="btn btn-secondary" onclick="alert('Recurring lessons coming soon!')">🔄 Recurring Lessons</button>
+                            <button class="btn btn-secondary" onclick="alert('Calendar sync coming soon!')">📱 Sync Calendar</button>
+                        </div>
+                        
+                        <div style="margin-top: 30px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                            <h4 style="color: #2d3748; margin-bottom: 15px;">📊 This Week</h4>
+                            <div style="color: #4a5568; font-size: 14px; line-height: 1.6;">
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Total Lessons:</span>
+                                    <strong>8</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Hours Scheduled:</span>
+                                    <strong>12</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                                    <span>Active Students:</span>
+                                    <strong>6</strong>
+                                </div>
+                                <div style="display: flex; justify-content: space-between;">
+                                    <span>Availability:</span>
+                                    <strong style="color: #059669;">85%</strong>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderStudentsView() {
+            return `
+                <h2>Student Management</h2>
+                
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <div>
+                        <input type="text" class="search-box" placeholder="🔍 Search students..." style="width: 300px; margin: 0;">
+                    </div>
+                    <button class="btn" onclick="openAddStudentModal()">➕ Add New Student</button>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px;">
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">Emma Thompson</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 6 • Mathematics & English</p>
+                            </div>
+                            <span class="subscription-badge" style="font-size: 12px;">Active</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Next Lesson:</strong><br>
+                                    <span style="color: #4a5568;">Mon, 2 Sept 10:00 AM</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #059669;">Excellent</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Sarah Thompson</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07123 456789</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">📅 Schedule</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">James Wilson</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 5 • 11+ Preparation</p>
+                            </div>
+                            <span class="subscription-badge" style="font-size: 12px;">Active</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Next Lesson:</strong><br>
+                                    <span style="color: #4a5568;">Mon, 2 Sept 2:00 PM</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #f59e0b;">Good</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Michael Wilson</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07987 654321</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small">📅 Schedule</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" style="cursor: default;">
+                        <div style="display: flex; justify-content: between; align-items: start; margin-bottom: 15px;">
+                            <div style="flex-grow: 1;">
+                                <h4 style="color: #1e40af; margin-bottom: 5px;">Sophie Chen</h4>
+                                <p style="color: #4a5568; font-size: 14px; margin-bottom: 10px;">Year 4 • Mathematics</p>
+                            </div>
+                            <span class="subscription-badge inactive" style="font-size: 12px;">Paused</span>
+                        </div>
+                        
+                        <div style="background: #f8fafc; padding: 15px; border-radius: 5px; margin-bottom: 15px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; font-size: 14px;">
+                                <div>
+                                    <strong>Last Lesson:</strong><br>
+                                    <span style="color: #718096;">25 Aug</span>
+                                </div>
+                                <div>
+                                    <strong>Progress:</strong><br>
+                                    <span style="color: #059669;">Very Good</span>
+                                </div>
+                                <div>
+                                    <strong>Parent:</strong><br>
+                                    <span style="color: #4a5568;">Lisa Chen</span>
+                                </div>
+                                <div>
+                                    <strong>Contact:</strong><br>
+                                    <span style="color: #4a5568;">07456 123789</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="lesson-actions">
+                            <button class="btn btn-small btn-success">▶️ Resume</button>
+                            <button class="btn btn-small btn-secondary">📊 Progress</button>
+                            <button class="btn btn-small btn-secondary">✏️ Notes</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 40px; padding: 20px; background: #f8fafc; border-radius: 8px;">
+                    <h4 style="color: #2d3748; margin-bottom: 15px;">📈 Student Statistics</h4>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 20px; text-align: center;">
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #1e40af;">12</div>
+                            <div style="font-size: 14px; color: #718096;">Active Students</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #059669;">95%</div>
+                            <div style="font-size: 14px; color: #718096;">Attendance Rate</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #f59e0b;">8.5</div>
+                            <div style="font-size: 14px; color: #718096;">Avg Progress Score</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 24px; font-weight: bold; color: #8b5cf6;">24</div>
+                            <div style="font-size: 14px; color: #718096;">Lessons This Week</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAdminView() {
+            if (!userIsAdmin) return '<p>Access denied.</p>';
+            
+            return `
+                <h2>Admin Settings</h2>
+                
+                <div style="display: grid; gap: 30px;">
+                    <div style="background: #f7fafc; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px;">👥 User Management</h3>
+                        
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 25px;">
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #1e40af;">47</div>
+                                <div style="font-size: 14px; color: #718096;">Total Users</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #059669;">42</div>
+                                <div style="font-size: 14px; color: #718096;">Active Subscriptions</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #f59e0b;">3</div>
+                                <div style="font-size: 14px; color: #718096;">Pending Approval</div>
+                            </div>
+                            <div style="text-align: center; padding: 20px; background: white; border-radius: 8px;">
+                                <div style="font-size: 28px; font-weight: bold; color: #ef4444;">2</div>
+                                <div style="font-size: 14px; color: #718096;">Suspended</div>
+                            </div>
+                        </div>
+                        
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <button class="btn" onclick="alert('User list coming soon!')">📋 View All Users</button>
+                            <button class="btn btn-secondary" onclick="alert('Bulk actions coming soon!')">⚡ Bulk Actions</button>
+                            <button class="btn btn-secondary" onclick="alert('Export coming soon!')">📤 Export Users</button>
+                            <button class="btn btn-secondary" onclick="alert('User analytics coming soon!')">📊 User Analytics</button>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #f7fafc; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #2d3748; margin-bottom: 20px;">⚙️ Platform Settings</h3>
+                        
+                        <div style="display: grid; gap: 20px;">
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">💳 Payment Configuration</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    <div style="margin-bottom: 8px;">Monthly Price: <strong>£9.99</strong></div>
+                                    <div style="margin-bottom: 8px;">Annual Price: <strong>£99.99</strong></div>
+                                    <div style="margin-bottom: 8px;">Currency: <strong>GBP</strong></div>
+                                    <div>Stripe Mode: <strong style="color: #f59e0b;">Test</strong></div>
+                                </div>
+                                <button class="btn btn-secondary btn-small" onclick="alert('Payment settings coming soon!')">⚙️ Modify Pricing</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">📧 Email Templates</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    Customize automated emails sent to users for approvals, subscriptions, and notifications.
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Welcome email template coming soon!')">Welcome Email</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Approval email template coming soon!')">Approval Email</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Payment email template coming soon!')">Payment Failed</button>
+                                </div>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">🔐 Security Settings</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    <div style="margin-bottom: 8px;">Session Timeout: <strong>15 minutes (inactive)</strong></div>
+                                    <div style="margin-bottom: 8px;">Content Protection: <strong>✅ Enabled</strong></div>
+                                    <div style="margin-bottom: 8px;">View Tracking: <strong>✅ Active</strong></div>
+                                    <div>Failed Login Attempts: <strong>5 max</strong></div>
+                                </div>
+                                <button class="btn btn-secondary btn-small" onclick="alert('Security settings coming soon!')">⚙️ Configure Security</button>
+                            </div>
+                            
+                            <div style="background: white; padding: 20px; border-radius: 8px;">
+                                <h4 style="color: #2d3748; margin-bottom: 15px;">📊 Analytics & Reporting</h4>
+                                <div style="color: #4a5568; margin-bottom: 15px;">
+                                    Monitor platform usage, subscription metrics, and user engagement.
+                                </div>
+                                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Revenue analytics coming soon!')">💰 Revenue Report</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Usage analytics coming soon!')">📈 Usage Stats</button>
+                                    <button class="btn btn-secondary btn-small" onclick="alert('Export analytics coming soon!')">📤 Export Data</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: #fff5f5; border: 1px solid #fed7d7; padding: 25px; border-radius: 8px;">
+                        <h3 style="color: #c53030; margin-bottom: 15px;">⚠️ System Actions</h3>
+                        <p style="color: #742a2a; margin-bottom: 20px;">
+                            These actions affect the entire platform. Use with caution.
+                        </p>
+                        <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                            <button class="btn btn-danger btn-small" onclick="confirm('Are you sure? This will clear all cache.') && alert('Cache cleared!')">🗑️ Clear Cache</button>
+                            <button class="btn btn-danger btn-small" onclick="alert('Maintenance mode coming soon!')">🚧 Maintenance Mode</button>
+                            <button class="btn btn-danger btn-small" onclick="alert('Backup system coming soon!')">💾 System Backup</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function saveConfiguration() {
+            const tenantName = document.getElementById('tenantName').value.trim();
+            const clientId = document.getElementById('clientId').value.trim();
+            const userFlow = document.getElementById('userFlow').value.trim();
+            
+            if (!tenantName || !clientId || !userFlow) {
+                showStatus("Please fill in all configuration fields", "error");
+                return;
+            }
+            
+            B2C_CONFIG.tenantName = tenantName;
+            B2C_CONFIG.clientId = clientId;
+            B2C_CONFIG.signInSignUpPolicyName = userFlow;
+            B2C_CONFIG.isConfigured = true;
+            
+            if (initializeMSAL()) {
+                showStatus("Configuration saved successfully! Initializing authentication...", "success");
+                setTimeout(() => {
+                    checkExistingLogin();
+                    render();
+                }, 1500);
+            } else {
+                showStatus("Error initializing authentication. Please check your configuration.", "error");
+            }
+        }
+
+        // ============================================
+        // INITIALIZATION
+        // ============================================
+        
+        window.addEventListener('load', async () => {
+            // Initialize Stripe
+            initializeStripe();
+            
+            // Setup enhanced protection
+            setupKeyboardProtection();
+            setupWindowProtection();
+            setupActivityTracking();
+            detectDevTools();
+
+            // Prevent print shortcuts
+            document.addEventListener('keydown', (e) => {
+                if ((e.ctrlKey || e.metaKey) && (e.key === 'p' || e.key === 's')) {
+                    e.preventDefault();
+                    alert('Printing and saving are disabled for content protection.');
+                    return false;
+                }
+            });
+
+            // Setup drag and drop for file upload
+            document.addEventListener('dragover', (e) => {
+                e.preventDefault();
+            });
+
+            document.addEventListener('drop', (e) => {
+                e.preventDefault();
+                const uploadArea = document.querySelector('.file-upload-area');
+                if (uploadArea && uploadArea.contains(e.target)) {
+                    const files = Array.from(e.dataTransfer.files);
+                    handleFileUpload({ target: { files } });
+                }
+            });
+
+            localStorage.removeItem('b2cConfig');
+            
+            console.log("Initializing MSAL with configuration:", B2C_CONFIG);
+            if (initializeMSAL()) {
+                console.log("MSAL initialized successfully");
+                
+                try {
+                    const response = await msalInstance.handleRedirectPromise();
+                    console.log("Redirect response:", response);
+                    
+                    if (response && response.account) {
+                        await handleAuthResponse(response);
+                    } else {
+                        await checkExistingLogin();
+                    }
+                } catch (error) {
+                    console.error("Error handling redirect:", error);
+                }
+            } else {
+                console.error("Failed to initialize MSAL");
+            }
+            
+            render();
+        });
+
+        // Setup payment form submission
+        document.addEventListener('DOMContentLoaded', function() {
+            const form = document.getElementById('payment-form');
+            if (form) {
+                form.addEventListener('submit', handleSubscriptionPayment);
+            }
+        });
+
+        // Prevent context menu
+        document.addEventListener('contextmenu', (e) => {
+            e.preventDefault();
+            return false;
+        });
+    </script>
+</body>
+</html>
