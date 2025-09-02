@@ -14,8 +14,10 @@ module.exports = async function (request, context) {
             };
         }
 
-        // Connect to Azure Table Storage
+        // Connect to Azure Table Storage using connection string
         const connectionString = process.env["STORAGE_CONNECTION_STRING"];
+        
+        // Use the connection string directly (not as URL)
         const tableClient = new TableClient(connectionString, "viewtracking");
         
         // Create table if it doesn't exist

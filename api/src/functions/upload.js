@@ -1,10 +1,10 @@
-const { BlobServiceClient, generateBlobSASQueryParameters, BlobSASPermissions } = require("@azure/storage-blob");
+const { BlobServiceClient } = require("@azure/storage-blob");
 
 module.exports = async function (request, context) {
     context.log('File upload request - DEBUG MODE');
     
     try {
-        // Step 1: Check admin access
+        // Check admin access
         const formData = await request.formData();
         const isAdmin = formData.get('isAdmin') === 'true';
         context.log('Admin check:', { isAdmin });
@@ -17,7 +17,7 @@ module.exports = async function (request, context) {
             };
         }
         
-        // Step 2: Check file
+        // Check file
         const file = formData.get('file');
         if (!file) {
             context.log('ERROR: No file provided');
@@ -28,7 +28,7 @@ module.exports = async function (request, context) {
         }
         context.log('File received:', { name: file.name, size: file.size, type: file.type });
         
-        // Step 3: Check connection string
+        // Check connection string
         const connectionString = process.env["STORAGE_CONNECTION_STRING"];
         if (!connectionString) {
             context.log('ERROR: No storage connection string');
@@ -37,23 +37,20 @@ module.exports = async function (request, context) {
                 jsonBody: { error: "Storage not configured" }
             };
         }
-        context.log('Storage connection string exists:', connectionString.substring(0, 50) + '...');
         
-        // Step 4: Initialize blob service
+        // Initialize blob service
         context.log('Initializing blob service...');
         const blobServiceClient = BlobServiceClient.fromConnectionString(connectionString);
         const containerName = "lesson-files";
         const containerClient = blobServiceClient.getContainerClient(containerName);
         context.log('Container client created for:', containerName);
         
-        // Step 5: Create container (simplified - no SAS generation yet)
+        // Create container (private by default when no access parameter is provided)
         context.log('Creating/checking container...');
-        await containerClient.createIfNotExists({ 
-            access: 'private'
-        });
-        context.log('Container ready');
+        await containerClient.createIfNotExists(); // No access parameter = private
+        context.log('Container ready (private access)');
         
-        // Step 6: Upload file
+        // Upload file
         const fileName = `${Date.now()}_${file.name}`;
         const blockBlobClient = containerClient.getBlockBlobClient(fileName);
         context.log('Uploading file as:', fileName);
@@ -64,7 +61,6 @@ module.exports = async function (request, context) {
         await blockBlobClient.upload(buffer, buffer.byteLength);
         context.log('File uploaded successfully');
         
-        // Step 7: For now, return simple URL without SAS (we'll add SAS back once basic upload works)
         const fileUrl = blockBlobClient.url;
         context.log('File URL:', fileUrl);
         
@@ -81,7 +77,6 @@ module.exports = async function (request, context) {
     } catch (error) {
         context.log('UPLOAD ERROR:', error);
         context.log('Error message:', error.message);
-        context.log('Error stack:', error.stack);
         
         return {
             status: 500,
