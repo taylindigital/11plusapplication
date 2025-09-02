@@ -1167,6 +1167,24 @@
                 return false;
             }
         }
+
+        async function refreshSubscriptionStatus() {
+    if (!currentAccount) return;
+    
+    const email = currentAccount.username || currentAccount.idTokenClaims?.emails?.[0];
+    if (email) {
+        console.log('Refreshing subscription status for:', email);
+        const status = await getSubscriptionStatus(email);
+        console.log('Subscription status response:', status);
+        if (status && status.hasActiveSubscription) {
+            userHasSubscription = true;
+            console.log('Updated userHasSubscription to true');
+            render();
+        } else {
+            console.log('No active subscription found');
+        }
+    }
+}
         
         const B2C_CONFIG = {
             tenantName: "brightstars11plus",
@@ -2068,6 +2086,19 @@
                 console.log("User is admin:", userIsAdmin);
                 userApprovalStatus = userStatus?.status || 'approved';
                 userHasSubscription = userStatus?.hasSubscription || false;
+
+                // Also check Stripe subscription status directly
+console.log("Checking Stripe subscription status...");
+try {
+    const stripeStatus = await getSubscriptionStatus(email);
+    console.log("Stripe subscription status:", stripeStatus);
+    if (stripeStatus && stripeStatus.hasActiveSubscription) {
+        userHasSubscription = true;
+        console.log("Found active Stripe subscription");
+    }
+} catch (error) {
+    console.log("Error checking Stripe subscription:", error);
+}
                 
                 // Initialize lessons based on user role
                 initializeLessons();
