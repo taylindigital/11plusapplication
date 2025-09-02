@@ -1781,36 +1781,27 @@
             try {
                 // Upload files to Azure Storage
                 const uploadedFileUrls = [];
-                
-                // Temporarily skip file uploads to test lesson creation
-                if (uploadedFiles.length > 0) {
-                    console.log('Files to upload:', uploadedFiles.length);
-                    alert('File upload is temporarily disabled. Lesson will be created without files.');
-                    // Comment out the upload loop for now
-                    /*
-                    for (const fileData of uploadedFiles) {
-                        if (fileData.file) { // Only upload new files
-                            try {
-                                const uploadResult = await uploadFileToAzure(fileData.file);
-                                uploadedFileUrls.push({
-                                    name: fileData.name,
-                                    type: fileData.type,
-                                    size: fileData.size,
-                                    url: uploadResult.url,
-                                    fileName: uploadResult.fileName
-                                });
-                            } catch (error) {
-                                alert(`Failed to upload ${fileData.name}. Please try again.`);
-                                submitBtn.textContent = originalText;
-                                submitBtn.disabled = false;
-                                return;
-                            }
-                        } else {
-                            // Existing file, keep as is
-                            uploadedFileUrls.push(fileData);
+                for (const fileData of uploadedFiles) {
+                    if (fileData.file) { // Only upload new files
+                        try {
+                            const uploadResult = await uploadFileToAzure(fileData.file);
+                            uploadedFileUrls.push({
+                                name: fileData.name,
+                                type: fileData.type,
+                                size: fileData.size,
+                                url: uploadResult.url,
+                                fileName: uploadResult.fileName
+                            });
+                        } catch (error) {
+                            alert(`Failed to upload ${fileData.name}. Please try again.`);
+                            submitBtn.textContent = originalText;
+                            submitBtn.disabled = false;
+                            return;
                         }
+                    } else {
+                        // Existing file, keep as is
+                        uploadedFileUrls.push(fileData);
                     }
-                    */
                 }
                 
                 const lessonData = {
