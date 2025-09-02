@@ -8,6 +8,7 @@ const onUserSignUp = require('./functions/onusersignup');
 const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
 const trackview = require('./functions/trackview');
+const download = require('./functions/download');
 
 // Import Stripe function handlers (create these files next)
 const stripeCreateCustomer = require('./functions/stripe-create-customer');
@@ -95,6 +96,12 @@ app.http('stripe-webhook', {
     methods: ['POST'],
     authLevel: 'anonymous',
     handler: stripeWebhook
+});
+
+app.http('download', {
+    methods: ['POST'],
+    authLevel: 'anonymous',
+    handler: download
 });
 
 // Test endpoint

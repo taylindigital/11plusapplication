@@ -1713,16 +1713,24 @@
             formData.append('isAdmin', userIsAdmin.toString());
 
             try {
+                console.log('Uploading file:', file.name, file.size, 'bytes');
+                console.log('User is admin:', userIsAdmin);
+                
                 const response = await fetch('/api/upload', {
                     method: 'POST',
                     body: formData
                 });
 
+                console.log('Upload response status:', response.status);
+
                 if (response.ok) {
                     const result = await response.json();
+                    console.log('Upload success:', result);
                     return result;
                 } else {
-                    throw new Error('Upload failed');
+                    const errorText = await response.text();
+                    console.error('Upload error response:', response.status, errorText);
+                    throw new Error('Upload failed: ' + response.status);
                 }
             } catch (error) {
                 console.error('Error uploading file:', error);
@@ -1773,27 +1781,36 @@
             try {
                 // Upload files to Azure Storage
                 const uploadedFileUrls = [];
-                for (const fileData of uploadedFiles) {
-                    if (fileData.file) { // Only upload new files
-                        try {
-                            const uploadResult = await uploadFileToAzure(fileData.file);
-                            uploadedFileUrls.push({
-                                name: fileData.name,
-                                type: fileData.type,
-                                size: fileData.size,
-                                url: uploadResult.url,
-                                fileName: uploadResult.fileName
-                            });
-                        } catch (error) {
-                            alert(`Failed to upload ${fileData.name}. Please try again.`);
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                            return;
+                
+                // Temporarily skip file uploads to test lesson creation
+                if (uploadedFiles.length > 0) {
+                    console.log('Files to upload:', uploadedFiles.length);
+                    alert('File upload is temporarily disabled. Lesson will be created without files.');
+                    // Comment out the upload loop for now
+                    /*
+                    for (const fileData of uploadedFiles) {
+                        if (fileData.file) { // Only upload new files
+                            try {
+                                const uploadResult = await uploadFileToAzure(fileData.file);
+                                uploadedFileUrls.push({
+                                    name: fileData.name,
+                                    type: fileData.type,
+                                    size: fileData.size,
+                                    url: uploadResult.url,
+                                    fileName: uploadResult.fileName
+                                });
+                            } catch (error) {
+                                alert(`Failed to upload ${fileData.name}. Please try again.`);
+                                submitBtn.textContent = originalText;
+                                submitBtn.disabled = false;
+                                return;
+                            }
+                        } else {
+                            // Existing file, keep as is
+                            uploadedFileUrls.push(fileData);
                         }
-                    } else {
-                        // Existing file, keep as is
-                        uploadedFileUrls.push(fileData);
                     }
+                    */
                 }
                 
                 const lessonData = {
@@ -1837,12 +1854,35 @@
             }
         }
 
-        function downloadFile(fileName, fileUrl) {
-            if (fileUrl) {
-                // Open Azure Storage URL in new tab
+        async function downloadFile(fileName, fileUrl) {
+            // If we have a direct URL (from before security update), use it
+            if (fileUrl && fileUrl.includes('?')) {
                 window.open(fileUrl, '_blank');
-            } else {
-                alert(`In a real implementation, this would download: ${fileName}`);
+                return;
+            }
+            
+            // Use secure download for new files
+            try {
+                const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+                
+                const response = await fetch('/api/download', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        fileName: fileName,
+                        userEmail: userEmail
+                    })
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    window.open(data.downloadUrl, '_blank');
+                } else {
+                    alert('Failed to generate secure download link');
+                }
+            } catch (error) {
+                console.error('Download error:', error);
+                alert('Download failed. Please try again.');
             }
         }
 
