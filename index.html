@@ -1201,6 +1201,100 @@
             return `https://${B2C_CONFIG.tenantName}.ciamlogin.com/${B2C_CONFIG.tenantId}`;
         };
 
+// ============================================
+// LESSON API FUNCTIONS
+// ============================================
+
+async function loadLessonsFromAPI() {
+    try {
+        const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+        
+        const response = await fetch('/api/lessons', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                action: 'get',
+                userEmail,
+                isAdmin: userIsAdmin 
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            console.log('Loaded lessons from API:', data);
+            return data.lessons || [];
+        } else {
+            console.error('Failed to load lessons:', response.status);
+            return [];
+        }
+    } catch (error) {
+        console.error('Error loading lessons:', error);
+        return [];
+    }
+}
+
+async function saveLessonToAPI(lessonData, isUpdate = false) {
+    try {
+        const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+        
+        const response = await fetch('/api/lessons', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                action: isUpdate ? 'update' : 'create',
+                lesson: lessonData,
+                userEmail,
+                isAdmin: userIsAdmin 
+            })
+        });
+        
+        if (response.ok) {
+            const data = await response.json();
+            return data.lesson;
+        } else {
+            const errorData = await response.text();
+            console.error('Failed to save lesson:', response.status, errorData);
+            return null;
+        }
+    } catch (error) {
+        console.error('Error saving lesson:', error);
+        return null;
+    }
+}
+
+async function deleteLessonFromAPI(lessonId) {
+    try {
+        const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+        
+        const response = await fetch('/api/lessons', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ 
+                action: 'delete',
+                lesson: { id: lessonId },
+                userEmail,
+                isAdmin: userIsAdmin 
+            })
+        });
+        
+        if (response.ok) {
+            return true;
+        } else {
+            console.error('Failed to delete lesson:', response.status);
+            return false;
+        }
+    } catch (error) {
+        console.error('Error deleting lesson:', error);
+        return false;
+    }
+}
+
         // ============================================
         // MSAL Setup
         // ============================================
@@ -1503,73 +1597,21 @@
         let lessonFilter = 'all';
 
         // Mock lesson data for demonstration
-        function initializeLessons() {
-            if (userIsAdmin) {
-                lessons = [
-                    {
-                        id: '1',
-                        title: 'Introduction to Algebra',
-                        category: 'Mathematics',
-                        description: 'Basic algebraic concepts and solving linear equations',
-                        content: 'This lesson covers the fundamentals of algebra including:\n\n1. Variables and Constants\n2. Basic Operations\n3. Solving Linear Equations\n4. Practice Problems\n\nVariables are letters that represent unknown numbers...',
-                        createdDate: new Date('2024-01-15'),
-                        files: [
-                            { name: 'algebra_worksheet.pdf', type: 'application/pdf', size: '245 KB' }
-                        ],
-                        author: 'Admin'
-                    },
-                    {
-                        id: '2',
-                        title: 'Creative Writing Techniques',
-                        category: 'English',
-                        description: 'Explore different writing styles and narrative techniques',
-                        content: 'In this lesson, we will explore various creative writing techniques:\n\n1. Character Development\n2. Plot Structure\n3. Dialogue Writing\n4. Setting Description\n\nGood creative writing starts with understanding your audience...',
-                        createdDate: new Date('2024-01-10'),
-                        files: [
-                            { name: 'writing_prompts.docx', type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document', size: '120 KB' },
-                            { name: 'example_story.pdf', type: 'application/pdf', size: '180 KB' }
-                        ],
-                        author: 'Admin'
-                    },
-                    {
-                        id: '3',
-                        title: 'The Solar System',
-                        category: 'Science',
-                        description: 'Comprehensive guide to planets, moons, and space exploration',
-                        content: 'Welcome to our journey through the Solar System!\n\nThe Solar System consists of:\n1. The Sun (our star)\n2. Eight Planets\n3. Moons and Asteroids\n4. Comets and Meteoroids\n\nLet\'s start with the Sun, which is the center of our solar system...',
-                        createdDate: new Date('2024-01-05'),
-                        files: [
-                            { name: 'solar_system_diagram.jpg', type: 'image/jpeg', size: '890 KB' },
-                            { name: 'planet_facts.pdf', type: 'application/pdf', size: '320 KB' }
-                        ],
-                        author: 'Admin'
-                    }
-                ];
-            } else {
-                // For regular users, show lessons if they have subscription
-                if (userHasSubscription) {
-                    lessons = [
-                        {
-                            id: '1',
-                            title: 'Introduction to Algebra',
-                            category: 'Mathematics',
-                            description: 'Basic algebraic concepts and solving linear equations',
-                            createdDate: new Date('2024-01-15'),
-                            author: 'Tutor'
-                        },
-                        {
-                            id: '2',
-                            title: 'Creative Writing Techniques',
-                            category: 'English',
-                            description: 'Explore different writing styles and narrative techniques',
-                            createdDate: new Date('2024-01-10'),
-                            author: 'Tutor'
-                        }
-                    ];
-                }
-            }
+        async function initializeLessons() {
+    try {
+        console.log('Loading lessons from API...');
+        lessons = await loadLessonsFromAPI();
+        console.log('Loaded', lessons.length, 'lessons');
+        
+        // If no lessons and user is admin, you can create demo data if needed
+        if (lessons.length === 0 && userIsAdmin) {
+            console.log('No lessons found - admin can create new lessons via UI');
         }
-
+    } catch (error) {
+        console.error('Error initializing lessons:', error);
+        lessons = [];
+    }
+}
         function openLessonModal(lessonId = null) {
             const modal = document.getElementById('lessonModal');
             const modalTitle = document.getElementById('modalTitle');
@@ -1803,85 +1845,106 @@
         }
 
         async function saveLessonForm(event) {
-            event.preventDefault();
-            
-            const title = document.getElementById('lessonTitle').value;
-            const category = document.getElementById('lessonCategory').value;
-            const description = document.getElementById('lessonDescription').value;
-            const content = document.getElementById('lessonContent').value;
-            
-            // Show saving status
-            const submitBtn = event.target.querySelector('button[type="submit"]');
-            const originalText = submitBtn.textContent;
-            submitBtn.textContent = 'Saving...';
-            submitBtn.disabled = true;
-            
-            try {
-                // Upload files to Azure Storage
-                const uploadedFileUrls = [];
-                for (const fileData of uploadedFiles) {
-                    if (fileData.file) { // Only upload new files
-                        try {
-                            const uploadResult = await uploadFileToAzure(fileData.file);
-                            uploadedFileUrls.push({
-                                name: fileData.name,
-                                type: fileData.type,
-                                size: fileData.size,
-                                url: uploadResult.url,
-                                fileName: uploadResult.fileName
-                            });
-                        } catch (error) {
-                            alert(`Failed to upload ${fileData.name}. Please try again.`);
-                            submitBtn.textContent = originalText;
-                            submitBtn.disabled = false;
-                            return;
-                        }
-                    } else {
-                        // Existing file, keep as is
-                        uploadedFileUrls.push(fileData);
-                    }
+    event.preventDefault();
+    
+    const title = document.getElementById('lessonTitle').value;
+    const category = document.getElementById('lessonCategory').value;
+    const description = document.getElementById('lessonDescription').value;
+    const content = document.getElementById('lessonContent').value;
+    
+    // Show saving status
+    const submitBtn = event.target.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = 'Saving...';
+    submitBtn.disabled = true;
+    
+    try {
+        // Upload files to Azure Storage (keep your existing file upload logic)
+        const uploadedFileUrls = [];
+        for (const fileData of uploadedFiles) {
+            if (fileData.file) {
+                try {
+                    const uploadResult = await uploadFileToAzure(fileData.file);
+                    uploadedFileUrls.push({
+                        name: fileData.name,
+                        type: fileData.type,
+                        size: fileData.size,
+                        url: uploadResult.url,
+                        fileName: uploadResult.fileName
+                    });
+                } catch (error) {
+                    alert(`Failed to upload ${fileData.name}. Please try again.`);
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                    return;
                 }
-                
-                const lessonData = {
-                    id: currentLesson ? currentLesson.id : Date.now().toString(),
-                    title,
-                    category,
-                    description,
-                    content,
-                    files: uploadedFileUrls,
-                    createdDate: currentLesson ? currentLesson.createdDate : new Date(),
-                    author: currentAccount?.name || 'Admin'
-                };
-                
-                if (currentLesson) {
-                    // Update existing lesson
-                    const index = lessons.findIndex(l => l.id === currentLesson.id);
-                    lessons[index] = { ...lessons[index], ...lessonData };
-                    showStatus('Lesson updated successfully!', 'success');
-                } else {
-                    // Create new lesson
-                    lessons.push(lessonData);
-                    showStatus('Lesson created successfully!', 'success');
-                }
-                
-                closeLessonModal();
-                render();
-                
-            } catch (error) {
-                console.error('Error saving lesson:', error);
-                alert('Failed to save lesson. Please try again.');
-                submitBtn.textContent = originalText;
-                submitBtn.disabled = false;
+            } else {
+                uploadedFileUrls.push(fileData);
             }
         }
+        
+        const lessonData = {
+            title,
+            category,
+            description,
+            content,
+            files: uploadedFileUrls,
+            author: currentAccount?.name || 'Admin'
+        };
+        
+        if (currentLesson) {
+            // Update existing lesson
+            lessonData.id = currentLesson.id;
+            lessonData.createdDate = currentLesson.createdDate;
+            
+            const updatedLesson = await saveLessonToAPI(lessonData, true);
+            if (updatedLesson) {
+                const index = lessons.findIndex(l => l.id === currentLesson.id);
+                lessons[index] = updatedLesson;
+                showStatus('Lesson updated successfully!', 'success');
+            } else {
+                throw new Error('Failed to update lesson');
+            }
+        } else {
+            // Create new lesson
+            const newLesson = await saveLessonToAPI(lessonData, false);
+            if (newLesson) {
+                lessons.push(newLesson);
+                showStatus('Lesson created successfully!', 'success');
+            } else {
+                throw new Error('Failed to create lesson');
+            }
+        }
+        
+        closeLessonModal();
+        render();
+        
+    } catch (error) {
+        console.error('Error saving lesson:', error);
+        alert('Failed to save lesson. Please try again.');
+    } finally {
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
+    }
+}
 
-        function deleteLesson(lessonId) {
-            if (confirm('Are you sure you want to delete this lesson? This action cannot be undone.')) {
+async function deleteLesson(lessonId) {
+    if (confirm('Are you sure you want to delete this lesson? This action cannot be undone.')) {
+        try {
+            const success = await deleteLessonFromAPI(lessonId);
+            if (success) {
                 lessons = lessons.filter(l => l.id !== lessonId);
                 showStatus('Lesson deleted successfully!', 'success');
                 render();
+            } else {
+                alert('Failed to delete lesson. Please try again.');
             }
+        } catch (error) {
+            console.error('Error deleting lesson:', error);
+            alert('Failed to delete lesson. Please try again.');
         }
+    }
+}
 
         async function downloadFile(fileName, fileUrl) {
             // If we have a direct URL (from before security update), use it
@@ -2101,7 +2164,7 @@ try {
 }
                 
                 // Initialize lessons based on user role
-                initializeLessons();
+                await initializeLessons();
                 
                 setTimeout(() => {
                     render();
