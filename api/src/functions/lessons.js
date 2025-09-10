@@ -1,8 +1,22 @@
 const { CosmosClient } = require('@azure/cosmos');
 
+let cosmosClient, database, lessonsContainer;
+
+// Initialize Cosmos DB
+function initializeCosmosDB() {
+    if (!cosmosClient) {
+        cosmosClient = new CosmosClient({
+            endpoint: process.env.COSMOS_DB_ENDPOINT,
+            key: process.env.COSMOS_DB_KEY,
+        });
+        database = cosmosClient.database('TutorPortal');
+        lessonsContainer = database.container('Lessons');
+    }
+}
+
 module.exports = async function (request, context) {
-    console.log('Lessons function called');
-    
+    context.log('Lessons API called');
+
     const corsHeaders = {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
@@ -17,85 +31,161 @@ module.exports = async function (request, context) {
     }
 
     try {
-        // Test Cosmos DB connection
-        console.log('Testing Cosmos DB connection...');
-        
-        const cosmosClient = new CosmosClient({
-            endpoint: process.env.COSMOS_DB_ENDPOINT,
-            key: process.env.COSMOS_DB_KEY,
-        });
+        initializeCosmosDB();
 
-        console.log('CosmosClient created successfully');
-
-        // Test database access
-        const database = cosmosClient.database('TutorPortal');
-        console.log('Database reference created');
-
-        // Test if database exists
+        let body;
         try {
-            const { resource: dbInfo } = await database.read();
-            console.log('Database exists:', dbInfo?.id);
-        } catch (dbError) {
-            console.log('Database read error:', dbError.message);
-            
-            // Try to create database if it doesn't exist
-            try {
-                const { resource: newDb } = await cosmosClient.databases.create({ id: 'TutorPortal' });
-                console.log('Database created:', newDb.id);
-            } catch (createDbError) {
-                console.error('Failed to create database:', createDbError.message);
-                throw createDbError;
-            }
+            body = await request.json();
+        } catch (jsonError) {
+            context.log.error('Failed to parse JSON:', jsonError);
+            return {
+                status: 400,
+                headers: corsHeaders,
+                jsonBody: { success: false, error: 'Invalid JSON in request body' }
+            };
         }
 
-        // Test container access
-        const lessonsContainer = database.container('Lessons');
-        console.log('Container reference created');
+        const { action, lesson, userEmail, isAdmin } = body || {};
 
-        // Test if container exists
-        try {
-            const { resource: containerInfo } = await lessonsContainer.read();
-            console.log('Container exists:', containerInfo?.id);
-        } catch (containerError) {
-            console.log('Container read error:', containerError.message);
-            
-            // Try to create container if it doesn't exist
-            try {
-                const { resource: newContainer } = await database.containers.create({ 
-                    id: 'Lessons',
-                    partitionKey: { path: '/id' }
-                });
-                console.log('Container created:', newContainer.id);
-            } catch (createContainerError) {
-                console.error('Failed to create container:', createContainerError.message);
-                throw createContainerError;
-            }
+        context.log('Request:', { action, userEmail: !!userEmail, isAdmin, lessonTitle: lesson?.title });
+
+        if (!userEmail) {
+            return {
+                status: 400,
+                headers: corsHeaders,
+                jsonBody: { success: false, error: 'User email required' }
+            };
         }
 
-        // If we get here, everything is working
-        console.log('Cosmos DB connection test successful');
+        switch (action) {
+            case 'get':
+                // Get all lessons
+                let query = "SELECT * FROM c";
+                if (!isAdmin) {
+                    query += " WHERE c.published = true";
+                }
+                query += " ORDER BY c.createdDate DESC";
 
-        return {
-            status: 200,
-            headers: corsHeaders,
-            jsonBody: { 
-                success: true, 
-                message: 'Cosmos DB connection successful',
-                database: 'TutorPortal',
-                container: 'Lessons'
-            }
-        };
+                const { resources: lessons } = await lessonsContainer.items
+                    .query(query)
+                    .fetchAll();
+
+                context.log('Found lessons:', lessons?.length || 0);
+
+                return {
+                    status: 200,
+                    headers: corsHeaders,
+                    jsonBody: { 
+                        success: true, 
+                        lessons: lessons || [] 
+                    }
+                };
+
+            case 'create':
+                if (!isAdmin) {
+                    return {
+                        status: 403,
+                        headers: corsHeaders,
+                        jsonBody: { success: false, error: 'Admin access required' }
+                    };
+                }
+
+                if (!lesson) {
+                    return {
+                        status: 400,
+                        headers: corsHeaders,
+                        jsonBody: { success: false, error: 'Lesson data required' }
+                    };
+                }
+
+                const newLesson = {
+                    id: Date.now().toString(),
+                    ...lesson,
+                    createdDate: new Date().toISOString(),
+                    updatedDate: new Date().toISOString(),
+                    createdBy: userEmail,
+                    published: true
+                };
+
+                context.log('Creating lesson:', newLesson.title);
+                const { resource: createdLesson } = await lessonsContainer.items.create(newLesson);
+
+                return {
+                    status: 201,
+                    headers: corsHeaders,
+                    jsonBody: { 
+                        success: true, 
+                        lesson: createdLesson 
+                    }
+                };
+
+            case 'update':
+                if (!isAdmin) {
+                    return {
+                        status: 403,
+                        headers: corsHeaders,
+                        jsonBody: { success: false, error: 'Admin access required' }
+                    };
+                }
+
+                const updatedLessonData = {
+                    ...lesson,
+                    updatedDate: new Date().toISOString(),
+                    updatedBy: userEmail
+                };
+
+                context.log('Updating lesson:', lesson.id);
+                const { resource: updatedLesson } = await lessonsContainer
+                    .item(lesson.id, lesson.id)
+                    .replace(updatedLessonData);
+
+                return {
+                    status: 200,
+                    headers: corsHeaders,
+                    jsonBody: { 
+                        success: true, 
+                        lesson: updatedLesson 
+                    }
+                };
+
+            case 'delete':
+                if (!isAdmin) {
+                    return {
+                        status: 403,
+                        headers: corsHeaders,
+                        jsonBody: { success: false, error: 'Admin access required' }
+                    };
+                }
+
+                context.log('Deleting lesson:', lesson.id);
+                await lessonsContainer.item(lesson.id, lesson.id).delete();
+
+                return {
+                    status: 200,
+                    headers: corsHeaders,
+                    jsonBody: { 
+                        success: true, 
+                        message: 'Lesson deleted successfully' 
+                    }
+                };
+
+            default:
+                return {
+                    status: 400,
+                    headers: corsHeaders,
+                    jsonBody: { success: false, error: `Invalid action: ${action}` }
+                };
+        }
 
     } catch (error) {
-        console.error('Cosmos DB test error:', error);
+        context.log.error('Lessons API error:', error);
         return {
             status: 500,
             headers: corsHeaders,
             jsonBody: { 
                 success: false, 
-                error: 'Cosmos DB connection failed',
-                details: error.message,
-                code: error.code
+                error: 'Internal server error',
+                details: error.message
             }
         };
     }
