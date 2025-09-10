@@ -78,35 +78,24 @@
             overflow: hidden;
         }
 
-        .header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            right: -10%;
-            width: 200px;
-            height: 200px;
-            background: radial-gradient(circle, var(--sunny-yellow) 0%, transparent 70%);
-            opacity: 0.1;
-            border-radius: 50%;
-        }
-
         .logo {
-            font-family: 'Fredoka One', cursive;
-            font-size: 28px;
-            font-weight: 400;
-            color: var(--primary-purple);
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 15px;
             position: relative;
             z-index: 2;
         }
 
-        .logo::before {
-            content: "⭐";
-            font-size: 32px;
-            color: var(--sunny-yellow);
-            filter: drop-shadow(2px 2px 4px rgba(255,217,61,0.3));
+        .logo-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            object-fit: contain;
+        }
+
+        .logo-banner {
+            height: 40px;
+            object-fit: contain;
         }
 
         .user-info {
@@ -616,6 +605,75 @@
             margin-bottom: 20px;
         }
 
+        /* Auth styles */
+        .auth-container {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 50px;
+            max-width: 450px;
+            margin: 100px auto;
+            box-shadow: 0 20px 60px var(--shadow);
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .auth-container::before {
+            content: '';
+            position: absolute;
+            top: -50px;
+            right: -50px;
+            width: 150px;
+            height: 150px;
+            background: radial-gradient(circle, var(--sunny-yellow) 0%, transparent 70%);
+            opacity: 0.1;
+            border-radius: 50%;
+        }
+
+        .auth-container h2 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary-purple);
+            margin-bottom: 30px;
+            font-size: 32px;
+        }
+
+        .auth-logo {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            object-fit: contain;
+            margin-bottom: 20px;
+            box-shadow: 0 8px 25px rgba(139, 95, 191, 0.2);
+            animation: bounce 2s infinite;
+        }
+
+        .auth-status {
+            background: var(--bg-light);
+            border: 2px solid #e2e8f0;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            font-size: 14px;
+        }
+
+        .auth-status.error {
+            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(255, 77, 79, 0.1));
+            border-color: var(--coral-pink);
+            color: #742a2a;
+        }
+
+        .auth-status.success {
+            background: linear-gradient(135deg, rgba(107, 207, 127, 0.1), rgba(82, 196, 26, 0.1));
+            border-color: var(--grass-green);
+            color: #22543d;
+        }
+
+        .auth-status.info {
+            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(64, 169, 255, 0.1));
+            border-color: var(--sky-blue);
+            color: #003a8c;
+        }
+
         /* Responsive design */
         @media (max-width: 768px) {
             .dashboard {
@@ -682,64 +740,6 @@
 
         @keyframes spin {
             to { transform: rotate(360deg); }
-        }
-
-        .auth-container {
-            background: var(--white);
-            border-radius: 25px;
-            padding: 50px;
-            max-width: 450px;
-            margin: 100px auto;
-            box-shadow: 0 20px 60px var(--shadow);
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .auth-container::before {
-            content: '';
-            position: absolute;
-            top: -50px;
-            right: -50px;
-            width: 150px;
-            height: 150px;
-            background: radial-gradient(circle, var(--sunny-yellow) 0%, transparent 70%);
-            opacity: 0.1;
-            border-radius: 50%;
-        }
-
-        .auth-container h2 {
-            font-family: 'Fredoka One', cursive;
-            color: var(--primary-purple);
-            margin-bottom: 30px;
-            font-size: 32px;
-        }
-
-        .auth-status {
-            background: var(--bg-light);
-            border: 2px solid #e2e8f0;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            font-size: 14px;
-        }
-
-        .auth-status.error {
-            background: linear-gradient(135deg, rgba(255, 107, 157, 0.1), rgba(255, 77, 79, 0.1));
-            border-color: var(--coral-pink);
-            color: #742a2a;
-        }
-
-        .auth-status.success {
-            background: linear-gradient(135deg, rgba(107, 207, 127, 0.1), rgba(82, 196, 26, 0.1));
-            border-color: var(--grass-green);
-            color: #22543d;
-        }
-
-        .auth-status.info {
-            background: linear-gradient(135deg, rgba(78, 205, 196, 0.1), rgba(64, 169, 255, 0.1));
-            border-color: var(--sky-blue);
-            color: #003a8c;
         }
     </style>
 </head>
@@ -981,7 +981,10 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Bright Stars Education</div>
+                        <div class="logo">
+                            <img src="/images/bright-stars-logo.png" alt="Bright Stars Education" class="logo-image" />
+                            <img src="/images/bright-stars-banner.png" alt="Bright Stars Education" class="logo-banner" />
+                        </div>
                         <div class="user-info">
                             <button class="btn btn-secondary" onclick="signOut()">Logout</button>
                         </div>
@@ -1003,7 +1006,10 @@
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Bright Stars Education</div>
+                        <div class="logo">
+                            <img src="/images/bright-stars-logo.png" alt="Bright Stars Education" class="logo-image" />
+                            <img src="/images/bright-stars-banner.png" alt="Bright Stars Education" class="logo-banner" />
+                        </div>
                         <div class="user-info">
                             ${userHasSubscription ? 
                                 '<span class="subscription-badge">Active Subscription</span>' :
@@ -1055,14 +1061,13 @@
         }
 
         function renderDashboard() {
-            const clubInfo = selectedClub === 'year4' ? 
-                { title: 'Year 4 - 11+ Prep Club', subtitle: 'Foundation preparation program', color: 'var(--bright-orange)' } :
-                { title: 'Year 5 - 11+ Club', subtitle: 'Intensive preparation program', color: 'var(--grass-green)' };
-
             return `
                 <div class="container">
                     <div class="header">
-                        <div class="logo">Bright Stars Education</div>
+                        <div class="logo">
+                            <img src="/images/bright-stars-logo.png" alt="Bright Stars Education" class="logo-image" />
+                            <img src="/images/bright-stars-banner.png" alt="Bright Stars Education" class="logo-banner" />
+                        </div>
                         <div class="user-info">
                             ${userHasSubscription ? 
                                 '<span class="subscription-badge">Active Subscription</span>' :
