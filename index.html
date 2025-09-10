@@ -1444,52 +1444,61 @@
         }
 
         function renderStudentArea() {
-            if (selectedClub !== 'year5') {
-                return `
-                    <div class="content-area">
-                        <div class="coming-soon">
-                            <div class="coming-soon-icon">🚫</div>
-                            <h3>Not Available for Year 4</h3>
-                            <p>The Student Area is only available for Year 5 - 11+ Club members.</p>
-                        </div>
-                    </div>
-                `;
-            }
-
             return `
                 <div class="content-area">
                     <div class="content-header">
                         <div>
                             <h1 class="content-title">Student Area</h1>
-                            <p class="content-subtitle">Progress tracking and homework management</p>
+                            <p class="content-subtitle">${selectedClub === 'year4' ? 'Weekly homework assignments' : 'Progress tracking and homework management'}</p>
                         </div>
                     </div>
                     
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">👨‍🎓</div>
-                        <h3>Student Portal Coming Soon!</h3>
-                        <p>
-                            A secure, GDPR-compliant area where students and parents can track 
-                            progress, view test scores, access homework assignments, and monitor 
-                            weekly achievements. Parents will only see their child's data.
-                        </p>
-                    </div>
-                    
-                    <div class="content-grid">
-                        <div class="content-card" style="border-left: 5px solid var(--primary-purple);">
-                            <span class="card-icon" style="color: var(--primary-purple);">📊</span>
-                            <h3 class="card-title">Progress Tracking</h3>
-                            <p class="card-description">View test scores and academic progress</p>
-                            <div class="card-meta"><span>🔒 GDPR Compliant</span></div>
+                    ${selectedClub === 'year4' ? `
+                        <div class="coming-soon">
+                            <div class="coming-soon-icon">📝</div>
+                            <h3>Weekly Homework Coming Soon!</h3>
+                            <p>
+                                Access weekly homework assignments designed to reinforce your child's 
+                                learning and build confidence with 11+ preparation. Each week will have 
+                                targeted exercises aligned with the lesson plans.
+                            </p>
                         </div>
                         
-                        <div class="content-card" style="border-left: 5px solid var(--sunny-yellow);">
-                            <span class="card-icon" style="color: var(--sunny-yellow);">📝</span>
-                            <h3 class="card-title">Weekly Homework</h3>
-                            <p class="card-description">Access homework for weeks 1-44</p>
-                            <div class="card-meta"><span>📅 Weekly Updates</span></div>
+                        <div class="content-grid">
+                            <div class="content-card" style="border-left: 5px solid var(--sunny-yellow);">
+                                <span class="card-icon" style="color: var(--sunny-yellow);">📝</span>
+                                <h3 class="card-title">Weekly Homework</h3>
+                                <p class="card-description">Access homework assignments for weeks 1-44</p>
+                                <div class="card-meta"><span>📅 Weekly Updates</span></div>
+                            </div>
                         </div>
-                    </div>
+                    ` : `
+                        <div class="coming-soon">
+                            <div class="coming-soon-icon">👨‍🎓</div>
+                            <h3>Student Portal Coming Soon!</h3>
+                            <p>
+                                A secure, GDPR-compliant area where students and parents can track 
+                                progress, view test scores, access homework assignments, and monitor 
+                                weekly achievements. Parents will only see their child's data.
+                            </p>
+                        </div>
+                        
+                        <div class="content-grid">
+                            <div class="content-card" style="border-left: 5px solid var(--primary-purple);">
+                                <span class="card-icon" style="color: var(--primary-purple);">📊</span>
+                                <h3 class="card-title">Progress Tracking</h3>
+                                <p class="card-description">View test scores and academic progress</p>
+                                <div class="card-meta"><span>🔒 GDPR Compliant</span></div>
+                            </div>
+                            
+                            <div class="content-card" style="border-left: 5px solid var(--sunny-yellow);">
+                                <span class="card-icon" style="color: var(--sunny-yellow);">📝</span>
+                                <h3 class="card-title">Weekly Homework</h3>
+                                <p class="card-description">Access homework for weeks 1-44</p>
+                                <div class="card-meta"><span>📅 Weekly Updates</span></div>
+                            </div>
+                        </div>
+                    `}
                 </div>
             `;
         }
