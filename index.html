@@ -800,6 +800,25 @@
 
         .modal-close:hover {
             color: var(--primary-purple);
+            background: rgba(139, 95, 191, 0.1);
+            border-radius: 50%;
+        }
+
+        /* Force close button for stuck modals */
+        .force-close-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+            background: var(--coral-pink);
+            color: var(--white);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            font-size: 20px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(255, 107, 157, 0.4);
         }
 
         .modal-body {
@@ -1845,8 +1864,8 @@
                     </div>
 
                     <!-- Bulk Upload Modal -->
-                    <div id="bulkUploadModal" class="modal hidden">
-                        <div class="modal-content">
+                    <div id="bulkUploadModal" class="modal hidden" onclick="handleModalBackdropClick(event)">
+                        <div class="modal-content" onclick="event.stopPropagation()">
                             <div class="modal-header">
                                 <h3 id="modalTitle">Bulk Upload</h3>
                                 <span class="modal-close" onclick="hideBulkUploadForm()">&times;</span>
@@ -1981,33 +2000,85 @@
         }
 
         function hideBulkUploadForm() {
-            const modal = document.getElementById('bulkUploadModal');
-            const uploadBtn = document.getElementById('uploadBtn');
+            console.log('Closing bulk upload modal...');
             
+            const modal = document.getElementById('bulkUploadModal');
+            if (!modal) {
+                console.log('Modal not found');
+                return;
+            }
+            
+            // Force hide the modal
             modal.classList.add('hidden');
+            modal.style.display = 'none';
             document.body.style.overflow = 'auto';
             
-            // Reset form
+            // Reset global variables
             selectedFiles = [];
             currentUploadType = '';
             
-            const uploadProgress = document.getElementById('uploadProgress');
-            const uploadResults = document.getElementById('uploadResults');
-            const uploadBtnText = document.getElementById('uploadBtnText');
-            const uploadLoader = document.getElementById('uploadLoader');
+            // Reset form elements safely
+            const elements = {
+                uploadProgress: document.getElementById('uploadProgress'),
+                uploadResults: document.getElementById('uploadResults'), 
+                uploadBtnText: document.getElementById('uploadBtnText'),
+                uploadLoader: document.getElementById('uploadLoader'),
+                uploadBtn: document.getElementById('uploadBtn')
+            };
             
-            if (uploadProgress) uploadProgress.classList.add('hidden');
-            if (uploadResults) uploadResults.classList.add('hidden');
-            if (uploadBtnText) uploadBtnText.textContent = 'Upload';
-            if (uploadLoader) uploadLoader.classList.add('hidden');
-            if (uploadBtn) uploadBtn.disabled = false;
+            Object.entries(elements).forEach(([key, element]) => {
+                if (element) {
+                    switch (key) {
+                        case 'uploadProgress':
+                        case 'uploadResults':
+                        case 'uploadLoader':
+                            element.classList.add('hidden');
+                            break;
+                        case 'uploadBtnText':
+                            element.textContent = 'Upload';
+                            break;
+                        case 'uploadBtn':
+                            element.disabled = false;
+                            break;
+                    }
+                }
+            });
             
-            // Clear any file inputs and lists
-            const fileInputs = document.querySelectorAll('input[type="file"]');
-            fileInputs.forEach(input => input.value = '');
+            // Clear file inputs and lists
+            try {
+                const fileInputs = document.querySelectorAll('input[type="file"]');
+                fileInputs.forEach(input => {
+                    if (input) input.value = '';
+                });
+                
+                const fileLists = document.querySelectorAll('.file-list');
+                fileLists.forEach(list => {
+                    if (list) list.innerHTML = '';
+                });
+            } catch (error) {
+                console.log('Error clearing file inputs:', error);
+            }
             
-            const fileLists = document.querySelectorAll('.file-list');
-            fileLists.forEach(list => list.innerHTML = '');
+            console.log('Modal closed successfully');
+        }
+
+        // Emergency close function for stuck modals
+        function forceCloseModal() {
+            console.log('Force closing modal...');
+            const modal = document.getElementById('bulkUploadModal');
+            if (modal) {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+            }
+            document.body.style.overflow = 'auto';
+            selectedFiles = [];
+            currentUploadType = '';
+            
+            // Remove any stuck force close buttons
+            const forceBtn = document.querySelector('.force-close-btn');
+            if (forceBtn) {
+                forceBtn.remove();
+            }
         }
 
         function triggerFileSelect(inputId) {
@@ -2260,7 +2331,14 @@
             }
         });
 
-        // Close modal when clicking outside
+        // Handle modal backdrop clicks
+        function handleModalBackdropClick(event) {
+            if (event.target === event.currentTarget) {
+                hideBulkUploadForm();
+            }
+        }
+
+        // Close modal when clicking outside (backup)
         document.addEventListener('click', (event) => {
             const modal = document.getElementById('bulkUploadModal');
             if (modal && !modal.classList.contains('hidden')) {
@@ -2269,6 +2347,27 @@
                 }
             }
         });
+
+        // Expose global emergency function for console access
+        window.emergencyCloseModal = function() {
+            console.log('EMERGENCY: Closing modal from console');
+            const modal = document.getElementById('bulkUploadModal');
+            if (modal) {
+                modal.style.display = 'none !important';
+                modal.classList.add('hidden');
+                modal.remove(); // Nuclear option - remove it entirely
+            }
+            document.body.style.overflow = 'auto';
+            
+            // Clean up any overlays
+            const overlays = document.querySelectorAll('.modal');
+            overlays.forEach(overlay => {
+                overlay.style.display = 'none';
+                overlay.classList.add('hidden');
+            });
+            
+            console.log('Emergency modal closure complete');
+        };
 
         // ============================================
         // INITIALIZATION
