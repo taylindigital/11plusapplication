@@ -8,6 +8,7 @@ const onUserSignUp = require('./functions/onusersignup');
 const lessons = require('./functions/lessons');
 const upload = require('./functions/upload');
 const bulkUpload = require('./functions/bulk-upload');
+const getContent = require('./functions/get-content');
 const trackview = require('./functions/trackview');
 const download = require('./functions/download');
 
@@ -60,6 +61,12 @@ app.http('bulk-upload', {
     methods: ['POST', 'OPTIONS'],
     authLevel: 'anonymous',
     handler: bulkUpload
+});
+
+app.http('get-content', {
+    methods: ['GET', 'POST', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: getContent
 });
 
 app.http('trackview', {
@@ -124,7 +131,7 @@ app.http('test', {
                 timestamp: new Date().toISOString(),
                 functions: [
                     'checkuserstatus', 'getpendingusers', 'approveuser', 
-                    'onusersignup', 'lessons', 'upload', 'bulk-upload', 'trackview',
+                    'onusersignup', 'lessons', 'upload', 'bulk-upload', 'get-content', 'trackview',
                     'stripe-create-customer', 'stripe-create-subscription',
                     'stripe-get-subscription', 'stripe-cancel-subscription',
                     'stripe-update-payment-method', 'stripe-webhook'
