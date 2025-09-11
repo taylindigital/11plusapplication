@@ -1915,7 +1915,9 @@
                         <div class="form-group">
                             <label>Excel Spreadsheet</label>
                             <div class="file-upload-area" onclick="triggerFileSelect('planFile')" 
-                                 ondrop="handleFileDrop(event, 'single')" ondragover="handleDragOver(event)">
+                                 ondrop="handleFileDrop(event, 'single')" 
+                                 ondragover="handleDragOver(event)" 
+                                 ondragleave="handleDragLeave(event)">
                                 <div class="file-upload-icon">📊</div>
                                 <div class="file-upload-text">Click to select or drag Excel file here</div>
                                 <div class="file-upload-hint">Accepts .xlsx files with weekly lesson plan structure</div>
@@ -1933,7 +1935,9 @@
                         <div class="form-group">
                             <label>Lesson Files</label>
                             <div class="file-upload-area" onclick="triggerFileSelect('lessonFiles')"
-                                 ondrop="handleFileDrop(event, 'multiple')" ondragover="handleDragOver(event)">
+                                 ondrop="handleFileDrop(event, 'multiple')" 
+                                 ondragover="handleDragOver(event)" 
+                                 ondragleave="handleDragLeave(event)">
                                 <div class="file-upload-icon">📚</div>
                                 <div class="file-upload-text">Click to select or drag lesson files here</div>
                                 <div class="file-upload-hint">Accepts PDF, DOCX, PPT and image files</div>
@@ -1951,7 +1955,9 @@
                         <div class="form-group">
                             <label>Resource Files</label>
                             <div class="file-upload-area" onclick="triggerFileSelect('resourceFiles')"
-                                 ondrop="handleFileDrop(event, 'multiple')" ondragover="handleDragOver(event)">
+                                 ondrop="handleFileDrop(event, 'multiple')" 
+                                 ondragover="handleDragOver(event)" 
+                                 ondragleave="handleDragLeave(event)">
                                 <div class="file-upload-icon">🎯</div>
                                 <div class="file-upload-text">Click to select or drag resource files here</div>
                                 <div class="file-upload-hint">Videos, PDFs, images and other educational materials</div>
@@ -1976,15 +1982,32 @@
 
         function hideBulkUploadForm() {
             const modal = document.getElementById('bulkUploadModal');
+            const uploadBtn = document.getElementById('uploadBtn');
+            
             modal.classList.add('hidden');
             document.body.style.overflow = 'auto';
             
             // Reset form
             selectedFiles = [];
-            document.getElementById('uploadProgress').classList.add('hidden');
-            document.getElementById('uploadResults').classList.add('hidden');
-            document.getElementById('uploadBtnText').textContent = 'Upload';
-            document.getElementById('uploadLoader').classList.add('hidden');
+            currentUploadType = '';
+            
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadResults = document.getElementById('uploadResults');
+            const uploadBtnText = document.getElementById('uploadBtnText');
+            const uploadLoader = document.getElementById('uploadLoader');
+            
+            if (uploadProgress) uploadProgress.classList.add('hidden');
+            if (uploadResults) uploadResults.classList.add('hidden');
+            if (uploadBtnText) uploadBtnText.textContent = 'Upload';
+            if (uploadLoader) uploadLoader.classList.add('hidden');
+            if (uploadBtn) uploadBtn.disabled = false;
+            
+            // Clear any file inputs and lists
+            const fileInputs = document.querySelectorAll('input[type="file"]');
+            fileInputs.forEach(input => input.value = '');
+            
+            const fileLists = document.querySelectorAll('.file-list');
+            fileLists.forEach(list => list.innerHTML = '');
         }
 
         function triggerFileSelect(inputId) {
@@ -2006,6 +2029,13 @@
         function handleDragOver(event) {
             event.preventDefault();
             event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleDragLeave(event) {
+            // Only remove drag-over if leaving the drop zone entirely
+            if (!event.currentTarget.contains(event.relatedTarget)) {
+                event.currentTarget.classList.remove('drag-over');
+            }
         }
 
         function handleFileDrop(event, mode) {
@@ -2090,15 +2120,22 @@
                 return;
             }
             
+            const uploadBtn = document.getElementById('uploadBtn');
+            const uploadBtnText = document.getElementById('uploadBtnText');
+            const uploadLoader = document.getElementById('uploadLoader');
+            const uploadProgress = document.getElementById('uploadProgress');
+            const uploadResults = document.getElementById('uploadResults');
+            
             const formData = new FormData();
             const yearGroup = document.getElementById('yearGroup').value;
             const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
             
             // Set upload state
-            document.getElementById('uploadBtnText').textContent = 'Uploading...';
-            document.getElementById('uploadLoader').classList.remove('hidden');
-            document.getElementById('uploadProgress').classList.remove('hidden');
-            document.getElementById('uploadResults').classList.add('hidden');
+            uploadBtn.disabled = true;
+            uploadBtnText.textContent = 'Uploading...';
+            uploadLoader.classList.remove('hidden');
+            uploadProgress.classList.remove('hidden');
+            uploadResults.classList.add('hidden');
             
             // Add form fields
             formData.append('isAdmin', userIsAdmin.toString());
@@ -2138,6 +2175,10 @@
                 
                 updateProgress(75, 'Processing files...');
                 
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
                 const result = await response.json();
                 
                 updateProgress(100, 'Upload complete!');
@@ -2152,6 +2193,11 @@
                     success: false,
                     error: 'Upload failed: ' + error.message
                 });
+            } finally {
+                // Reset button state
+                uploadBtn.disabled = false;
+                uploadBtnText.textContent = 'Upload';
+                uploadLoader.classList.add('hidden');
             }
         }
 
@@ -2203,6 +2249,26 @@
                 `;
             }
         }
+
+        // Add keyboard and modal event listeners
+        document.addEventListener('keydown', (event) => {
+            if (event.key === 'Escape') {
+                const modal = document.getElementById('bulkUploadModal');
+                if (modal && !modal.classList.contains('hidden')) {
+                    hideBulkUploadForm();
+                }
+            }
+        });
+
+        // Close modal when clicking outside
+        document.addEventListener('click', (event) => {
+            const modal = document.getElementById('bulkUploadModal');
+            if (modal && !modal.classList.contains('hidden')) {
+                if (event.target === modal) {
+                    hideBulkUploadForm();
+                }
+            }
+        });
 
         // ============================================
         // INITIALIZATION
