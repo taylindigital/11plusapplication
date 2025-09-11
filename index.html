@@ -327,6 +327,7 @@
             height: 100px;
             background: linear-gradient(135deg, var(--soft-lavender), var(--sky-blue));
             opacity: 0.1;
+            pointer-events: none;
         }
 
         .sidebar-header {
@@ -351,17 +352,20 @@
         }
 
         .back-to-clubs {
-            background: linear-gradient(135deg, var(--text-light), var(--text-medium));
-            color: var(--white);
-            border: none;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 14px;
-            cursor: pointer;
-            margin-bottom: 20px;
-            margin-left: 30px;
-            transition: all 0.3s ease;
-        }
+    background: linear-gradient(135deg, var(--text-light), var(--text-medium));
+    color: var(--white);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    cursor: pointer;
+    margin-bottom: 20px;
+    margin-left: 30px;
+    transition: all 0.3s ease;
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto;
+}
 
         .back-to-clubs:hover {
             transform: translateY(-2px);
