@@ -1222,6 +1222,15 @@
             } else {
                 app.innerHTML = renderDashboard();
             }
+            
+            // After rendering, ensure any modals are properly hidden
+            setTimeout(() => {
+                const modal = document.getElementById('bulkUploadModal');
+                if (modal && currentView !== 'admin-lessons') {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                }
+            }, 100);
         }
 
         function renderLogin() {
@@ -1808,6 +1817,8 @@
         }
 
         function renderAdminLessons() {
+            console.log('Rendering admin lessons page');
+            
             if (!userIsAdmin) {
                 return `
                     <div class="content-area">
@@ -1819,6 +1830,16 @@
                     </div>
                 `;
             }
+
+            // Ensure modal is hidden when admin page loads
+            setTimeout(() => {
+                const modal = document.getElementById('bulkUploadModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.style.display = 'none';
+                    console.log('Admin page loaded - modal hidden');
+                }
+            }, 50);
 
             return `
                 <div class="content-area">
@@ -1956,6 +1977,7 @@
         let currentUploadType = '';
 
         function showBulkUploadForm(uploadType) {
+            console.log('Opening bulk upload modal for:', uploadType);
             currentUploadType = uploadType;
             selectedFiles = [];
             
@@ -1963,6 +1985,11 @@
             const modalTitle = document.getElementById('modalTitle');
             const uploadFields = document.getElementById('uploadFields');
             const uploadContentType = document.getElementById('uploadContentType');
+            
+            if (!modal) {
+                console.error('Bulk upload modal not found!');
+                return;
+            }
             
             uploadContentType.value = uploadType;
             
@@ -2420,6 +2447,14 @@
         
         window.addEventListener('load', async () => {
             console.log("Initializing application...");
+            
+            // Ensure modal is hidden on page load
+            const modal = document.getElementById('bulkUploadModal');
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.style.display = 'none';
+                console.log('Modal initialized as hidden');
+            }
             
             if (initializeMSAL()) {
                 console.log("MSAL initialized successfully");
