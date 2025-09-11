@@ -1978,7 +1978,6 @@
 
         function showBulkUploadForm(uploadType) {
             console.log('Opening bulk upload modal for:', uploadType);
-            alert('Button clicked! Upload type: ' + uploadType);
             currentUploadType = uploadType;
             selectedFiles = [];
             
@@ -2064,6 +2063,7 @@
             }
             
             modal.classList.remove('hidden');
+            modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
         }
 
