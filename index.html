@@ -923,7 +923,7 @@
             render();
         }
 
-        function backToClubSelection() {
+        function YrClubSelection() {
             selectedClub = null;
             currentView = 'overview';
             render();
@@ -1112,7 +1112,7 @@
 
             return `
                 <div class="sidebar">
-                    <button class="back-to-clubs" onclick="backToClubSelection()">
+                    <button class="back-to-clubs" onclick="YrClubSelection()">
                         ← Back to Club Selection
                     </button>
                     
@@ -1364,85 +1364,87 @@
         }
 
         function renderExtraResources() {
-            return `
-                <div class="content-area">
-                    <div class="content-header">
-                        <div>
-                            <h1 class="content-title">Extra Teaching Resources</h1>
-                            <p class="content-subtitle">Additional materials to enhance learning</p>
-                        </div>
-                    </div>
-                    
-                    <div class="content-grid">
-                        <div class="content-card maths">
-                            <span class="card-icon">🎥</span>
-                            <h3 class="card-title">Maths Topic Videos</h3>
-                            <p class="card-description">Visual explanations of key mathematical concepts</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card english">
-                            <span class="card-icon">📝</span>
-                            <h3 class="card-title">English How-To Guides</h3>
-                            <p class="card-description">Step-by-step writing and comprehension guides</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card resources">
-                            <span class="card-icon">📄</span>
-                            <h3 class="card-title">CSSE Past Papers</h3>
-                            <p class="card-description">Historical exam papers for practice</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card resources">
-                            <span class="card-icon">✏️</span>
-                            <h3 class="card-title">CSSE Worked Examples</h3>
-                            <p class="card-description">Detailed solutions to past paper questions</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card planning">
-                            <span class="card-icon">📚</span>
-                            <h3 class="card-title">Recommended Reading</h3>
-                            <p class="card-description">Curated book lists to enhance learning</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card english">
-                            <span class="card-icon">✍️</span>
-                            <h3 class="card-title">Writing Prompts</h3>
-                            <p class="card-description">Creative writing exercises and prompts</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card english">
-                            <span class="card-icon">📖</span>
-                            <h3 class="card-title">Comprehension Tasks</h3>
-                            <p class="card-description">CSSE-style comprehension exercises</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                        
-                        <div class="content-card resources">
-                            <span class="card-icon">🔗</span>
-                            <h3 class="card-title">Useful Website Links</h3>
-                            <p class="card-description">Educational websites and online resources</p>
-                            <div class="card-meta"><span>Coming Soon</span></div>
-                        </div>
-                    </div>
-                    
-                    ${userIsAdmin ? `
-                        <div class="bulk-upload-section">
-                            <h4>🎯 Admin: Upload Extra Resources</h4>
-                            <p>Bulk upload videos, past papers, reading lists, and other supplementary materials.</p>
-                            <button class="btn" onclick="alert('Bulk resource upload coming next!')">
-                                📁 Upload Resources
-                            </button>
-                        </div>
-                    ` : ''}
+    return `
+        <div class="content-area">
+            <div class="content-header">
+                <div>
+                    <h1 class="content-title">Extra Teaching Resources</h1>
+                    <p class="content-subtitle">Additional materials to enhance learning</p>
                 </div>
-            `;
-        }
+            </div>
+            
+            <div class="content-grid">
+                <div class="content-card maths">
+                    <span class="card-icon">🎥</span>
+                    <h3 class="card-title">Maths Topic Videos</h3>
+                    <p class="card-description">Visual explanations of key mathematical concepts</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+                
+                <div class="content-card english">
+                    <span class="card-icon">📝</span>
+                    <h3 class="card-title">English How-To Guides</h3>
+                    <p class="card-description">Step-by-step writing and comprehension guides</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+                
+                ${selectedClub === 'year5' ? `
+                    <div class="content-card resources">
+                        <span class="card-icon">📄</span>
+                        <h3 class="card-title">CSSE Past Papers</h3>
+                        <p class="card-description">Historical exam papers for practice</p>
+                        <div class="card-meta"><span>Coming Soon</span></div>
+                    </div>
+                    
+                    <div class="content-card resources">
+                        <span class="card-icon">✏️</span>
+                        <h3 class="card-title">CSSE Worked Examples</h3>
+                        <p class="card-description">Detailed solutions to past paper questions</p>
+                        <div class="card-meta"><span>Coming Soon</span></div>
+                    </div>
+                ` : ''}
+                
+                <div class="content-card planning">
+                    <span class="card-icon">📚</span>
+                    <h3 class="card-title">Recommended Reading</h3>
+                    <p class="card-description">Curated book lists to enhance learning</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+                
+                <div class="content-card english">
+                    <span class="card-icon">✍️</span>
+                    <h3 class="card-title">Writing Prompts</h3>
+                    <p class="card-description">Creative writing exercises and prompts</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+                
+                <div class="content-card english">
+                    <span class="card-icon">📖</span>
+                    <h3 class="card-title">Comprehension Tasks</h3>
+                    <p class="card-description">CSSE-style comprehension exercises</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+                
+                <div class="content-card resources">
+                    <span class="card-icon">🔗</span>
+                    <h3 class="card-title">Useful Website Links</h3>
+                    <p class="card-description">Educational websites and online resources</p>
+                    <div class="card-meta"><span>Coming Soon</span></div>
+                </div>
+            </div>
+            
+            ${userIsAdmin ? `
+                <div class="bulk-upload-section">
+                    <h4>🎯 Admin: Upload Extra Resources</h4>
+                    <p>Bulk upload videos, past papers, reading lists, and other supplementary materials.</p>
+                    <button class="btn" onclick="alert('Bulk resource upload coming next!')">
+                        📁 Upload Resources
+                    </button>
+                </div>
+            ` : ''}
+        </div>
+    `;
+}
 
         function renderStudentArea() {
     return `
