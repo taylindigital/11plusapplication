@@ -962,6 +962,371 @@
             50% { opacity: 0.5; }
         }
 
+        /* ============================================ */
+        /* MICRO-INTERACTIONS & ANIMATIONS */
+        /* ============================================ */
+
+        /* Enhanced Loading Animations */
+        .loading-spinner-enhanced {
+            display: inline-block;
+            width: 32px;
+            height: 32px;
+            border: 3px solid var(--border-light);
+            border-top: 3px solid var(--primary-purple);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        .loading-dots {
+            display: inline-flex;
+            gap: 4px;
+            align-items: center;
+        }
+
+        .loading-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: var(--primary-purple);
+            animation: loadingDots 1.5s ease-in-out infinite;
+        }
+
+        .loading-dot:nth-child(1) { animation-delay: 0s; }
+        .loading-dot:nth-child(2) { animation-delay: 0.2s; }
+        .loading-dot:nth-child(3) { animation-delay: 0.4s; }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes loadingDots {
+            0%, 80%, 100% { 
+                transform: scale(0.8);
+                opacity: 0.6;
+            }
+            40% { 
+                transform: scale(1.2);
+                opacity: 1;
+            }
+        }
+
+        /* Button Micro-Interactions */
+        .btn {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: left 0.5s;
+        }
+
+        .btn:hover::before {
+            left: 100%;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .btn:active {
+            transform: translateY(0px) scale(0.98);
+            transition: all 0.1s ease;
+        }
+
+        .btn.loading {
+            pointer-events: none;
+            opacity: 0.7;
+        }
+
+        .btn.loading::after {
+            content: '';
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin-left: -8px;
+            margin-top: -8px;
+            border: 2px solid transparent;
+            border-top: 2px solid currentColor;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+        }
+
+        /* Success/Error Feedback Animations */
+        .feedback-animation {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .feedback-animation::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+
+        .feedback-animation.success::after {
+            background: linear-gradient(45deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+            opacity: 1;
+            animation: successPulse 0.6s ease;
+        }
+
+        .feedback-animation.error::after {
+            background: linear-gradient(45deg, transparent, rgba(239, 68, 68, 0.1), transparent);
+            opacity: 1;
+            animation: errorShake 0.6s ease;
+        }
+
+        @keyframes successPulse {
+            0% { transform: scale(0.95); opacity: 0; }
+            50% { transform: scale(1.02); opacity: 1; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+
+        /* Card Hover Interactions */
+        .content-card {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .content-card:hover {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px var(--shadow-hover);
+        }
+
+        .content-card:hover .card-icon {
+            transform: scale(1.1) rotate(5deg);
+            transition: transform 0.3s ease;
+        }
+
+        .content-card:hover .card-title {
+            color: var(--primary-purple);
+            transition: color 0.3s ease;
+        }
+
+        /* Content Preview Card Animations */
+        .content-preview-card {
+            animation: slideInUp 0.4s ease forwards;
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        .content-preview-card:nth-child(1) { animation-delay: 0.1s; }
+        .content-preview-card:nth-child(2) { animation-delay: 0.2s; }
+        .content-preview-card:nth-child(3) { animation-delay: 0.3s; }
+        .content-preview-card:nth-child(4) { animation-delay: 0.4s; }
+        .content-preview-card:nth-child(5) { animation-delay: 0.5s; }
+        .content-preview-card:nth-child(6) { animation-delay: 0.6s; }
+
+        @keyframes slideInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Modal Entrance/Exit Animations */
+        .modal {
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal:not(.hidden) {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            transform: scale(0.9) translateY(20px);
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .modal:not(.hidden) .modal-content {
+            transform: scale(1) translateY(0);
+        }
+
+        /* File Upload Animations */
+        .file-upload-area {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .file-upload-area::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--primary-purple);
+            opacity: 0;
+            border-radius: 12px;
+            transition: opacity 0.3s ease;
+            pointer-events: none;
+        }
+
+        .file-upload-area.drag-over {
+            border-color: var(--primary-purple);
+            background: rgba(124, 58, 237, 0.05);
+            transform: scale(1.02);
+        }
+
+        .file-upload-area.drag-over::before {
+            opacity: 0.1;
+            animation: uploadPulse 1s ease infinite;
+        }
+
+        @keyframes uploadPulse {
+            0%, 100% { opacity: 0.1; }
+            50% { opacity: 0.2; }
+        }
+
+        /* Progress Indicators */
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--border-light);
+            border-radius: 4px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary-purple), var(--sky-blue));
+            border-radius: 4px;
+            transition: width 0.3s ease;
+            position: relative;
+        }
+
+        .progress-fill::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            right: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            animation: progressShimmer 2s infinite;
+        }
+
+        @keyframes progressShimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
+
+        /* Navigation Link Animations */
+        .nav-link {
+            position: relative;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .nav-link::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: left 0.4s ease;
+        }
+
+        .nav-link:hover::before {
+            left: 100%;
+        }
+
+        .nav-link.active {
+            animation: activeNavPulse 2s ease infinite;
+        }
+
+        @keyframes activeNavPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(124, 58, 237, 0.4); }
+            50% { box-shadow: 0 0 0 8px rgba(124, 58, 237, 0); }
+        }
+
+        /* Statistics Animation */
+        .stat-number {
+            transition: all 0.3s ease;
+        }
+
+        .stat-item:hover .stat-number {
+            transform: scale(1.2);
+            color: var(--primary-purple);
+        }
+
+        /* Form Input Animations */
+        .form-group input,
+        .form-group select {
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(124, 58, 237, 0.15);
+            border-color: var(--primary-purple);
+        }
+
+        /* Toast Notification Enhancements */
+        .toast {
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+
+        /* Loading Skeleton */
+        .skeleton {
+            background: linear-gradient(90deg, var(--border-light) 25%, var(--background-light) 50%, var(--border-light) 75%);
+            background-size: 200% 100%;
+            animation: skeletonLoading 1.5s infinite;
+        }
+
+        @keyframes skeletonLoading {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        .skeleton-text {
+            height: 14px;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .skeleton-title {
+            height: 20px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+        }
+
+        .skeleton-card {
+            height: 200px;
+            border-radius: 16px;
+        }
+
         /* Student Portal & GDPR Compliance Styles */
         .privacy-badge {
             background: var(--grass-green);
@@ -1107,20 +1472,536 @@
             border-radius: 6px;
         }
 
-        /* Responsive Design for Student Portal */
+        /* Enhanced Mobile Responsive Design */
+        
+        /* Mobile Header & Navigation */
         @media (max-width: 768px) {
-            .consent-content {
-                flex-direction: column;
-                text-align: center;
+            .header {
+                padding: 15px 20px;
+                flex-wrap: wrap;
+                gap: 15px;
             }
-
-            .parent-access-card {
+            
+            .logo {
+                font-size: 20px;
+                flex: 1;
+            }
+            
+            .user-info {
+                order: 3;
+                width: 100%;
+                margin-top: 10px;
+                justify-content: space-between;
+            }
+            
+            .club-selector {
+                order: 2;
+            }
+            
+            .club-selector select {
+                font-size: 14px;
+                padding: 8px 12px;
+            }
+            
+            /* Mobile Navigation */
+            .sidebar {
+                order: 2;
+                background: var(--white);
+                border-radius: 16px 16px 0 0;
+                margin-top: 20px;
+                padding: 20px;
+                box-shadow: 0 -4px 15px var(--shadow);
+            }
+            
+            .nav-links {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 10px;
+            }
+            
+            .nav-link {
+                padding: 12px;
+                text-align: center;
+                font-size: 13px;
+                border-radius: 12px;
+            }
+            
+            /* Mobile Dashboard */
+            .dashboard {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .main-content {
+                order: 1;
+            }
+            
+            /* Mobile Content Areas */
+            .content-area {
+                padding: 20px;
+            }
+            
+            .content-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+                text-align: left;
+            }
+            
+            .content-title {
+                font-size: 24px;
+                line-height: 1.2;
+            }
+            
+            .content-subtitle {
+                font-size: 14px;
+            }
+            
+            .privacy-badge {
+                align-self: flex-start;
+            }
+            
+            /* Mobile Content Grids */
+            .content-grid {
                 grid-template-columns: 1fr;
                 gap: 20px;
             }
-
+            
+            .content-preview-grid {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .upload-stats {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 12px;
+            }
+            
+            /* Mobile Cards */
+            .content-card {
+                padding: 20px;
+                min-height: auto;
+            }
+            
+            .content-card.enhanced {
+                padding: 25px;
+                min-height: auto;
+            }
+            
+            .card-icon {
+                font-size: 36px;
+                margin-bottom: 12px;
+            }
+            
+            .card-title {
+                font-size: 18px;
+                margin-bottom: 8px;
+            }
+            
+            .card-description {
+                font-size: 13px;
+                line-height: 1.5;
+                margin-bottom: 15px;
+            }
+            
+            .card-meta {
+                flex-wrap: wrap;
+                gap: 6px;
+                margin-bottom: 15px;
+            }
+            
+            .card-meta span {
+                font-size: 10px;
+                padding: 4px 8px;
+            }
+            
+            .card-actions {
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .btn {
+                width: 100%;
+                text-align: center;
+                padding: 12px 16px;
+            }
+            
+            .btn-sm {
+                padding: 10px 14px;
+                font-size: 13px;
+            }
+            
+            .btn-xs {
+                padding: 8px 12px;
+                font-size: 11px;
+            }
+            
+            /* Mobile Club Selection */
+            .club-boxes {
+                grid-template-columns: 1fr;
+                gap: 15px;
+            }
+            
+            .club-box {
+                padding: 20px;
+                text-align: center;
+            }
+            
+            .club-emoji {
+                font-size: 48px;
+                margin-bottom: 15px;
+            }
+            
+            .club-title {
+                font-size: 20px;
+            }
+            
+            .club-subtitle {
+                font-size: 13px;
+            }
+            
+            /* Student Portal Mobile */
+            .consent-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 15px;
+            }
+            
+            .consent-icon {
+                font-size: 28px;
+            }
+            
+            .consent-text h4 {
+                font-size: 16px;
+            }
+            
+            .consent-text p {
+                font-size: 13px;
+            }
+            
             .consent-actions {
                 justify-content: center;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .consent-actions .btn {
+                width: 100%;
+            }
+            
+            .parent-access-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+                padding: 20px;
+            }
+            
+            .access-code {
+                font-size: 16px;
+                padding: 12px;
+                letter-spacing: 1px;
+            }
+            
+            /* Mobile Enhanced Upload Sections */
+            .enhanced-upload-section {
+                margin-top: 25px;
+                padding: 20px;
+                border-radius: 12px;
+            }
+            
+            .upload-section-header {
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .upload-section-icon {
+                font-size: 28px;
+                width: 50px;
+                height: 50px;
+                border-radius: 12px;
+            }
+            
+            .upload-section-info h3 {
+                font-size: 18px;
+                margin-bottom: 5px;
+            }
+            
+            .upload-section-info p {
+                font-size: 13px;
+            }
+            
+            .stat-item {
+                padding: 12px;
+                border-radius: 10px;
+            }
+            
+            .stat-number {
+                font-size: 20px;
+                margin-bottom: 4px;
+            }
+            
+            .stat-label {
+                font-size: 10px;
+            }
+        }
+
+        /* Tablet Optimization */
+        @media (min-width: 769px) and (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .content-preview-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .upload-stats {
+                grid-template-columns: repeat(4, 1fr);
+            }
+            
+            .nav-links {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            
+            .club-boxes {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        /* Extra Small Screens */
+        @media (max-width: 480px) {
+            .header {
+                padding: 12px 15px;
+            }
+            
+            .logo {
+                font-size: 18px;
+            }
+            
+            .dashboard {
+                padding: 15px;
+                gap: 15px;
+            }
+            
+            .content-area {
+                padding: 15px;
+            }
+            
+            .content-title {
+                font-size: 20px;
+            }
+            
+            .content-card {
+                padding: 15px;
+            }
+            
+            .content-card.enhanced {
+                padding: 18px;
+            }
+            
+            .card-icon {
+                font-size: 32px;
+            }
+            
+            .card-title {
+                font-size: 16px;
+            }
+            
+            .card-description {
+                font-size: 12px;
+            }
+            
+            .upload-stats {
+                grid-template-columns: 1fr;
+                gap: 10px;
+            }
+            
+            .enhanced-upload-section {
+                padding: 15px;
+                margin-top: 20px;
+            }
+            
+            .upload-section-icon {
+                width: 40px;
+                height: 40px;
+                font-size: 24px;
+            }
+            
+            .upload-section-info h3 {
+                font-size: 16px;
+            }
+            
+            .upload-section-info p {
+                font-size: 12px;
+            }
+        }
+
+        /* Mobile Modal Optimizations */
+        @media (max-width: 768px) {
+            .modal {
+                padding: 20px;
+                align-items: flex-start;
+                padding-top: 40px;
+            }
+            
+            .modal-content {
+                width: 100%;
+                max-width: none;
+                margin: 0;
+                border-radius: 16px 16px 0 0;
+                max-height: 90vh;
+                overflow-y: auto;
+            }
+            
+            .modal-header {
+                padding: 20px;
+                border-bottom: 1px solid var(--border-light);
+                position: sticky;
+                top: 0;
+                background: var(--white);
+                z-index: 10;
+            }
+            
+            .modal-header h3 {
+                font-size: 18px;
+                margin: 0;
+            }
+            
+            .close-button {
+                font-size: 24px;
+                width: 32px;
+                height: 32px;
+            }
+            
+            .modal-body {
+                padding: 20px;
+            }
+            
+            .modal-footer {
+                padding: 20px;
+                border-top: 1px solid var(--border-light);
+                position: sticky;
+                bottom: 0;
+                background: var(--white);
+                z-index: 10;
+            }
+            
+            /* Mobile Upload Areas */
+            .file-upload-area {
+                padding: 30px 20px;
+                border-radius: 12px;
+                min-height: 120px;
+            }
+            
+            .file-upload-icon {
+                font-size: 32px;
+                margin-bottom: 10px;
+            }
+            
+            .file-upload-text {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            
+            .file-upload-hint {
+                font-size: 11px;
+            }
+            
+            /* Mobile Form Elements */
+            .form-group {
+                margin-bottom: 20px;
+            }
+            
+            .form-group label {
+                font-size: 14px;
+                margin-bottom: 8px;
+            }
+            
+            .form-group select,
+            .form-group input {
+                padding: 12px;
+                font-size: 14px;
+                border-radius: 8px;
+            }
+            
+            .file-list {
+                margin-top: 15px;
+            }
+            
+            .file-item {
+                padding: 10px;
+                font-size: 12px;
+                border-radius: 6px;
+            }
+            
+            .progress-bar {
+                height: 6px;
+                border-radius: 3px;
+                margin: 8px 0;
+            }
+            
+            .upload-results {
+                padding: 15px;
+                border-radius: 8px;
+                margin-top: 15px;
+            }
+        }
+
+        /* Touch-Friendly Interactions */
+        @media (max-width: 768px) {
+            .content-card,
+            .content-preview-card,
+            .nav-link,
+            .btn {
+                transition: all 0.2s ease;
+            }
+            
+            .content-card:active,
+            .content-preview-card:active,
+            .nav-link:active,
+            .btn:active {
+                transform: scale(0.98);
+                opacity: 0.8;
+            }
+            
+            /* Larger touch targets */
+            .btn {
+                min-height: 44px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            .nav-link {
+                min-height: 48px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            
+            /* Swipe indicators for horizontal scrolling */
+            .horizontal-scroll {
+                overflow-x: auto;
+                scroll-snap-type: x mandatory;
+                -webkit-overflow-scrolling: touch;
+            }
+            
+            .horizontal-scroll::-webkit-scrollbar {
+                height: 3px;
+            }
+            
+            .horizontal-scroll::-webkit-scrollbar-track {
+                background: var(--background-light);
+            }
+            
+            .horizontal-scroll::-webkit-scrollbar-thumb {
+                background: var(--border-light);
+                border-radius: 3px;
             }
         }
 
@@ -1385,6 +2266,131 @@
 
         .result-status {
             font-size: 16px;
+        }
+
+        /* ============================================ */
+        /* FEEDBACK TOAST & INTERACTIVE ELEMENTS */
+        /* ============================================ */
+        
+        .feedback-toast {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 600;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+            transform: translateX(400px);
+            opacity: 0;
+            transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 10000;
+            display: none;
+            align-items: center;
+            gap: 10px;
+            max-width: 300px;
+        }
+        
+        .feedback-toast.show {
+            transform: translateX(0);
+            opacity: 1;
+        }
+        
+        .feedback-toast.success {
+            background: linear-gradient(135deg, var(--success-green), #27ae60);
+        }
+        
+        .feedback-toast.error {
+            background: linear-gradient(135deg, var(--coral-pink), #e74c3c);
+        }
+        
+        .feedback-toast.info {
+            background: linear-gradient(135deg, var(--sage-green), #3498db);
+        }
+        
+        .feedback-toast::before {
+            content: '✓';
+            font-size: 18px;
+        }
+        
+        .feedback-toast.error::before {
+            content: '✕';
+        }
+        
+        .feedback-toast.info::before {
+            content: 'ℹ';
+        }
+
+        /* Click ripple effect */
+        .click-ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.3);
+            transform: scale(0);
+            animation: ripple 0.6s ease-out;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+
+        /* Enhanced hover states */
+        .hover-lift {
+            transform: translateY(-8px) scale(1.02);
+            box-shadow: 0 20px 40px var(--shadow-hover);
+        }
+        
+        .btn-pressed {
+            transform: scale(0.95);
+        }
+        
+        .input-focused {
+            transform: scale(1.02);
+            box-shadow: 0 0 0 3px rgba(139, 185, 139, 0.3);
+        }
+        
+        /* Scroll-triggered animations */
+        .animate-in {
+            animation: slideInUp 0.6s ease-out;
+        }
+        
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        /* Upload status animations */
+        .upload-uploading {
+            animation: pulse 1.5s infinite;
+        }
+        
+        .upload-success {
+            animation: successFlash 0.5s ease-out;
+        }
+        
+        .upload-error {
+            animation: errorShake 0.5s ease-out;
+        }
+        
+        @keyframes successFlash {
+            0%, 100% { background: transparent; }
+            50% { background: rgba(39, 174, 96, 0.2); }
+        }
+        
+        @keyframes errorShake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-5px); }
+            75% { transform: translateX(5px); }
         }
     </style>
 </head>
@@ -2623,6 +3629,230 @@
         }
 
         // ============================================
+        // MOBILE OPTIMIZATION FUNCTIONALITY
+        // ============================================
+
+        // Mobile viewport and touch handling
+        let isMobile = window.innerWidth <= 768;
+        let isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+
+        // Update mobile state on resize
+        window.addEventListener('resize', () => {
+            isMobile = window.innerWidth <= 768;
+            isTablet = window.innerWidth > 768 && window.innerWidth <= 1024;
+            handleResponsiveChanges();
+        });
+
+        // Handle responsive layout changes
+        function handleResponsiveChanges() {
+            if (isMobile) {
+                // Mobile-specific adjustments
+                document.body.classList.add('mobile-view');
+                document.body.classList.remove('tablet-view', 'desktop-view');
+                
+                // Optimize modals for mobile
+                optimizeModalsForMobile();
+                
+                // Enable touch gestures
+                enableTouchGestures();
+            } else if (isTablet) {
+                document.body.classList.add('tablet-view');
+                document.body.classList.remove('mobile-view', 'desktop-view');
+            } else {
+                document.body.classList.add('desktop-view');
+                document.body.classList.remove('mobile-view', 'tablet-view');
+            }
+        }
+
+        // Optimize modals for mobile devices
+        function optimizeModalsForMobile() {
+            if (!isMobile) return;
+
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                // Add mobile scroll handling
+                modal.addEventListener('touchmove', (e) => {
+                    const modalContent = modal.querySelector('.modal-content');
+                    if (modalContent && modalContent.contains(e.target)) {
+                        e.stopPropagation();
+                    }
+                });
+
+                // Prevent background scroll when modal is open
+                modal.addEventListener('scroll', (e) => {
+                    if (e.target === modal) {
+                        e.preventDefault();
+                    }
+                });
+            });
+        }
+
+        // Enable touch gestures for mobile
+        function enableTouchGestures() {
+            if (!isMobile) return;
+
+            // Add swipe-to-close for modals
+            const modals = document.querySelectorAll('.modal');
+            modals.forEach(modal => {
+                let startY = 0;
+                let startX = 0;
+
+                modal.addEventListener('touchstart', (e) => {
+                    startY = e.touches[0].clientY;
+                    startX = e.touches[0].clientX;
+                });
+
+                modal.addEventListener('touchend', (e) => {
+                    if (!e.changedTouches[0]) return;
+                    
+                    const endY = e.changedTouches[0].clientY;
+                    const endX = e.changedTouches[0].clientX;
+                    const deltaY = endY - startY;
+                    const deltaX = endX - startX;
+
+                    // Swipe down to close modal
+                    if (deltaY > 100 && Math.abs(deltaX) < 50) {
+                        const closeEvent = new Event('click');
+                        const closeButton = modal.querySelector('.close-button');
+                        if (closeButton && !modal.classList.contains('hidden')) {
+                            closeButton.dispatchEvent(closeEvent);
+                        }
+                    }
+                });
+            });
+
+            // Add pull-to-refresh hint (visual only)
+            addPullToRefreshHint();
+        }
+
+        // Add pull-to-refresh visual hint
+        function addPullToRefreshHint() {
+            let startY = 0;
+            let pullDistance = 0;
+            const threshold = 80;
+
+            document.addEventListener('touchstart', (e) => {
+                startY = e.touches[0].clientY;
+            });
+
+            document.addEventListener('touchmove', (e) => {
+                if (window.scrollY === 0) {
+                    pullDistance = e.touches[0].clientY - startY;
+                    
+                    if (pullDistance > 20 && pullDistance < threshold) {
+                        document.body.style.paddingTop = `${pullDistance * 0.3}px`;
+                        document.body.style.background = `linear-gradient(to bottom, #f0f9ff ${pullDistance}px, var(--background-light) ${pullDistance + 10}px)`;
+                    }
+                }
+            });
+
+            document.addEventListener('touchend', () => {
+                document.body.style.paddingTop = '0';
+                document.body.style.background = '';
+                pullDistance = 0;
+            });
+        }
+
+        // Mobile-friendly notification system
+        function showMobileToast(message, type = 'info', duration = 3000) {
+            if (!isMobile && document.querySelectorAll('.toast').length === 0) {
+                // Use regular alerts on desktop if no toast system
+                alert(message);
+                return;
+            }
+
+            const toast = document.createElement('div');
+            toast.className = `toast toast-${type}`;
+            toast.style.cssText = `
+                position: fixed;
+                top: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: ${type === 'error' ? '#ef4444' : type === 'success' ? '#10b981' : '#3b82f6'};
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                font-size: 14px;
+                font-weight: 500;
+                z-index: 10000;
+                box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+                opacity: 0;
+                animation: slideInToast 0.3s ease forwards;
+            `;
+            
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.animation = 'slideOutToast 0.3s ease forwards';
+                setTimeout(() => {
+                    document.body.removeChild(toast);
+                }, 300);
+            }, duration);
+        }
+
+        // Add toast animations to CSS
+        const toastStyles = document.createElement('style');
+        toastStyles.textContent = `
+            @keyframes slideInToast {
+                from { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+                to { opacity: 1; transform: translateX(-50%) translateY(0); }
+            }
+            @keyframes slideOutToast {
+                from { opacity: 1; transform: translateX(-50%) translateY(0); }
+                to { opacity: 0; transform: translateX(-50%) translateY(-20px); }
+            }
+        `;
+        document.head.appendChild(toastStyles);
+
+        // Mobile-optimized drag and drop for file uploads
+        function initializeMobileDragDrop() {
+            if (!isMobile) return;
+
+            const dropAreas = document.querySelectorAll('.file-upload-area');
+            dropAreas.forEach(area => {
+                // Convert drag events to touch events
+                area.addEventListener('touchstart', (e) => {
+                    area.classList.add('drag-over');
+                });
+
+                area.addEventListener('touchend', (e) => {
+                    area.classList.remove('drag-over');
+                    
+                    // Trigger file input on touch
+                    const input = area.parentElement.querySelector('input[type="file"]');
+                    if (input) {
+                        input.click();
+                    }
+                });
+            });
+        }
+
+        // Initialize mobile optimizations when page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            handleResponsiveChanges();
+            initializeMobileDragDrop();
+            
+            // Add mobile-specific body classes
+            if (isMobile) {
+                document.body.classList.add('mobile-device');
+            } else if (isTablet) {
+                document.body.classList.add('tablet-device');
+            }
+        });
+
+        // Mobile-friendly error handling
+        function handleMobileError(error, context = '') {
+            console.error(`Mobile Error (${context}):`, error);
+            
+            if (isMobile) {
+                showMobileToast(`Something went wrong. Please try again.`, 'error');
+            } else {
+                alert(`Error: ${error.message || 'Something went wrong'}`);
+            }
+        }
+
+        // ============================================
         // ENHANCED CONTENT FUNCTIONALITY
         // ============================================
 
@@ -2668,26 +3898,35 @@
             }
         }
 
-        // Generic content preview loader
+        // Enhanced content preview loader with skeleton and transitions
         async function loadContentPreviews(containerId, filters) {
             const container = document.getElementById(containerId);
             if (!container) return;
 
-            container.innerHTML = '<div class="loading-spinner">🔄 Loading content...</div>';
+            // Show skeleton loader
+            const skeleton = showSkeletonLoader(container, 3);
 
             try {
                 const queryParams = new URLSearchParams(filters);
                 const response = await fetch(`http://localhost:7071/api/get-content?${queryParams}`);
                 const data = await response.json();
 
+                // Simulate minimum loading time for smooth UX
+                await new Promise(resolve => setTimeout(resolve, 500));
+
+                // Remove skeleton loader
+                removeSkeletonLoader(container);
+
                 if (data.success && data.content) {
                     renderContentPreviews(container, data.content.all || []);
                 } else {
-                    container.innerHTML = '<div class="no-content">No content available yet.</div>';
+                    container.innerHTML = '<div class="no-content animate-in">No content available yet.</div>';
                 }
             } catch (error) {
                 console.error('Error loading content previews:', error);
-                container.innerHTML = '<div class="error-message">Failed to load content. Please try again.</div>';
+                removeSkeletonLoader(container);
+                container.innerHTML = '<div class="error-message animate-in">Failed to load content. Please try again.</div>';
+                showFeedback('Failed to load content', 'error', 3000);
             }
         }
 
@@ -2698,8 +3937,8 @@
                 return;
             }
 
-            const previewCards = contentItems.slice(0, 6).map(item => `
-                <div class="content-preview-card">
+            const previewCards = contentItems.slice(0, 6).map((item, index) => `
+                <div class="content-preview-card animate-in" style="animation-delay: ${index * 0.1}s">
                     <div class="preview-header">
                         <div class="preview-icon">${getContentIcon(item.type, item.subject)}</div>
                         <div>
@@ -2828,16 +4067,23 @@
         function updateProgressOverview(metrics) {
             if (!metrics) return;
 
-            document.getElementById('totalAssignments').textContent = metrics.totalAssignments || 0;
-            document.getElementById('completedAssignments').textContent = metrics.completedAssignments || 0;
-            document.getElementById('averageScore').textContent = metrics.averageScore ? `${metrics.averageScore}%` : '-';
+            const totalEl = document.getElementById('totalAssignments');
+            const completedEl = document.getElementById('completedAssignments');
+            const averageEl = document.getElementById('averageScore');
+            const trendEl = document.getElementById('improvementTrend');
+
+            if (totalEl) totalEl.textContent = metrics.totalAssignments || 0;
+            if (completedEl) completedEl.textContent = metrics.completedAssignments || 0;
+            if (averageEl) averageEl.textContent = metrics.averageScore ? `${metrics.averageScore}%` : '-';
             
-            const trendEmojis = {
-                'improving': '📈',
-                'declining': '📉',
-                'neutral': '📊'
-            };
-            document.getElementById('improvementTrend').textContent = trendEmojis[metrics.improvementTrend] || '📊';
+            if (trendEl) {
+                const trendEmojis = {
+                    'improving': '📈',
+                    'declining': '📉',
+                    'neutral': '📊'
+                };
+                trendEl.textContent = trendEmojis[metrics.improvementTrend] || '📊';
+            }
         }
 
         // Load student homework
@@ -2983,7 +4229,11 @@
         function acceptGDPRConsent() {
             gdprConsent.dataProcessing = true;
             gdprConsent.progressTracking = true;
-            document.getElementById('gdprConsentBanner').classList.add('hidden');
+            
+            const consentBanner = document.getElementById('gdprConsentBanner');
+            if (consentBanner) {
+                consentBanner.classList.add('hidden');
+            }
             
             // Save consent to database
             saveGDPRConsent();
@@ -2996,15 +4246,22 @@
         function declineGDPRConsent() {
             gdprConsent.dataProcessing = false;
             gdprConsent.progressTracking = false;
-            document.getElementById('gdprConsentBanner').classList.add('hidden');
+            
+            const consentBanner = document.getElementById('gdprConsentBanner');
+            if (consentBanner) {
+                consentBanner.classList.add('hidden');
+            }
             
             // Show limited functionality message
-            document.getElementById('progressOverview').innerHTML = `
-                <div class="no-content">
-                    <h4>🔒 Privacy Mode Active</h4>
-                    <p>Progress tracking is disabled. You can still access learning materials.</p>
-                </div>
-            `;
+            const progressOverview = document.getElementById('progressOverview');
+            if (progressOverview) {
+                progressOverview.innerHTML = `
+                    <div class="no-content">
+                        <h4>🔒 Privacy Mode Active</h4>
+                        <p>Progress tracking is disabled. You can still access learning materials.</p>
+                    </div>
+                `;
+            }
         }
 
         // Save GDPR consent
@@ -3025,8 +4282,11 @@
 
         // Generate parent access code
         function generateParentAccessCode() {
-            const accessCode = Math.random().toString(36).substring(2, 10).toUpperCase();
-            document.getElementById('parentAccessCode').textContent = accessCode;
+            const parentAccessCodeEl = document.getElementById('parentAccessCode');
+            if (parentAccessCodeEl) {
+                const accessCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+                parentAccessCodeEl.textContent = accessCode;
+            }
         }
 
         // Homework submission functions
@@ -3047,12 +4307,17 @@
 
         // Initialize student portal when page loads
         function initializeStudentPortal() {
-            // Check GDPR consent status
-            if (!gdprConsent.dataProcessing) {
-                document.getElementById('gdprConsentBanner').classList.remove('hidden');
-            } else {
-                loadStudentProgress();
-                generateParentAccessCode();
+            try {
+                // Check GDPR consent status
+                const consentBanner = document.getElementById('gdprConsentBanner');
+                if (!gdprConsent.dataProcessing && consentBanner) {
+                    consentBanner.classList.remove('hidden');
+                } else {
+                    loadStudentProgress();
+                    generateParentAccessCode();
+                }
+            } catch (error) {
+                console.error('Error initializing student portal:', error);
             }
         }
 
@@ -3149,8 +4414,7 @@
                 yearGroupSelect.value = selectedClub;
             }
             
-            modal.classList.remove('hidden');
-            modal.style.display = 'flex';
+            showModalWithAnimation(modal);
             document.body.style.overflow = 'hidden';
         }
 
@@ -3163,10 +4427,10 @@
                 return;
             }
             
-            // Force hide the modal
-            modal.classList.add('hidden');
-            modal.style.display = 'none';
-            document.body.style.overflow = 'auto';
+            // Hide modal with animation
+            hideModalWithAnimation(modal, () => {
+                document.body.style.overflow = 'auto';
+            });
             
             // Reset global variables
             selectedFiles = [];
@@ -3361,12 +4625,18 @@
             const yearGroup = document.getElementById('yearGroup').value;
             const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
             
-            // Set upload state
-            uploadBtn.disabled = true;
-            uploadBtnText.textContent = 'Uploading...';
-            uploadLoader.classList.remove('hidden');
+            // Set enhanced loading state
+            setButtonLoading(uploadBtn, true, 'Upload');
             uploadProgress.classList.remove('hidden');
             uploadResults.classList.add('hidden');
+            
+            // Add visual feedback for files being uploaded
+            selectedFiles.forEach((file, index) => {
+                const fileElements = document.querySelectorAll('.file-item');
+                if (fileElements[index]) {
+                    animateFileUpload(fileElements[index], 'uploading');
+                }
+            });
             
             // Add form fields
             formData.append('isAdmin', userIsAdmin.toString());
@@ -3425,10 +4695,18 @@
                     error: 'Upload failed: ' + error.message
                 });
             } finally {
-                // Reset button state
-                uploadBtn.disabled = false;
-                uploadBtnText.textContent = 'Upload';
-                uploadLoader.classList.add('hidden');
+                // Reset enhanced button state
+                setButtonLoading(uploadBtn, false);
+                
+                // Update file animations based on result
+                setTimeout(() => {
+                    selectedFiles.forEach((file, index) => {
+                        const fileElements = document.querySelectorAll('.file-item');
+                        if (fileElements[index]) {
+                            animateFileUpload(fileElements[index], 'success');
+                        }
+                    });
+                }, 100);
             }
         }
 
@@ -3465,10 +4743,10 @@
                     ` : ''}
                 `;
                 
-                // Auto-close after 3 seconds
+                // Show success feedback and auto-close
+                showFeedback('Files uploaded successfully!', 'success', 4000);
                 setTimeout(() => {
                     hideBulkUploadForm();
-                    showStatus('Files uploaded successfully!', 'success');
                 }, 3000);
                 
             } else {
@@ -3478,6 +4756,8 @@
                     <p>${result.error}</p>
                     ${result.details ? `<p><small>${result.details}</small></p>` : ''}
                 `;
+                // Show error feedback
+                showFeedback('Upload failed: ' + result.error, 'error', 5000);
             }
         }
 
@@ -3530,6 +4810,246 @@
         };
 
         // ============================================
+        // MICRO-INTERACTIONS & ANIMATIONS
+        // ============================================
+        
+        // Enhanced success/error feedback system
+        function showFeedback(message, type = 'success', duration = 3000, element = null) {
+            // Create or update feedback element
+            let feedback = element || document.getElementById('globalFeedback');
+            if (!feedback) {
+                feedback = document.createElement('div');
+                feedback.id = 'globalFeedback';
+                feedback.className = 'feedback-toast';
+                document.body.appendChild(feedback);
+            }
+            
+            // Set content and type
+            feedback.textContent = message;
+            feedback.className = `feedback-toast ${type}`;
+            
+            // Trigger animation
+            feedback.style.display = 'flex';
+            setTimeout(() => feedback.classList.add('show'), 10);
+            
+            // Auto-hide
+            setTimeout(() => {
+                feedback.classList.remove('show');
+                setTimeout(() => {
+                    feedback.style.display = 'none';
+                    feedback.className = 'feedback-toast';
+                }, 300);
+            }, duration);
+        }
+        
+        // Enhanced button loading state
+        function setButtonLoading(button, loading = true, originalText = null) {
+            if (!button) return;
+            
+            if (loading) {
+                button.dataset.originalText = originalText || button.textContent;
+                button.innerHTML = '<span class="btn-spinner"></span> Loading...';
+                button.disabled = true;
+                button.classList.add('loading');
+            } else {
+                button.innerHTML = button.dataset.originalText || 'Submit';
+                button.disabled = false;
+                button.classList.remove('loading');
+                delete button.dataset.originalText;
+            }
+        }
+        
+        // Enhanced progress indicator
+        function showProgressIndicator(container, message = 'Processing...') {
+            if (!container) return;
+            
+            const progress = document.createElement('div');
+            progress.className = 'progress-indicator active';
+            progress.innerHTML = `
+                <div class="progress-spinner"></div>
+                <div class="progress-text">${message}</div>
+            `;
+            
+            container.appendChild(progress);
+            return progress;
+        }
+        
+        function updateProgressIndicator(progressElement, percentage, message) {
+            if (!progressElement) return;
+            
+            const textEl = progressElement.querySelector('.progress-text');
+            if (textEl) textEl.textContent = message;
+            
+            // Update any progress bars
+            const progressBar = progressElement.querySelector('.progress-fill');
+            if (progressBar) {
+                progressBar.style.width = `${percentage}%`;
+            }
+        }
+        
+        // Enhanced modal animations
+        function showModalWithAnimation(modal, callback = null) {
+            if (!modal) return;
+            
+            modal.style.display = 'flex';
+            modal.classList.remove('hidden');
+            
+            // Trigger entrance animation
+            requestAnimationFrame(() => {
+                modal.classList.add('modal-enter');
+                if (callback) callback();
+            });
+        }
+        
+        function hideModalWithAnimation(modal, callback = null) {
+            if (!modal) return;
+            
+            modal.classList.add('modal-exit');
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+                modal.classList.add('hidden');
+                modal.classList.remove('modal-enter', 'modal-exit');
+                if (callback) callback();
+            }, 300);
+        }
+        
+        // Content loading with skeleton animation
+        function showSkeletonLoader(container, count = 3) {
+            if (!container) return;
+            
+            const skeleton = document.createElement('div');
+            skeleton.className = 'skeleton-container';
+            
+            for (let i = 0; i < count; i++) {
+                const item = document.createElement('div');
+                item.className = 'skeleton-item';
+                skeleton.appendChild(item);
+            }
+            
+            container.appendChild(skeleton);
+            return skeleton;
+        }
+        
+        function removeSkeletonLoader(container) {
+            if (!container) return;
+            
+            const skeleton = container.querySelector('.skeleton-container');
+            if (skeleton) {
+                skeleton.classList.add('fade-out');
+                setTimeout(() => skeleton.remove(), 300);
+            }
+        }
+        
+        // Enhanced card interactions
+        function initializeCardAnimations() {
+            const cards = document.querySelectorAll('.content-card, .tool-card, .lesson-card');
+            
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.classList.add('hover-lift');
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    card.classList.remove('hover-lift');
+                });
+                
+                card.addEventListener('click', (e) => {
+                    // Add click ripple effect
+                    const ripple = document.createElement('div');
+                    ripple.className = 'click-ripple';
+                    
+                    const rect = card.getBoundingClientRect();
+                    const size = Math.max(rect.width, rect.height);
+                    const x = e.clientX - rect.left - size / 2;
+                    const y = e.clientY - rect.top - size / 2;
+                    
+                    ripple.style.width = ripple.style.height = size + 'px';
+                    ripple.style.left = x + 'px';
+                    ripple.style.top = y + 'px';
+                    
+                    card.appendChild(ripple);
+                    
+                    setTimeout(() => ripple.remove(), 600);
+                });
+            });
+        }
+        
+        // Enhanced form interactions
+        function initializeFormAnimations() {
+            const inputs = document.querySelectorAll('input, textarea, select');
+            
+            inputs.forEach(input => {
+                input.addEventListener('focus', () => {
+                    input.parentElement?.classList.add('input-focused');
+                });
+                
+                input.addEventListener('blur', () => {
+                    input.parentElement?.classList.remove('input-focused');
+                    if (input.value) {
+                        input.parentElement?.classList.add('input-has-value');
+                    } else {
+                        input.parentElement?.classList.remove('input-has-value');
+                    }
+                });
+            });
+        }
+        
+        // File upload animations
+        function animateFileUpload(fileElement, status = 'uploading') {
+            if (!fileElement) return;
+            
+            fileElement.classList.remove('upload-success', 'upload-error', 'upload-uploading');
+            fileElement.classList.add(`upload-${status}`);
+            
+            if (status === 'success') {
+                setTimeout(() => {
+                    fileElement.classList.add('upload-complete');
+                }, 100);
+            }
+        }
+        
+        // Initialize all micro-interactions
+        function initializeMicroInteractions() {
+            console.log('Initializing micro-interactions...');
+            
+            // Initialize card animations
+            initializeCardAnimations();
+            
+            // Initialize form animations
+            initializeFormAnimations();
+            
+            // Enhanced button interactions
+            const buttons = document.querySelectorAll('.btn, .tool-btn');
+            buttons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    btn.classList.add('btn-pressed');
+                    setTimeout(() => btn.classList.remove('btn-pressed'), 150);
+                });
+            });
+            
+            // Scroll-triggered animations
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+            
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('animate-in');
+                    }
+                });
+            }, observerOptions);
+            
+            // Observe elements for scroll animations
+            const animateElements = document.querySelectorAll('.content-card, .tool-card, .section-header');
+            animateElements.forEach(el => observer.observe(el));
+            
+            console.log('Micro-interactions initialized successfully');
+        }
+        
+        // ============================================
         // INITIALIZATION
         // ============================================
         
@@ -3564,6 +5084,11 @@
             }
             
             render();
+            
+            // Initialize micro-interactions after DOM is ready
+            setTimeout(() => {
+                initializeMicroInteractions();
+            }, 100);
         });
 
         // Prevent context menu
