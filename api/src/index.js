@@ -19,6 +19,7 @@ const stripeGetSubscription = require('./functions/stripe-get-subscription');
 const stripeCancelSubscription = require('./functions/stripe-cancel-subscription');
 const stripeUpdatePaymentMethod = require('./functions/stripe-update-payment-method');
 const stripeWebhook = require('./functions/stripe-webhook');
+const studentProgress = require('./functions/student-progress');
 
 // Register existing functions
 app.http('checkuserstatus', {
@@ -118,6 +119,12 @@ app.http('download', {
     handler: download
 });
 
+app.http('student-progress', {
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: studentProgress
+});
+
 // Test endpoint
 app.http('test', {
     methods: ['GET'],
@@ -134,7 +141,7 @@ app.http('test', {
                     'onusersignup', 'lessons', 'upload', 'bulk-upload', 'get-content', 'trackview',
                     'stripe-create-customer', 'stripe-create-subscription',
                     'stripe-get-subscription', 'stripe-cancel-subscription',
-                    'stripe-update-payment-method', 'stripe-webhook'
+                    'stripe-update-payment-method', 'stripe-webhook', 'student-progress'
                 ]
             }
         };

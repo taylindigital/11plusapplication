@@ -962,6 +962,168 @@
             50% { opacity: 0.5; }
         }
 
+        /* Student Portal & GDPR Compliance Styles */
+        .privacy-badge {
+            background: var(--grass-green);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .gdpr-consent-banner {
+            background: #f8f9ff;
+            border: 2px solid var(--primary-purple);
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .consent-content {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .consent-icon {
+            font-size: 32px;
+            flex-shrink: 0;
+        }
+
+        .consent-text h4 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 18px;
+            color: var(--text-dark);
+            margin: 0 0 8px 0;
+        }
+
+        .consent-text p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .consent-actions {
+            display: flex;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .progress-overview {
+            margin-bottom: 30px;
+        }
+
+        .homework-submission-area {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px dashed var(--border-light);
+            text-align: center;
+        }
+
+        .parent-access-card {
+            background: var(--white);
+            border-radius: 16px;
+            padding: 25px;
+            box-shadow: 0 4px 15px var(--shadow);
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+
+        .access-info h4,
+        .privacy-info h4 {
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 0 0 10px 0;
+        }
+
+        .access-info p,
+        .privacy-info p {
+            font-size: 14px;
+            color: var(--text-light);
+            margin: 0 0 15px 0;
+            line-height: 1.5;
+        }
+
+        .access-code {
+            background: var(--background-light);
+            border: 2px solid var(--primary-purple);
+            border-radius: 12px;
+            padding: 15px;
+            font-family: 'Courier New', monospace;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--primary-purple);
+            text-align: center;
+            letter-spacing: 2px;
+        }
+
+        .privacy-info a {
+            color: var(--primary-purple);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .privacy-info a:hover {
+            text-decoration: underline;
+        }
+
+        /* Progress Chart Styles */
+        .progress-chart {
+            background: var(--white);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .chart-title {
+            font-family: 'Fredoka One', cursive;
+            font-size: 16px;
+            color: var(--text-dark);
+            margin: 0;
+        }
+
+        .chart-period {
+            font-size: 12px;
+            color: var(--text-light);
+            background: var(--background-light);
+            padding: 4px 8px;
+            border-radius: 6px;
+        }
+
+        /* Responsive Design for Student Portal */
+        @media (max-width: 768px) {
+            .consent-content {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .parent-access-card {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .consent-actions {
+                justify-content: center;
+            }
+        }
+
         .loading {
             display: inline-block;
             width: 20px;
@@ -1649,6 +1811,7 @@
                 case 'extra-resources':
                     return renderExtraResources();
                 case 'student-area':
+                    setTimeout(() => initializeStudentPortal(), 100); // Initialize after DOM renders
                     return renderStudentArea();
                 case 'subscription':
                     return renderSubscription();
@@ -2103,75 +2266,156 @@
         <div class="content-area">
             <div class="content-header">
                 <div>
-                    <h1 class="content-title">Student Area</h1>
-                    <p class="content-subtitle">Weekly homework assignments</p>
+                    <h1 class="content-title">Student Progress Portal</h1>
+                    <p class="content-subtitle">GDPR-compliant learning progress tracking</p>
+                </div>
+                <div class="privacy-badge">
+                    🔒 Privacy Protected
                 </div>
             </div>
             
-            <div class="coming-soon">
-                <div class="coming-soon-icon">📝</div>
-                <h3>Weekly Homework Coming Soon!</h3>
-                <p>
-                    Access weekly homework assignments designed to reinforce your child's 
-                    learning and build confidence with 11+ preparation. Each week will have 
-                    targeted exercises aligned with the lesson plans.
-                </p>
+            <!-- GDPR Consent Banner -->
+            <div id="gdprConsentBanner" class="gdpr-consent-banner hidden">
+                <div class="consent-content">
+                    <div class="consent-icon">🔒</div>
+                    <div class="consent-text">
+                        <h4>Data Privacy Consent</h4>
+                        <p>We need your consent to track and display your learning progress. Your data is secure and will only be used to help improve your education.</p>
+                    </div>
+                    <div class="consent-actions">
+                        <button class="btn btn-sm" onclick="acceptGDPRConsent()">Accept</button>
+                        <button class="btn btn-sm btn-secondary" onclick="declineGDPRConsent()">Decline</button>
+                    </div>
+                </div>
             </div>
             
+            <!-- Progress Overview -->
+            <div id="progressOverview" class="progress-overview">
+                <div class="upload-stats">
+                    <div class="stat-item">
+                        <div class="stat-number" id="totalAssignments">-</div>
+                        <div class="stat-label">Total Assignments</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="completedAssignments">-</div>
+                        <div class="stat-label">Completed</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="averageScore">-</div>
+                        <div class="stat-label">Average Score</div>
+                    </div>
+                    <div class="stat-item">
+                        <div class="stat-number" id="improvementTrend">📊</div>
+                        <div class="stat-label">Trend</div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Main Content Grid -->
             <div class="content-grid">
-                <div class="content-card enhanced" style="border-left: 5px solid var(--sunny-yellow);">
-                    <span class="card-icon" style="color: var(--sunny-yellow);">📝</span>
-                    <h3 class="card-title">Weekly Homework</h3>
-                    <p class="card-description">Access homework assignments for weeks 1-44</p>
+                <div class="content-card enhanced" style="border-left: 5px solid var(--grass-green);">
+                    <span class="card-icon" style="color: var(--grass-green);">📝</span>
+                    <h3 class="card-title">My Homework</h3>
+                    <p class="card-description">
+                        Access your weekly assignments, submit completed work, and track your progress.
+                    </p>
                     <div class="card-meta">
-                        <span>📅 Weekly Updates</span>
-                        <span>📊 44 Weeks</span>
+                        <span>📅 Weekly Tasks</span>
+                        <span>⏰ Due Dates</span>
                     </div>
                     <div class="card-actions">
-                        <button class="btn btn-sm" onclick="loadWeeklyContent('homework')">
-                            📖 View Assignments
+                        <button class="btn btn-sm" onclick="loadStudentHomework()">
+                            📚 View Homework
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="content-card enhanced" style="border-left: 5px solid var(--primary-purple);">
+                    <span class="card-icon" style="color: var(--primary-purple);">📊</span>
+                    <h3 class="card-title">Progress Reports</h3>
+                    <p class="card-description">
+                        View detailed progress reports, test scores, and improvement areas identified by your teacher.
+                    </p>
+                    <div class="card-meta">
+                        <span>📈 Performance</span>
+                        <span>🎯 Goals</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-sm" onclick="loadProgressReports()">
+                            📊 View Progress
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="content-card enhanced" style="border-left: 5px solid var(--bright-orange);">
+                    <span class="card-icon" style="color: var(--bright-orange);">🏆</span>
+                    <h3 class="card-title">Achievements</h3>
+                    <p class="card-description">
+                        Celebrate your learning milestones and achievements in your 11+ preparation journey.
+                    </p>
+                    <div class="card-meta">
+                        <span>⭐ Milestones</span>
+                        <span>🎖️ Badges</span>
+                    </div>
+                    <div class="card-actions">
+                        <button class="btn btn-sm" onclick="loadAchievements()">
+                            🏆 View Achievements
                         </button>
                     </div>
                 </div>
             </div>
             
-            <!-- Enhanced Content Preview Section -->
+            <!-- Homework Submission Section -->
             <div class="enhanced-upload-section">
                 <div class="upload-section-header">
-                    <div class="upload-section-icon" style="color: var(--sunny-yellow);">📚</div>
+                    <div class="upload-section-icon" style="color: var(--sky-blue);">📤</div>
                     <div class="upload-section-info">
-                        <h3>Recent Content</h3>
-                        <p>Latest homework assignments and materials</p>
+                        <h3>Homework Submission</h3>
+                        <p>Submit your completed assignments for teacher review</p>
                     </div>
                 </div>
                 
-                <div class="upload-stats">
-                    <div class="stat-item">
-                        <div class="stat-number">12</div>
-                        <div class="stat-label">This Week</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">156</div>
-                        <div class="stat-label">Total Items</div>
-                    </div>
-                    <div class="stat-item">
-                        <div class="stat-number">8</div>
-                        <div class="stat-label">New Today</div>
-                    </div>
-                </div>
-                
-                <div id="contentPreviewArea" class="content-preview-grid">
-                    <!-- Content previews will be loaded here -->
+                <div id="homeworkSubmission" class="homework-submission-area">
+                    <!-- Homework submission form will be loaded here -->
                 </div>
             </div>
             
+            <!-- Recent Activity -->
+            <div class="enhanced-upload-section">
+                <div class="upload-section-header">
+                    <div class="upload-section-icon" style="color: var(--coral-pink);">📋</div>
+                    <div class="upload-section-info">
+                        <h3>Recent Activity</h3>
+                        <p>Your latest homework submissions and teacher feedback</p>
+                    </div>
+                </div>
+                
+                <div id="recentActivity" class="content-preview-grid">
+                    <!-- Recent activity will be loaded here -->
+                </div>
+            </div>
+            
+            <!-- Parent Access Section (Year 5 only) -->
             ${selectedClub === 'year5' ? `
-                <div class="content-grid" style="margin-top: 30px;">
-                    <div class="content-card" style="border-left: 5px solid var(--primary-purple);">
-                        <span class="card-icon" style="color: var(--primary-purple);">📊</span>
-                        <h3 class="card-title">Progress Tracking</h3>
-                        <p class="card-description">View test scores and academic progress</p>
-                        <div class="card-meta"><span>🔒 GDPR Compliant</span></div>
+                <div class="enhanced-upload-section">
+                    <div class="upload-section-header">
+                        <div class="upload-section-icon" style="color: var(--primary-purple);">👨‍👩‍👧‍👦</div>
+                        <div class="upload-section-info">
+                            <h3>Parent Dashboard Access</h3>
+                            <p>Parents can view your progress with secure access</p>
+                        </div>
+                    </div>
+                    
+                    <div class="parent-access-card">
+                        <div class="access-info">
+                            <h4>🔐 Parent Access Code</h4>
+                            <p>Share this secure code with your parents so they can view your progress:</p>
+                            <div class="access-code" id="parentAccessCode">Loading...</div>
+                        </div>
+                        <div class="privacy-info">
+                            <h4>🛡️ Your Privacy Rights</h4>
+                            <p>You can control what information your parents can see. <a href="#" onclick="openPrivacySettings()">Manage privacy settings</a></p>
+                        </div>
                     </div>
                 </div>
             ` : ''}
@@ -2385,7 +2629,6 @@
         // Load content previews for different sections
         async function loadWeeklyContent(contentType) {
             console.log('Loading weekly content:', contentType);
-            alert('Weekly content loading: ' + contentType);
             try {
                 await loadContentPreviews('contentPreviewArea', {
                     type: contentType,
@@ -2394,13 +2637,11 @@
                 });
             } catch (error) {
                 console.error('Error loading weekly content:', error);
-                alert('Error: ' + error.message);
             }
         }
 
         async function loadMathsTopic(topic) {
             console.log('Loading maths topic:', topic);
-            alert('Maths topic loading: ' + topic);
             try {
                 await loadContentPreviews('mathsContentPreview', {
                     type: 'lesson-material',
@@ -2410,13 +2651,11 @@
                 });
             } catch (error) {
                 console.error('Error loading maths topic:', error);
-                alert('Maths Error: ' + error.message);
             }
         }
 
         async function loadEnglishTopic(topic) {
             console.log('Loading english topic:', topic);
-            alert('English topic loading: ' + topic);
             try {
                 await loadContentPreviews('englishContentPreview', {
                     type: 'lesson-material',
@@ -2426,7 +2665,6 @@
                 });
             } catch (error) {
                 console.error('Error loading english topic:', error);
-                alert('English Error: ' + error.message);
             }
         }
 
@@ -2439,7 +2677,7 @@
 
             try {
                 const queryParams = new URLSearchParams(filters);
-                const response = await fetch(`/api/get-content?${queryParams}`);
+                const response = await fetch(`http://localhost:7071/api/get-content?${queryParams}`);
                 const data = await response.json();
 
                 if (data.success && data.content) {
@@ -2525,7 +2763,7 @@
         async function downloadContent(contentId) {
             console.log('Downloading content:', contentId);
             try {
-                const response = await fetch('/api/download', {
+                const response = await fetch('http://localhost:7071/api/download', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ contentId })
@@ -2545,6 +2783,276 @@
             } catch (error) {
                 console.error('Download error:', error);
                 alert('Download failed. Please try again.');
+            }
+        }
+
+        // ============================================
+        // STUDENT PORTAL & GDPR FUNCTIONALITY
+        // ============================================
+
+        // GDPR Consent Management
+        let gdprConsent = {
+            dataProcessing: false,
+            progressTracking: false,
+            parentAccess: false
+        };
+
+        // Load student progress data
+        async function loadStudentProgress() {
+            try {
+                const response = await fetch('http://localhost:7071/api/student-progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'get-progress',
+                        userEmail: userEmail,
+                        isStudent: true
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    updateProgressOverview(data.metrics);
+                    return data.progress;
+                } else {
+                    console.error('Failed to load progress:', data.error);
+                    return [];
+                }
+            } catch (error) {
+                console.error('Error loading student progress:', error);
+                return [];
+            }
+        }
+
+        // Update progress overview statistics
+        function updateProgressOverview(metrics) {
+            if (!metrics) return;
+
+            document.getElementById('totalAssignments').textContent = metrics.totalAssignments || 0;
+            document.getElementById('completedAssignments').textContent = metrics.completedAssignments || 0;
+            document.getElementById('averageScore').textContent = metrics.averageScore ? `${metrics.averageScore}%` : '-';
+            
+            const trendEmojis = {
+                'improving': '📈',
+                'declining': '📉',
+                'neutral': '📊'
+            };
+            document.getElementById('improvementTrend').textContent = trendEmojis[metrics.improvementTrend] || '📊';
+        }
+
+        // Load student homework
+        async function loadStudentHomework() {
+            console.log('Loading student homework...');
+            try {
+                const response = await fetch('http://localhost:7071/api/student-progress', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'get-homework',
+                        userEmail: userEmail,
+                        isStudent: true
+                    })
+                });
+
+                const data = await response.json();
+                if (data.success) {
+                    displayHomeworkList(data.homework);
+                } else {
+                    console.error('Failed to load homework:', data.error);
+                }
+            } catch (error) {
+                console.error('Error loading homework:', error);
+            }
+        }
+
+        // Display homework list
+        function displayHomeworkList(homework) {
+            const submissionArea = document.getElementById('homeworkSubmission');
+            if (!homework.length) {
+                submissionArea.innerHTML = `
+                    <div class="no-content">
+                        <h4>No homework assignments yet</h4>
+                        <p>Your teacher will assign homework soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const homeworkCards = homework.map(hw => `
+                <div class="content-preview-card">
+                    <div class="preview-header">
+                        <div class="preview-icon">📝</div>
+                        <div>
+                            <h4 class="preview-title">${hw.title || 'Assignment'}</h4>
+                            <p class="preview-subtitle">Due: ${new Date(hw.dueDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <p class="preview-description">${hw.description || 'No description'}</p>
+                        <div class="preview-metadata">
+                            <span class="metadata-tag">${hw.subject || 'General'}</span>
+                            <span class="metadata-tag">${hw.status || 'Pending'}</span>
+                        </div>
+                    </div>
+                    <div class="preview-actions">
+                        <button class="btn btn-xs" onclick="submitHomework('${hw.id}')">📤 Submit</button>
+                        <button class="btn btn-xs btn-secondary" onclick="viewHomework('${hw.id}')">👁️ View</button>
+                    </div>
+                </div>
+            `).join('');
+
+            submissionArea.innerHTML = homeworkCards;
+        }
+
+        // Load progress reports
+        async function loadProgressReports() {
+            console.log('Loading progress reports...');
+            const progress = await loadStudentProgress();
+            displayProgressReports(progress);
+        }
+
+        // Display progress reports
+        function displayProgressReports(progress) {
+            const activityArea = document.getElementById('recentActivity');
+            if (!progress.length) {
+                activityArea.innerHTML = `
+                    <div class="no-content">
+                        <h4>No progress reports yet</h4>
+                        <p>Your teacher will add progress updates soon!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const reportCards = progress.slice(0, 6).map(report => `
+                <div class="content-preview-card">
+                    <div class="preview-header">
+                        <div class="preview-icon">📊</div>
+                        <div>
+                            <h4 class="preview-title">${report.title || 'Progress Update'}</h4>
+                            <p class="preview-subtitle">${new Date(report.createdDate).toLocaleDateString()}</p>
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <p class="preview-description">${report.feedback || 'No feedback yet'}</p>
+                        <div class="preview-metadata">
+                            ${report.score ? `<span class="metadata-tag">Score: ${report.score}%</span>` : ''}
+                            <span class="metadata-tag">${report.subject || 'General'}</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            activityArea.innerHTML = reportCards;
+        }
+
+        // Load achievements
+        async function loadAchievements() {
+            console.log('Loading achievements...');
+            // Mock achievements for now
+            const achievements = [
+                { title: 'First Homework', description: 'Completed your first assignment!', icon: '🏆' },
+                { title: 'Math Master', description: 'Scored 90%+ on 5 math assignments', icon: '🔢' },
+                { title: 'Writing Wizard', description: 'Excellent creative writing skills', icon: '✍️' }
+            ];
+            displayAchievements(achievements);
+        }
+
+        // Display achievements
+        function displayAchievements(achievements) {
+            const activityArea = document.getElementById('recentActivity');
+            const achievementCards = achievements.map(achievement => `
+                <div class="content-preview-card" style="border-left-color: var(--bright-orange);">
+                    <div class="preview-header">
+                        <div class="preview-icon">${achievement.icon}</div>
+                        <div>
+                            <h4 class="preview-title">${achievement.title}</h4>
+                            <p class="preview-subtitle">Achievement Unlocked!</p>
+                        </div>
+                    </div>
+                    <div class="preview-content">
+                        <p class="preview-description">${achievement.description}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            activityArea.innerHTML = achievementCards;
+        }
+
+        // GDPR Consent Functions
+        function acceptGDPRConsent() {
+            gdprConsent.dataProcessing = true;
+            gdprConsent.progressTracking = true;
+            document.getElementById('gdprConsentBanner').classList.add('hidden');
+            
+            // Save consent to database
+            saveGDPRConsent();
+            
+            // Load student data
+            loadStudentProgress();
+            generateParentAccessCode();
+        }
+
+        function declineGDPRConsent() {
+            gdprConsent.dataProcessing = false;
+            gdprConsent.progressTracking = false;
+            document.getElementById('gdprConsentBanner').classList.add('hidden');
+            
+            // Show limited functionality message
+            document.getElementById('progressOverview').innerHTML = `
+                <div class="no-content">
+                    <h4>🔒 Privacy Mode Active</h4>
+                    <p>Progress tracking is disabled. You can still access learning materials.</p>
+                </div>
+            `;
+        }
+
+        // Save GDPR consent
+        async function saveGDPRConsent() {
+            try {
+                await fetch('http://localhost:7071/api/checkuserstatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: userEmail,
+                        gdprConsent: gdprConsent
+                    })
+                });
+            } catch (error) {
+                console.error('Error saving GDPR consent:', error);
+            }
+        }
+
+        // Generate parent access code
+        function generateParentAccessCode() {
+            const accessCode = Math.random().toString(36).substring(2, 10).toUpperCase();
+            document.getElementById('parentAccessCode').textContent = accessCode;
+        }
+
+        // Homework submission functions
+        async function submitHomework(homeworkId) {
+            console.log('Submitting homework:', homeworkId);
+            alert('Homework submission feature coming soon!');
+        }
+
+        function viewHomework(homeworkId) {
+            console.log('Viewing homework:', homeworkId);
+            alert('Homework viewer coming soon!');
+        }
+
+        // Privacy settings
+        function openPrivacySettings() {
+            alert('Privacy settings panel coming soon!');
+        }
+
+        // Initialize student portal when page loads
+        function initializeStudentPortal() {
+            // Check GDPR consent status
+            if (!gdprConsent.dataProcessing) {
+                document.getElementById('gdprConsentBanner').classList.remove('hidden');
+            } else {
+                loadStudentProgress();
+                generateParentAccessCode();
             }
         }
 
