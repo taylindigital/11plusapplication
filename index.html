@@ -2385,6 +2385,7 @@
         // Load content previews for different sections
         async function loadWeeklyContent(contentType) {
             console.log('Loading weekly content:', contentType);
+            alert('Weekly content loading: ' + contentType);
             try {
                 await loadContentPreviews('contentPreviewArea', {
                     type: contentType,
@@ -2393,11 +2394,13 @@
                 });
             } catch (error) {
                 console.error('Error loading weekly content:', error);
+                alert('Error: ' + error.message);
             }
         }
 
         async function loadMathsTopic(topic) {
             console.log('Loading maths topic:', topic);
+            alert('Maths topic loading: ' + topic);
             try {
                 await loadContentPreviews('mathsContentPreview', {
                     type: 'lesson-material',
@@ -2407,11 +2410,13 @@
                 });
             } catch (error) {
                 console.error('Error loading maths topic:', error);
+                alert('Maths Error: ' + error.message);
             }
         }
 
         async function loadEnglishTopic(topic) {
             console.log('Loading english topic:', topic);
+            alert('English topic loading: ' + topic);
             try {
                 await loadContentPreviews('englishContentPreview', {
                     type: 'lesson-material',
@@ -2421,6 +2426,7 @@
                 });
             } catch (error) {
                 console.error('Error loading english topic:', error);
+                alert('English Error: ' + error.message);
             }
         }
 
