@@ -745,6 +745,235 @@
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        /* Modal styles */
+        .modal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0,0,0,0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(5px);
+        }
+
+        .modal-content {
+            background: var(--white);
+            border-radius: 25px;
+            padding: 0;
+            max-width: 600px;
+            width: 90%;
+            max-height: 80vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 60px var(--shadow-hover);
+            position: relative;
+            animation: fadeInUp 0.3s ease;
+        }
+
+        .modal-header {
+            padding: 25px 30px;
+            border-bottom: 2px solid var(--bg-light);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-family: 'Fredoka One', cursive;
+            color: var(--primary-purple);
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .modal-close {
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--text-light);
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .modal-close:hover {
+            color: var(--primary-purple);
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .form-select, .form-input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid var(--bg-light);
+            border-radius: 12px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--white);
+        }
+
+        .form-select:focus, .form-input:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+            box-shadow: 0 0 0 3px rgba(139, 95, 191, 0.1);
+        }
+
+        .file-upload-area {
+            border: 2px dashed var(--primary-purple);
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            background: rgba(139, 95, 191, 0.05);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .file-upload-area:hover {
+            background: rgba(139, 95, 191, 0.1);
+        }
+
+        .file-upload-area.drag-over {
+            border-color: var(--grass-green);
+            background: rgba(107, 207, 127, 0.1);
+        }
+
+        .file-upload-icon {
+            font-size: 48px;
+            color: var(--primary-purple);
+            margin-bottom: 15px;
+        }
+
+        .file-upload-text {
+            color: var(--text-medium);
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .file-upload-hint {
+            color: var(--text-light);
+            font-size: 14px;
+        }
+
+        .file-list {
+            margin-top: 20px;
+        }
+
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: var(--bg-light);
+            border-radius: 10px;
+            margin-bottom: 10px;
+        }
+
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .file-icon {
+            font-size: 18px;
+        }
+
+        .file-remove {
+            color: var(--coral-pink);
+            cursor: pointer;
+            font-size: 18px;
+            padding: 5px;
+            border-radius: 50%;
+            transition: background 0.3s ease;
+        }
+
+        .file-remove:hover {
+            background: rgba(255, 107, 157, 0.1);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 2px solid var(--bg-light);
+        }
+
+        .upload-progress {
+            margin-top: 25px;
+            padding: 20px;
+            background: var(--bg-light);
+            border-radius: 12px;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 8px;
+            background: #e2e8f0;
+            border-radius: 4px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--grass-green), #52C41A);
+            transition: width 0.3s ease;
+        }
+
+        .upload-results {
+            margin-top: 25px;
+            padding: 20px;
+            border-radius: 12px;
+        }
+
+        .upload-results.success {
+            background: rgba(107, 207, 127, 0.1);
+            border: 2px solid var(--grass-green);
+            color: #22543d;
+        }
+
+        .upload-results.error {
+            background: rgba(255, 107, 157, 0.1);
+            border: 2px solid var(--coral-pink);
+            color: #742a2a;
+        }
+
+        .results-list {
+            margin-top: 15px;
+        }
+
+        .result-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .result-item:last-child {
+            border-bottom: none;
+        }
+
+        .result-status {
+            font-size: 16px;
+        }
     </style>
 </head>
 <body oncontextmenu="return false;" ondragstart="return false;" onselectstart="return false;">
@@ -1292,7 +1521,7 @@
                         <div class="bulk-upload-section">
                             <h4>📋 Admin: Upload Year Plan</h4>
                             <p>Upload the spreadsheet with the year-ahead teaching plan for ${selectedClub === 'year4' ? 'Year 4' : 'Year 5'}.</p>
-                            <button class="btn" onclick="alert('Bulk upload functionality coming next!')">
+                            <button class="btn" onclick="showBulkUploadForm('year-plan')">
                                 📁 Upload Teaching Plan
                             </button>
                         </div>
@@ -1325,7 +1554,7 @@
                         <div class="bulk-upload-section">
                             <h4>🔢 Admin: Upload Maths Content</h4>
                             <p>Bulk upload maths lesson plans, worksheets, and resources organized by topic.</p>
-                            <button class="btn" onclick="alert('Bulk upload functionality coming next!')">
+                            <button class="btn" onclick="showBulkUploadForm('bulk-lessons')">
                                 📁 Upload Maths Syllabus
                             </button>
                         </div>
@@ -1358,7 +1587,7 @@
                         <div class="bulk-upload-section">
                             <h4>📚 Admin: Upload English Content</h4>
                             <p>Bulk upload English lesson plans, comprehension exercises, and writing resources.</p>
-                            <button class="btn" onclick="alert('Bulk upload functionality coming next!')">
+                            <button class="btn" onclick="showBulkUploadForm('bulk-lessons')">
                                 📁 Upload English Syllabus
                             </button>
                         </div>
@@ -1441,7 +1670,7 @@
                 <div class="bulk-upload-section">
                     <h4>🎯 Admin: Upload Extra Resources</h4>
                     <p>Bulk upload videos, past papers, reading lists, and other supplementary materials.</p>
-                    <button class="btn" onclick="alert('Bulk resource upload coming next!')">
+                    <button class="btn" onclick="showBulkUploadForm('resources')">
                         📁 Upload Resources
                     </button>
                 </div>
@@ -1556,31 +1785,423 @@
                 <div class="content-area">
                     <div class="content-header">
                         <div>
-                            <h1 class="content-title">Manage Lessons</h1>
-                            <p class="content-subtitle">Admin tools for content management</p>
+                            <h1 class="content-title">Bulk Upload Tools</h1>
+                            <p class="content-subtitle">Admin tools for lesson management</p>
                         </div>
                     </div>
                     
-                    <div class="coming-soon">
-                        <div class="coming-soon-icon">⚙️</div>
-                        <h3>Admin Tools Coming Next!</h3>
-                        <p>
-                            Complete lesson management system with bulk upload capabilities, 
-                            content organization tools, and user management features.
-                        </p>
+                    <div class="content-grid">
+                        <div class="content-card planning" onclick="showBulkUploadForm('year-plan')">
+                            <span class="card-icon">📅</span>
+                            <h3 class="card-title">Year Plan Upload</h3>
+                            <p class="card-description">
+                                Upload Excel spreadsheet with the structured year-ahead plan 
+                                including weekly topics and objectives.
+                            </p>
+                            <div class="card-meta">
+                                <span>📊 Excel Format</span>
+                                <span>🗓️ 44 Weeks</span>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card maths" onclick="showBulkUploadForm('bulk-lessons')">
+                            <span class="card-icon">📚</span>
+                            <h3 class="card-title">Lesson Materials</h3>
+                            <p class="card-description">
+                                Bulk upload lesson plans, worksheets, and teaching materials. 
+                                Supports multiple file types and automatic organization.
+                            </p>
+                            <div class="card-meta">
+                                <span>📁 Multiple Files</span>
+                                <span>🏷️ Auto-Tagged</span>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card resources" onclick="showBulkUploadForm('resources')">
+                            <span class="card-icon">🎯</span>
+                            <h3 class="card-title">Extra Resources</h3>
+                            <p class="card-description">
+                                Upload videos, past papers, reading lists and supplementary 
+                                materials for enhanced learning experiences.
+                            </p>
+                            <div class="card-meta">
+                                <span>🎥 Media Files</span>
+                                <span>📄 Documents</span>
+                            </div>
+                        </div>
+                        
+                        <div class="content-card" style="border-left: 5px solid var(--primary-purple);">
+                            <span class="card-icon" style="color: var(--primary-purple);">📊</span>
+                            <h3 class="card-title">Upload Status</h3>
+                            <p class="card-description">
+                                Track upload progress and view recently uploaded content.
+                                Monitor processing status and errors.
+                            </p>
+                            <div class="card-meta">
+                                <span>⚡ Real-time</span>
+                                <span>📈 Analytics</span>
+                            </div>
+                        </div>
                     </div>
-                    
-                    <div class="bulk-upload-section">
-                        <h4>🚀 Phase 2 Preview</h4>
-                        <p>The next phase will include comprehensive admin tools for managing all content types.</p>
-                        <div style="display: flex; gap: 15px; justify-content: center; margin-top: 20px;">
-                            <button class="btn btn-secondary" onclick="alert('Coming in Phase 2!')">📁 Bulk Upload</button>
-                            <button class="btn btn-secondary" onclick="alert('Coming in Phase 2!')">📊 Analytics</button>
-                            <button class="btn btn-secondary" onclick="alert('Coming in Phase 2!')">👥 User Management</button>
+
+                    <!-- Bulk Upload Modal -->
+                    <div id="bulkUploadModal" class="modal hidden">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h3 id="modalTitle">Bulk Upload</h3>
+                                <span class="modal-close" onclick="hideBulkUploadForm()">&times;</span>
+                            </div>
+                            <div class="modal-body">
+                                <form id="bulkUploadForm" onsubmit="handleBulkUpload(event)">
+                                    <input type="hidden" id="uploadContentType" name="contentType">
+                                    
+                                    <div class="form-group">
+                                        <label for="yearGroup">Year Group</label>
+                                        <select id="yearGroup" name="yearGroup" required class="form-select">
+                                            <option value="year4">Year 4 - 11+ Prep Club</option>
+                                            <option value="year5">Year 5 - 11+ Club</option>
+                                        </select>
+                                    </div>
+                                    
+                                    <div id="uploadFields"></div>
+                                    
+                                    <div class="form-actions">
+                                        <button type="button" class="btn btn-secondary" onclick="hideBulkUploadForm()">Cancel</button>
+                                        <button type="submit" class="btn" id="uploadBtn">
+                                            <span id="uploadBtnText">Upload</span>
+                                            <span id="uploadLoader" class="loading hidden"></span>
+                                        </button>
+                                    </div>
+                                </form>
+                                
+                                <div id="uploadProgress" class="upload-progress hidden">
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" style="width: 0%"></div>
+                                    </div>
+                                    <p id="progressText">Uploading...</p>
+                                </div>
+                                
+                                <div id="uploadResults" class="upload-results hidden"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
             `;
+        }
+
+        // ============================================
+        // BULK UPLOAD FUNCTIONALITY
+        // ============================================
+
+        let selectedFiles = [];
+        let currentUploadType = '';
+
+        function showBulkUploadForm(uploadType) {
+            currentUploadType = uploadType;
+            selectedFiles = [];
+            
+            const modal = document.getElementById('bulkUploadModal');
+            const modalTitle = document.getElementById('modalTitle');
+            const uploadFields = document.getElementById('uploadFields');
+            const uploadContentType = document.getElementById('uploadContentType');
+            
+            uploadContentType.value = uploadType;
+            
+            // Set modal title and fields based on upload type
+            switch (uploadType) {
+                case 'year-plan':
+                    modalTitle.textContent = 'Upload Year Plan';
+                    uploadFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Excel Spreadsheet</label>
+                            <div class="file-upload-area" onclick="triggerFileSelect('planFile')" 
+                                 ondrop="handleFileDrop(event, 'single')" ondragover="handleDragOver(event)">
+                                <div class="file-upload-icon">📊</div>
+                                <div class="file-upload-text">Click to select or drag Excel file here</div>
+                                <div class="file-upload-hint">Accepts .xlsx files with weekly lesson plan structure</div>
+                            </div>
+                            <input type="file" id="planFile" accept=".xlsx,.xls" style="display: none;" 
+                                   onchange="handleFileSelect(event, 'single')">
+                            <div id="planFileList" class="file-list"></div>
+                        </div>
+                    `;
+                    break;
+                
+                case 'bulk-lessons':
+                    modalTitle.textContent = 'Upload Lesson Materials';
+                    uploadFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Lesson Files</label>
+                            <div class="file-upload-area" onclick="triggerFileSelect('lessonFiles')"
+                                 ondrop="handleFileDrop(event, 'multiple')" ondragover="handleDragOver(event)">
+                                <div class="file-upload-icon">📚</div>
+                                <div class="file-upload-text">Click to select or drag lesson files here</div>
+                                <div class="file-upload-hint">Accepts PDF, DOCX, PPT and image files</div>
+                            </div>
+                            <input type="file" id="lessonFiles" accept=".pdf,.docx,.pptx,.jpg,.jpeg,.png" 
+                                   multiple style="display: none;" onchange="handleFileSelect(event, 'multiple')">
+                            <div id="lessonFilesList" class="file-list"></div>
+                        </div>
+                    `;
+                    break;
+                
+                case 'resources':
+                    modalTitle.textContent = 'Upload Extra Resources';
+                    uploadFields.innerHTML = `
+                        <div class="form-group">
+                            <label>Resource Files</label>
+                            <div class="file-upload-area" onclick="triggerFileSelect('resourceFiles')"
+                                 ondrop="handleFileDrop(event, 'multiple')" ondragover="handleDragOver(event)">
+                                <div class="file-upload-icon">🎯</div>
+                                <div class="file-upload-text">Click to select or drag resource files here</div>
+                                <div class="file-upload-hint">Videos, PDFs, images and other educational materials</div>
+                            </div>
+                            <input type="file" id="resourceFiles" multiple style="display: none;"
+                                   onchange="handleFileSelect(event, 'multiple')">
+                            <div id="resourceFilesList" class="file-list"></div>
+                        </div>
+                    `;
+                    break;
+            }
+            
+            // Set default year group based on current selection
+            const yearGroupSelect = document.getElementById('yearGroup');
+            if (selectedClub) {
+                yearGroupSelect.value = selectedClub;
+            }
+            
+            modal.classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function hideBulkUploadForm() {
+            const modal = document.getElementById('bulkUploadModal');
+            modal.classList.add('hidden');
+            document.body.style.overflow = 'auto';
+            
+            // Reset form
+            selectedFiles = [];
+            document.getElementById('uploadProgress').classList.add('hidden');
+            document.getElementById('uploadResults').classList.add('hidden');
+            document.getElementById('uploadBtnText').textContent = 'Upload';
+            document.getElementById('uploadLoader').classList.add('hidden');
+        }
+
+        function triggerFileSelect(inputId) {
+            document.getElementById(inputId).click();
+        }
+
+        function handleFileSelect(event, mode) {
+            const files = Array.from(event.target.files);
+            
+            if (mode === 'single') {
+                selectedFiles = files.slice(0, 1);
+            } else {
+                selectedFiles = [...selectedFiles, ...files];
+            }
+            
+            updateFileList();
+        }
+
+        function handleDragOver(event) {
+            event.preventDefault();
+            event.currentTarget.classList.add('drag-over');
+        }
+
+        function handleFileDrop(event, mode) {
+            event.preventDefault();
+            event.currentTarget.classList.remove('drag-over');
+            
+            const files = Array.from(event.dataTransfer.files);
+            
+            if (mode === 'single') {
+                selectedFiles = files.slice(0, 1);
+            } else {
+                selectedFiles = [...selectedFiles, ...files];
+            }
+            
+            updateFileList();
+        }
+
+        function updateFileList() {
+            let listContainer;
+            
+            switch (currentUploadType) {
+                case 'year-plan':
+                    listContainer = document.getElementById('planFileList');
+                    break;
+                case 'bulk-lessons':
+                    listContainer = document.getElementById('lessonFilesList');
+                    break;
+                case 'resources':
+                    listContainer = document.getElementById('resourceFilesList');
+                    break;
+            }
+            
+            if (!listContainer) return;
+            
+            if (selectedFiles.length === 0) {
+                listContainer.innerHTML = '';
+                return;
+            }
+            
+            const fileListHTML = selectedFiles.map((file, index) => `
+                <div class="file-item">
+                    <div class="file-info">
+                        <span class="file-icon">${getFileIcon(file.type)}</span>
+                        <span>${file.name}</span>
+                        <span style="color: var(--text-light); font-size: 12px;">(${formatFileSize(file.size)})</span>
+                    </div>
+                    <span class="file-remove" onclick="removeFile(${index})">&times;</span>
+                </div>
+            `).join('');
+            
+            listContainer.innerHTML = fileListHTML;
+        }
+
+        function removeFile(index) {
+            selectedFiles.splice(index, 1);
+            updateFileList();
+        }
+
+        function getFileIcon(fileType) {
+            if (fileType.includes('excel') || fileType.includes('spreadsheet')) return '📊';
+            if (fileType.includes('pdf')) return '📄';
+            if (fileType.includes('word') || fileType.includes('document')) return '📝';
+            if (fileType.includes('powerpoint') || fileType.includes('presentation')) return '📽️';
+            if (fileType.includes('image')) return '🖼️';
+            if (fileType.includes('video')) return '🎥';
+            return '📁';
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        async function handleBulkUpload(event) {
+            event.preventDefault();
+            
+            if (selectedFiles.length === 0) {
+                alert('Please select files to upload');
+                return;
+            }
+            
+            const formData = new FormData();
+            const yearGroup = document.getElementById('yearGroup').value;
+            const userEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+            
+            // Set upload state
+            document.getElementById('uploadBtnText').textContent = 'Uploading...';
+            document.getElementById('uploadLoader').classList.remove('hidden');
+            document.getElementById('uploadProgress').classList.remove('hidden');
+            document.getElementById('uploadResults').classList.add('hidden');
+            
+            // Add form fields
+            formData.append('isAdmin', userIsAdmin.toString());
+            formData.append('userEmail', userEmail);
+            formData.append('contentType', currentUploadType);
+            formData.append('yearGroup', yearGroup);
+            
+            // Add files with appropriate field names
+            switch (currentUploadType) {
+                case 'year-plan':
+                    if (selectedFiles[0]) {
+                        formData.append('planFile', selectedFiles[0]);
+                    }
+                    break;
+                    
+                case 'bulk-lessons':
+                    selectedFiles.forEach((file, index) => {
+                        formData.append(`lesson-${index}`, file);
+                    });
+                    break;
+                    
+                case 'resources':
+                    selectedFiles.forEach((file, index) => {
+                        formData.append(`resource-${index}`, file);
+                    });
+                    break;
+            }
+            
+            try {
+                // Update progress
+                updateProgress(25, 'Preparing files...');
+                
+                const response = await fetch('/api/bulk-upload', {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                updateProgress(75, 'Processing files...');
+                
+                const result = await response.json();
+                
+                updateProgress(100, 'Upload complete!');
+                
+                setTimeout(() => {
+                    displayUploadResults(result);
+                }, 500);
+                
+            } catch (error) {
+                console.error('Upload error:', error);
+                displayUploadResults({
+                    success: false,
+                    error: 'Upload failed: ' + error.message
+                });
+            }
+        }
+
+        function updateProgress(percentage, text) {
+            document.querySelector('.progress-fill').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        function displayUploadResults(result) {
+            document.getElementById('uploadProgress').classList.add('hidden');
+            document.getElementById('uploadBtnText').textContent = 'Upload';
+            document.getElementById('uploadLoader').classList.add('hidden');
+            
+            const resultsContainer = document.getElementById('uploadResults');
+            resultsContainer.classList.remove('hidden', 'success', 'error');
+            
+            if (result.success) {
+                resultsContainer.classList.add('success');
+                resultsContainer.innerHTML = `
+                    <h4>✅ Upload Successful!</h4>
+                    <p>${result.message}</p>
+                    ${result.lessonsCreated ? `<p><strong>Lessons Created:</strong> ${result.lessonsCreated}</p>` : ''}
+                    
+                    ${result.results ? `
+                        <div class="results-list">
+                            ${result.results.map(item => `
+                                <div class="result-item">
+                                    <span class="result-status">${item.success ? '✅' : '❌'}</span>
+                                    <span>${item.fileName || item.type}</span>
+                                    ${item.error ? `<span style="color: var(--coral-pink);">${item.error}</span>` : ''}
+                                </div>
+                            `).join('')}
+                        </div>
+                    ` : ''}
+                `;
+                
+                // Auto-close after 3 seconds
+                setTimeout(() => {
+                    hideBulkUploadForm();
+                    showStatus('Files uploaded successfully!', 'success');
+                }, 3000);
+                
+            } else {
+                resultsContainer.classList.add('error');
+                resultsContainer.innerHTML = `
+                    <h4>❌ Upload Failed</h4>
+                    <p>${result.error}</p>
+                    ${result.details ? `<p><small>${result.details}</small></p>` : ''}
+                `;
+            }
         }
 
         // ============================================
