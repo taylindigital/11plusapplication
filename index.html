@@ -3053,7 +3053,6 @@
             tenantId: "d96d2f4e-d080-4c2f-90e1-cce96e64b6ba",
             clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
             signInSignUpPolicyName: "SignUpSignIn",
-            passwordResetPolicyName: "PasswordReset", // Will need to be configured in Azure B2C
             redirectUri: window.location.origin,
             scopes: ["openid", "profile"],
             cacheLocation: "sessionStorage",
@@ -3233,36 +3232,6 @@
             }
         }
 
-        async function resetPassword() {
-            if (!msalInstance) {
-                console.error("MSAL instance not initialized");
-                showStatus("Authentication system not ready", "error");
-                return;
-            }
-
-            try {
-                showStatus("Redirecting to password reset...", "info");
-
-                const resetRequest = {
-                    scopes: B2C_CONFIG.scopes,
-                    extraQueryParameters: {
-                        p: B2C_CONFIG.passwordResetPolicyName
-                    }
-                };
-
-                await msalInstance.loginRedirect(resetRequest);
-                
-            } catch (error) {
-                console.error("Password reset error:", error);
-                
-                // Handle specific B2C error codes
-                if (error.message && error.message.includes("AADB2C90118")) {
-                    showStatus("Password reset was cancelled", "info");
-                } else {
-                    showStatus("Password reset failed. Please try again.", "error");
-                }
-            }
-        }
 
         // ============================================
         // ROLE DETECTION & ACCESS CONTROL
@@ -3456,15 +3425,9 @@
                     
                     <img src="/images/bright-stars-logo.png" alt="Bright Stars Education" class="auth-logo" />
                     
-                    <button class="btn" onclick="signIn()" style="width: 100%; margin-bottom: 15px; font-size: 18px;">
+                    <button class="btn" onclick="signIn()" style="width: 100%; margin-bottom: 20px; font-size: 18px;">
                         Sign In to Start Learning
                     </button>
-                    
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <a href="#" onclick="resetPassword()" style="color: var(--primary-purple); text-decoration: none; font-size: 14px;">
-                            Forgot your password?
-                        </a>
-                    </div>
                     
                     <p style="text-align: center; color: var(--text-light); font-size: 14px;">
                         New families can sign up through the same button above
@@ -7060,26 +7023,12 @@
                     console.log("Redirect response:", response);
                     
                     if (response && response.account) {
-                        // Check if this was a password reset flow completion
-                        const url = new URL(window.location.href);
-                        if (url.searchParams.get('p') === B2C_CONFIG.passwordResetPolicyName) {
-                            showStatus("Password reset successful! Please sign in with your new password.", "success");
-                            setTimeout(() => {
-                                window.location.replace(window.location.origin);
-                            }, 3000);
-                        } else {
-                            await handleAuthResponse(response);
-                        }
+                        await handleAuthResponse(response);
                     } else {
                         await checkExistingLogin();
                     }
                 } catch (error) {
                     console.error("Error handling redirect:", error);
-                    
-                    // Handle password reset cancellation
-                    if (error.message && error.message.includes("AADB2C90118")) {
-                        showStatus("Password reset was cancelled", "info");
-                    }
                 }
             } else {
                 console.error("Failed to initialize MSAL");
