@@ -41,6 +41,10 @@ module.exports = async function (request, context) {
             case 'delete-user':
                 const { userEmail } = body;
                 return await deleteUser(userEmail, tableClient, corsHeaders, context);
+                
+            case 'update-user-field':
+                const { userEmail: updateEmail, field, value } = body;
+                return await updateUserField(updateEmail, field, value, tableClient, corsHeaders, context);
             
             default:
                 return {
@@ -389,4 +393,69 @@ async function deleteUserFromAzure(userId, context) {
     // Delete the user from Azure AD B2C
     await graphClient.api(`/users/${userId}`).delete();
     context.log(`User ${userId} successfully deleted from Azure AD B2C`);
+}
+
+// Function to update a user field in the database
+async function updateUserField(userEmail, field, value, tableClient, corsHeaders, context) {
+    try {
+        // Validate field name to prevent injection
+        const allowedFields = ['name', 'phone', 'organization'];
+        if (!allowedFields.includes(field)) {
+            return {
+                status: 400,
+                headers: corsHeaders,
+                jsonBody: {
+                    success: false,
+                    error: `Invalid field: ${field}. Allowed fields are: ${allowedFields.join(', ')}`
+                }
+            };
+        }
+
+        // Get the existing user entity
+        const userEntity = await tableClient.getEntity("Users", userEmail);
+        
+        // Update the specific field
+        userEntity[field] = value;
+        userEntity.lastModified = new Date().toISOString();
+        
+        // Save the updated entity
+        await tableClient.updateEntity(userEntity, "Merge");
+        
+        context.log(`Updated ${field} for user ${userEmail}: ${value}`);
+
+        return {
+            status: 200,
+            headers: corsHeaders,
+            jsonBody: {
+                success: true,
+                message: `${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`,
+                field: field,
+                value: value
+            }
+        };
+
+    } catch (error) {
+        context.log('Update user field error:', error);
+        
+        if (error.statusCode === 404) {
+            return {
+                status: 404,
+                headers: corsHeaders,
+                jsonBody: {
+                    success: false,
+                    error: `User ${userEmail} not found`
+                }
+            };
+        }
+        
+        return {
+            status: 500,
+            headers: corsHeaders,
+            jsonBody: {
+                success: false,
+                error: 'Failed to update user field',
+                details: error.message
+            }
+        };
+    }
 }

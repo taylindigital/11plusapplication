@@ -2739,35 +2739,97 @@
             flex-direction: column;
         }
 
-        .btn-approve, .btn-reject {
-            padding: 10px 16px;
+        .btn-approve, .btn-reject, .btn-delete {
+            padding: 12px 20px;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             cursor: pointer;
             font-size: 0.9em;
-            font-weight: 500;
+            font-weight: 600;
             transition: all 0.3s ease;
-            min-width: 100px;
+            min-width: 120px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            position: relative;
+            overflow: hidden;
         }
 
         .btn-approve {
-            background: var(--success-green);
+            background: linear-gradient(135deg, var(--success-green), #22c55e);
             color: var(--white);
+            box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
         }
 
         .btn-approve:hover {
-            background: #22c55e;
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, #22c55e, #16a34a);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(34, 197, 94, 0.4);
         }
 
         .btn-reject {
-            background: var(--error-red);
+            background: linear-gradient(135deg, var(--error-red), #dc2626);
             color: var(--white);
+            box-shadow: 0 4px 12px rgba(239, 68, 68, 0.3);
         }
 
         .btn-reject:hover {
-            background: #dc2626;
-            transform: translateY(-1px);
+            background: linear-gradient(135deg, #dc2626, #b91c1c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(239, 68, 68, 0.4);
+        }
+
+        .btn-delete {
+            background: linear-gradient(135deg, #f97316, #ea580c);
+            color: var(--white);
+            box-shadow: 0 4px 12px rgba(249, 115, 22, 0.3);
+        }
+
+        .btn-delete:hover {
+            background: linear-gradient(135deg, #ea580c, #c2410c);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(249, 115, 22, 0.4);
+        }
+
+        .btn-approve:disabled, .btn-reject:disabled, .btn-delete:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .editable-field {
+            background: rgba(var(--primary-rgb), 0.05);
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 2px solid transparent;
+            transition: all 0.2s ease;
+            display: inline-block;
+            min-width: 100px;
+        }
+
+        .editable-field:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(var(--primary-rgb), 0.1);
+        }
+
+        .editable-field:hover {
+            background: rgba(var(--primary-rgb), 0.08);
+        }
+
+        .loading-spinner {
+            display: inline-block;
+            width: 14px;
+            height: 14px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
 
         .no-users {
@@ -5848,6 +5910,9 @@
                     displayAllUsers(allSystemUsers);
                     updateUserStats(data.stats || {});
                     setupUserFilters();
+                    
+                    // Load subscription information for active users
+                    setTimeout(() => loadSubscriptionInfo(), 1000);
                 } else {
                     console.error('Failed to load all users');
                     const container = document.getElementById('all-users-container');
@@ -5895,9 +5960,19 @@
                     
                     <div class="user-details">
                         <div class="detail-group">
-                            <p><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
-                            <p><strong>Organization:</strong> ${user.organization || 'Unknown'}</p>
-                            <p><strong>Subscription:</strong> ${user.subscriptionStatus || 'Unknown'}</p>
+                            <p><strong>Name:</strong> 
+                                <span class="editable-field" data-field="name" data-user="${user.email}" 
+                                      contenteditable="true" data-original="${user.name || user.displayName || ''}">${user.name || user.displayName || 'Not provided'}</span>
+                            </p>
+                            <p><strong>Phone:</strong> 
+                                <span class="editable-field" data-field="phone" data-user="${user.email}" 
+                                      contenteditable="true" data-original="${user.phone || ''}">${user.phone || 'Not provided'}</span>
+                            </p>
+                            <p><strong>Organisation:</strong> 
+                                <span class="editable-field" data-field="organization" data-user="${user.email}" 
+                                      contenteditable="true" data-original="${user.organization || ''}">${user.organization || 'Unknown'}</span>
+                            </p>
+                            <p><strong>Subscription:</strong> <span id="subscription-${user.email.replace(/[^a-zA-Z0-9]/g, '')}">${user.subscriptionStatus || 'Loading...'}</span></p>
                         </div>
                         <div class="detail-group">
                             <p><strong>Created:</strong> ${user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'Unknown'}</p>
@@ -5916,11 +5991,13 @@
                                 </select>
                             </div>
                             <div class="action-buttons">
-                                <button onclick="approveUser('${user.email}', 'approve')" class="btn-approve">
-                                    ✅ Approve
+                                <button onclick="approveUser('${user.email}', 'approve')" class="btn-approve" id="approve-${user.email.replace(/[^a-zA-Z0-9]/g, '')}">
+                                    <span class="btn-text">✅ Approve</span>
+                                    <span class="loading-spinner" style="display: none;"></span>
                                 </button>
-                                <button onclick="approveUser('${user.email}', 'reject')" class="btn-reject">
-                                    ❌ Reject
+                                <button onclick="approveUser('${user.email}', 'reject')" class="btn-reject" id="reject-${user.email.replace(/[^a-zA-Z0-9]/g, '')}">
+                                    <span class="btn-text">❌ Reject</span>
+                                    <span class="loading-spinner" style="display: none;"></span>
                                 </button>
                             </div>
                         ` : `
@@ -5986,6 +6063,107 @@
             displayAllUsers(filteredUsers);
         }
 
+        // Function to handle editable field changes
+        function setupEditableFields() {
+            document.addEventListener('blur', async (e) => {
+                if (e.target.classList.contains('editable-field')) {
+                    const field = e.target.dataset.field;
+                    const userEmail = e.target.dataset.user;
+                    const newValue = e.target.textContent.trim();
+                    const originalValue = e.target.dataset.original;
+                    
+                    if (newValue !== originalValue) {
+                        await saveUserField(userEmail, field, newValue, e.target);
+                    }
+                }
+            }, true);
+
+            // Handle Enter key to save and blur
+            document.addEventListener('keydown', (e) => {
+                if (e.target.classList.contains('editable-field') && e.key === 'Enter') {
+                    e.preventDefault();
+                    e.target.blur();
+                }
+            }, true);
+        }
+
+        // Function to save user field changes
+        async function saveUserField(userEmail, field, newValue, element) {
+            try {
+                const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+                
+                element.style.opacity = '0.6';
+                
+                const response = await fetch('/api/user-management', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'update-user-field',
+                        userEmail: userEmail,
+                        field: field,
+                        value: newValue,
+                        adminEmail: adminEmail,
+                        isAdmin: userIsAdmin
+                    })
+                });
+
+                if (response.ok) {
+                    element.dataset.original = newValue;
+                    element.style.opacity = '1';
+                    showStatus(`${field.charAt(0).toUpperCase() + field.slice(1)} updated successfully`, 'success');
+                } else {
+                    const errorData = await response.json();
+                    element.textContent = element.dataset.original;
+                    element.style.opacity = '1';
+                    showStatus(errorData.error || `Failed to update ${field}`, 'error');
+                }
+            } catch (error) {
+                console.error(`Error updating ${field}:`, error);
+                element.textContent = element.dataset.original;
+                element.style.opacity = '1';
+                showStatus(`Error updating ${field}. Please try again.`, 'error');
+            }
+        }
+
+        // Function to load subscription information for each user
+        async function loadSubscriptionInfo() {
+            const subscriptionElements = document.querySelectorAll('[id^="subscription-"]');
+            
+            for (const element of subscriptionElements) {
+                const emailId = element.id.replace('subscription-', '');
+                // Convert back to email format (this is approximate - we'll need the actual email)
+                const user = allSystemUsers.find(u => u.email.replace(/[^a-zA-Z0-9]/g, '') === emailId);
+                
+                if (user && user.source === 'azure') {
+                    try {
+                        const response = await fetch('/api/stripe-get-subscription', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ email: user.email })
+                        });
+
+                        if (response.ok) {
+                            const data = await response.json();
+                            const subscriptionText = data.hasActiveSubscription 
+                                ? `Active (${data.subscription.plan.interval}ly)`
+                                : 'No Active Subscription';
+                            element.textContent = subscriptionText;
+                            
+                            // Update the subscription status in the user object
+                            user.subscriptionStatus = subscriptionText;
+                        } else {
+                            element.textContent = 'Unable to load';
+                        }
+                    } catch (error) {
+                        element.textContent = 'Unable to load';
+                        console.error('Error loading subscription for', user.email, error);
+                    }
+                } else if (user && user.source === 'pending') {
+                    element.textContent = 'Pending Approval';
+                }
+            }
+        }
+
         async function deleteUser(email) {
             if (!confirm(`Are you sure you want to delete user ${email}? This will remove them from both Azure AD B2C and the local database. This action cannot be undone.`)) {
                 return;
@@ -6009,8 +6187,8 @@
                     const data = await response.json();
                     showStatus(data.message || `User ${email} deleted successfully!`, 'success');
                     
-                    // Reload the users list
-                    setTimeout(loadAllUsers, 1000);
+                    // Reload the users list immediately to update counts
+                    loadAllUsers();
                 } else {
                     const errorData = await response.json();
                     showStatus(errorData.error || `Failed to delete user`, 'error');
@@ -6022,13 +6200,25 @@
         }
 
         async function approveUser(email, action) {
+            const emailId = email.replace(/[^a-zA-Z0-9]/g, '');
+            const approveBtn = document.getElementById(`approve-${emailId}`);
+            const rejectBtn = document.getElementById(`reject-${emailId}`);
+            
             try {
-                const roleSelect = document.getElementById(`role-${email.replace(/[^a-zA-Z0-9]/g, '')}`);
+                const roleSelect = document.getElementById(`role-${emailId}`);
                 const selectedRole = roleSelect?.value;
                 
                 if (action === 'approve' && !selectedRole) {
                     showStatus('Please select a role before approving the user.', 'error');
                     return;
+                }
+
+                // Show loading state
+                const targetBtn = action === 'approve' ? approveBtn : rejectBtn;
+                if (targetBtn) {
+                    targetBtn.disabled = true;
+                    targetBtn.querySelector('.btn-text').style.display = 'none';
+                    targetBtn.querySelector('.loading-spinner').style.display = 'inline-block';
                 }
 
                 const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
@@ -6049,8 +6239,8 @@
                     const data = await response.json();
                     showStatus(data.message || `User ${action}d successfully!`, 'success');
                     
-                    // Reload the users list
-                    setTimeout(loadAllUsers, 1000);
+                    // Reload the users list immediately to update counts
+                    loadAllUsers();
                 } else {
                     const errorData = await response.json();
                     showStatus(errorData.error || `Failed to ${action} user`, 'error');
@@ -6058,6 +6248,18 @@
             } catch (error) {
                 console.error(`Error ${action}ing user:`, error);
                 showStatus(`Error ${action}ing user. Please try again.`, 'error');
+            } finally {
+                // Reset loading state
+                if (approveBtn) {
+                    approveBtn.disabled = false;
+                    approveBtn.querySelector('.btn-text').style.display = 'flex';
+                    approveBtn.querySelector('.loading-spinner').style.display = 'none';
+                }
+                if (rejectBtn) {
+                    rejectBtn.disabled = false;
+                    rejectBtn.querySelector('.btn-text').style.display = 'flex';
+                    rejectBtn.querySelector('.loading-spinner').style.display = 'none';
+                }
             }
         }
 
@@ -6206,6 +6408,7 @@
         document.addEventListener('DOMContentLoaded', () => {
             handleResponsiveChanges();
             initializeMobileDragDrop();
+            setupEditableFields();
             
             // Add mobile-specific body classes
             if (isMobile) {
