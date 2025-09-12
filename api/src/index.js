@@ -22,6 +22,7 @@ const stripeWebhook = require('./functions/stripe-webhook');
 const studentProgress = require('./functions/student-progress');
 const tutorManagement = require('./functions/tutor-management');
 const studentInvitations = require('./functions/student-invitations');
+const userManagement = require('./functions/user-management');
 
 // Register existing functions
 app.http('checkuserstatus', {
@@ -139,6 +140,12 @@ app.http('student-invitations', {
     handler: studentInvitations
 });
 
+app.http('user-management', {
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: userManagement
+});
+
 // Test endpoint
 app.http('test', {
     methods: ['GET'],
@@ -156,7 +163,7 @@ app.http('test', {
                     'stripe-create-customer', 'stripe-create-subscription',
                     'stripe-get-subscription', 'stripe-cancel-subscription',
                     'stripe-update-payment-method', 'stripe-webhook', 'student-progress',
-                    'tutor-management', 'student-invitations'
+                    'tutor-management', 'student-invitations', 'user-management'
                 ]
             }
         };
