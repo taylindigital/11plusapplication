@@ -2782,11 +2782,193 @@
             margin-bottom: 20px;
         }
 
+        /* Comprehensive User Management Styles */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .user-filters {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            padding: 8px 16px;
+            border: 2px solid var(--border-light);
+            background: var(--white);
+            color: var(--text-dark);
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .filter-btn:hover {
+            border-color: var(--primary-purple);
+            color: var(--primary-purple);
+        }
+
+        .filter-btn.active {
+            background: var(--primary-purple);
+            color: var(--white);
+            border-color: var(--primary-purple);
+        }
+
+        .comprehensive-user-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .comprehensive-user-card:hover {
+            border-color: var(--primary-purple);
+            box-shadow: 0 4px 12px rgba(139, 95, 191, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .user-main-info {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .user-identity h3 {
+            color: var(--primary-purple);
+            margin: 0 0 5px 0;
+            font-size: 1.2em;
+        }
+
+        .user-display-name {
+            color: var(--text-light);
+            margin: 0 0 10px 0;
+            font-style: italic;
+        }
+
+        .user-badges {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .status-badge, .role-badge, .admin-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75em;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .status-badge.azure {
+            background: var(--success-green);
+            color: var(--white);
+        }
+
+        .status-badge.pending {
+            background: var(--warning-yellow);
+            color: var(--text-dark);
+        }
+
+        .role-badge.tutor {
+            background: var(--primary-purple);
+            color: var(--white);
+        }
+
+        .role-badge.student_parent {
+            background: var(--sunny-yellow);
+            color: var(--text-dark);
+        }
+
+        .admin-badge {
+            background: var(--error-red);
+            color: var(--white);
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-top: 15px;
+        }
+
+        .detail-group p {
+            margin: 5px 0;
+            font-size: 0.9em;
+            color: var(--text-light);
+        }
+
+        .detail-group strong {
+            color: var(--text-dark);
+        }
+
+        .user-actions {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            justify-content: center;
+            min-width: 160px;
+        }
+
+        .action-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .btn-delete {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            background: var(--error-red);
+            color: var(--white);
+            min-width: 120px;
+        }
+
+        .btn-delete:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
         @media (max-width: 768px) {
             .user-approval-card {
                 grid-template-columns: 1fr;
                 text-align: center;
                 gap: 15px;
+            }
+
+            .comprehensive-user-card {
+                grid-template-columns: 1fr;
+                text-align: left;
+            }
+
+            .user-details {
+                grid-template-columns: 1fr;
+            }
+
+            .user-actions {
+                min-width: auto;
+            }
+
+            .action-buttons {
+                flex-direction: row;
+                justify-content: center;
             }
 
             .approval-actions {
@@ -2796,6 +2978,16 @@
 
             .admin-stats {
                 grid-template-columns: 1fr;
+            }
+
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .user-filters {
+                width: 100%;
+                justify-content: flex-start;
             }
         }
 
@@ -3795,7 +3987,7 @@
                 case 'subscription':
                     return renderSubscription();
                 case 'admin-users':
-                    setTimeout(() => loadPendingUsers(), 100);
+                    setTimeout(() => loadAllUsers(), 100);
                     return renderAdminUsers();
                 case 'admin-lessons':
                     return renderAdminLessons();
@@ -4515,19 +4707,31 @@
                     <div class="admin-dashboard">
                         <div class="admin-stats">
                             <div class="stat-card">
-                                <span class="stat-number" id="pending-count">0</span>
-                                <span class="stat-label">Pending Approvals</span>
-                            </div>
-                            <div class="stat-card">
                                 <span class="stat-number" id="total-users">0</span>
                                 <span class="stat-label">Total Users</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="active-users">0</span>
+                                <span class="stat-label">Active Users</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="pending-users">0</span>
+                                <span class="stat-label">Pending Approval</span>
                             </div>
                         </div>
 
                         <div class="users-section">
-                            <h2>Pending User Approvals</h2>
-                            <div id="pending-users-container">
-                                <div class="loading-spinner">Loading pending users...</div>
+                            <div class="section-header">
+                                <h2>All Platform Users</h2>
+                                <div class="user-filters">
+                                    <button class="filter-btn active" data-filter="all">All Users</button>
+                                    <button class="filter-btn" data-filter="active">Active</button>
+                                    <button class="filter-btn" data-filter="pending">Pending</button>
+                                    <button class="filter-btn" data-filter="tutors">Tutors</button>
+                                </div>
+                            </div>
+                            <div id="all-users-container">
+                                <div class="loading-spinner">Loading all users...</div>
                             </div>
                         </div>
                     </div>
@@ -5620,7 +5824,10 @@
         // USER MANAGEMENT FUNCTIONS
         // ============================================
 
-        async function loadPendingUsers() {
+        let currentUserFilter = 'all';
+        let allSystemUsers = [];
+
+        async function loadAllUsers() {
             try {
                 const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
                 if (!adminEmail) return;
@@ -5629,7 +5836,7 @@
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
-                        action: 'get-pending-users',
+                        action: 'get-all-users',
                         adminEmail: adminEmail,
                         isAdmin: userIsAdmin
                     })
@@ -5637,67 +5844,181 @@
 
                 if (response.ok) {
                     const data = await response.json();
-                    displayPendingUsers(data.users || []);
+                    allSystemUsers = data.users || [];
+                    displayAllUsers(allSystemUsers);
                     updateUserStats(data.stats || {});
+                    setupUserFilters();
                 } else {
-                    console.error('Failed to load pending users');
+                    console.error('Failed to load all users');
+                    const container = document.getElementById('all-users-container');
+                    if (container) {
+                        container.innerHTML = `
+                            <div class="error-placeholder">
+                                <span class="error-icon">❌</span>
+                                <p>Failed to load users</p>
+                            </div>
+                        `;
+                    }
                 }
             } catch (error) {
-                console.error('Error loading pending users:', error);
+                console.error('Error loading all users:', error);
             }
         }
 
-        function displayPendingUsers(users) {
-            const container = document.getElementById('pending-users-container');
+        function displayAllUsers(users) {
+            const container = document.getElementById('all-users-container');
             if (!container) return;
 
             if (users.length === 0) {
                 container.innerHTML = `
                     <div class="no-users">
-                        <span class="no-users-icon">✅</span>
-                        <p>No pending user approvals</p>
+                        <span class="no-users-icon">👥</span>
+                        <p>No users found for the selected filter</p>
                     </div>
                 `;
                 return;
             }
 
             container.innerHTML = users.map(user => `
-                <div class="user-approval-card">
-                    <div class="user-info">
-                        <h3>${user.email}</h3>
-                        <p><strong>Name:</strong> ${user.name || 'Not provided'}</p>
-                        <p><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
-                        <p><strong>Requested:</strong> ${new Date(user.createdDate).toLocaleDateString()}</p>
-                        <p><strong>Organization:</strong> ${user.organization || 'N/A'}</p>
+                <div class="comprehensive-user-card" data-user-type="${user.userType || 'unknown'}" data-source="${user.source}">
+                    <div class="user-main-info">
+                        <div class="user-identity">
+                            <h3>${user.email}</h3>
+                            <p class="user-display-name">${user.displayName || user.name || 'No name'}</p>
+                            <div class="user-badges">
+                                <span class="status-badge ${user.source}">${user.source === 'azure' ? 'Active' : 'Pending'}</span>
+                                ${user.userType ? `<span class="role-badge ${user.userType}">${user.userType}</span>` : ''}
+                                ${user.isAdmin ? '<span class="admin-badge">Admin</span>' : ''}
+                            </div>
+                        </div>
                     </div>
                     
-                    <div class="role-selection">
-                        <label for="role-${user.email.replace(/[^a-zA-Z0-9]/g, '')}">Assign Role:</label>
-                        <select id="role-${user.email.replace(/[^a-zA-Z0-9]/g, '')}" class="role-select">
-                            <option value="">Select Role</option>
-                            <option value="student_parent">Student/Parent</option>
-                            <option value="tutor">Tutor</option>
-                        </select>
+                    <div class="user-details">
+                        <div class="detail-group">
+                            <p><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
+                            <p><strong>Organization:</strong> ${user.organization || 'Unknown'}</p>
+                            <p><strong>Subscription:</strong> ${user.subscriptionStatus || 'Unknown'}</p>
+                        </div>
+                        <div class="detail-group">
+                            <p><strong>Created:</strong> ${user.createdDate ? new Date(user.createdDate).toLocaleDateString() : 'Unknown'}</p>
+                            <p><strong>Last Login:</strong> ${user.lastLoginDate || 'Never'}</p>
+                            <p><strong>Start Date:</strong> ${user.startDate || 'Unknown'}</p>
+                        </div>
                     </div>
 
-                    <div class="approval-actions">
-                        <button onclick="approveUser('${user.email}', 'approve')" class="btn-approve">
-                            ✅ Approve
-                        </button>
-                        <button onclick="approveUser('${user.email}', 'reject')" class="btn-reject">
-                            ❌ Reject
-                        </button>
+                    <div class="user-actions">
+                        ${user.source === 'pending' ? `
+                            <div class="role-selection">
+                                <select id="role-${user.email.replace(/[^a-zA-Z0-9]/g, '')}" class="role-select">
+                                    <option value="">Select Role</option>
+                                    <option value="student_parent">Student/Parent</option>
+                                    <option value="tutor">Tutor</option>
+                                </select>
+                            </div>
+                            <div class="action-buttons">
+                                <button onclick="approveUser('${user.email}', 'approve')" class="btn-approve">
+                                    ✅ Approve
+                                </button>
+                                <button onclick="approveUser('${user.email}', 'reject')" class="btn-reject">
+                                    ❌ Reject
+                                </button>
+                            </div>
+                        ` : `
+                            <div class="action-buttons">
+                                <button onclick="deleteUser('${user.email}')" class="btn-delete" title="Remove user from system">
+                                    🗑️ Delete User
+                                </button>
+                            </div>
+                        `}
                     </div>
                 </div>
             `).join('');
         }
 
         function updateUserStats(stats) {
-            const pendingCount = document.getElementById('pending-count');
             const totalUsers = document.getElementById('total-users');
+            const activeUsers = document.getElementById('active-users');
+            const pendingUsers = document.getElementById('pending-users');
             
-            if (pendingCount) pendingCount.textContent = stats.pending || 0;
             if (totalUsers) totalUsers.textContent = stats.total || 0;
+            if (activeUsers) activeUsers.textContent = stats.active || 0;
+            if (pendingUsers) pendingUsers.textContent = stats.pending || 0;
+        }
+
+        function setupUserFilters() {
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    // Update active button
+                    filterButtons.forEach(b => b.classList.remove('active'));
+                    e.target.classList.add('active');
+                    
+                    // Filter users
+                    const filter = e.target.dataset.filter;
+                    currentUserFilter = filter;
+                    filterUsers(filter);
+                });
+            });
+        }
+
+        function filterUsers(filter) {
+            let filteredUsers = [];
+            
+            switch(filter) {
+                case 'all':
+                    filteredUsers = allSystemUsers;
+                    break;
+                case 'active':
+                    filteredUsers = allSystemUsers.filter(user => user.source === 'azure');
+                    break;
+                case 'pending':
+                    filteredUsers = allSystemUsers.filter(user => user.source === 'pending');
+                    break;
+                case 'tutors':
+                    filteredUsers = allSystemUsers.filter(user => 
+                        user.userType === 'tutor' || user.roles?.includes('tutor') || user.isAdmin
+                    );
+                    break;
+                default:
+                    filteredUsers = allSystemUsers;
+            }
+            
+            displayAllUsers(filteredUsers);
+        }
+
+        async function deleteUser(email) {
+            if (!confirm(`Are you sure you want to delete user ${email}? This will remove them from both Azure AD B2C and the local database. This action cannot be undone.`)) {
+                return;
+            }
+
+            try {
+                const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+
+                const response = await fetch('/api/user-management', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'delete-user',
+                        userEmail: email,
+                        adminEmail: adminEmail,
+                        isAdmin: userIsAdmin
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus(data.message || `User ${email} deleted successfully!`, 'success');
+                    
+                    // Reload the users list
+                    setTimeout(loadAllUsers, 1000);
+                } else {
+                    const errorData = await response.json();
+                    showStatus(errorData.error || `Failed to delete user`, 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting user:', error);
+                showStatus('Error deleting user. Please try again.', 'error');
+            }
         }
 
         async function approveUser(email, action) {
@@ -5728,8 +6049,8 @@
                     const data = await response.json();
                     showStatus(data.message || `User ${action}d successfully!`, 'success');
                     
-                    // Reload the pending users list
-                    setTimeout(loadPendingUsers, 1000);
+                    // Reload the users list
+                    setTimeout(loadAllUsers, 1000);
                 } else {
                     const errorData = await response.json();
                     showStatus(errorData.error || `Failed to ${action} user`, 'error');
