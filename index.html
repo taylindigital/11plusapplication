@@ -2636,6 +2636,169 @@
             }
         }
 
+        /* User Management Styles */
+        .admin-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: var(--white);
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 4px solid var(--primary-purple);
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(139, 95, 191, 0.1);
+        }
+
+        .stat-number {
+            display: block;
+            font-size: 2.5em;
+            font-weight: 700;
+            color: var(--primary-purple);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: var(--text-light);
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .users-section h2 {
+            color: var(--text-dark);
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .user-approval-card {
+            background: var(--white);
+            border: 1px solid var(--border-light);
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 20px;
+            align-items: center;
+            transition: all 0.3s ease;
+        }
+
+        .user-approval-card:hover {
+            border-color: var(--primary-purple);
+            box-shadow: 0 4px 12px rgba(139, 95, 191, 0.15);
+            transform: translateY(-1px);
+        }
+
+        .user-info h3 {
+            color: var(--primary-purple);
+            margin: 0 0 10px 0;
+            font-size: 1.2em;
+        }
+
+        .user-info p {
+            margin: 5px 0;
+            color: var(--text-light);
+            font-size: 0.9em;
+        }
+
+        .role-selection {
+            text-align: center;
+        }
+
+        .role-selection label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-dark);
+            font-weight: 500;
+            font-size: 0.9em;
+        }
+
+        .role-select {
+            padding: 8px 12px;
+            border: 2px solid var(--border-light);
+            border-radius: 8px;
+            font-size: 0.9em;
+            background: var(--white);
+            color: var(--text-dark);
+            min-width: 150px;
+            transition: border-color 0.3s ease;
+        }
+
+        .role-select:focus {
+            outline: none;
+            border-color: var(--primary-purple);
+        }
+
+        .approval-actions {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+        }
+
+        .btn-approve, .btn-reject {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            min-width: 100px;
+        }
+
+        .btn-approve {
+            background: var(--success-green);
+            color: var(--white);
+        }
+
+        .btn-approve:hover {
+            background: #22c55e;
+            transform: translateY(-1px);
+        }
+
+        .btn-reject {
+            background: var(--error-red);
+            color: var(--white);
+        }
+
+        .btn-reject:hover {
+            background: #dc2626;
+            transform: translateY(-1px);
+        }
+
+        .no-users {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-light);
+        }
+
+        .no-users-icon {
+            font-size: 4em;
+            display: block;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .user-approval-card {
+                grid-template-columns: 1fr;
+                text-align: center;
+                gap: 15px;
+            }
+
+            .approval-actions {
+                flex-direction: row;
+                justify-content: center;
+            }
+
+            .admin-stats {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Homework Management Styles */
         .large-modal .modal-content {
             max-width: 900px;
@@ -3170,13 +3333,13 @@
                 
                 // Detect user roles and access level
                 try {
-                    const roleDetection = await detectUserRoles(email);
+                    const roleDetection = await detectUserRoles(email, response.account.idTokenClaims);
                     userRoles = roleDetection.roles;
                     userAccessLevel = roleDetection.accessLevel;
                     currentUser = roleDetection.user;
                     
                     // Backward compatibility
-                    userIsAdmin = userAccessLevel === 'tutor' || roleDetection.roles.includes('admin');
+                    userIsAdmin = userAccessLevel === 'admin' || userAccessLevel === 'tutor' || roleDetection.roles.includes('admin');
                     userApprovalStatus = 'approved'; // Simulate approved status
                     userHasSubscription = true; // Simulate active subscription
                     
@@ -3190,7 +3353,7 @@
                     console.error("Role detection error:", error);
                     // Fallback to legacy role detection
                     userIsAdmin = response.account.idTokenClaims?.roles?.includes('isAdmin') || false;
-                    userAccessLevel = userIsAdmin ? 'tutor' : 'student_parent';
+                    userAccessLevel = userIsAdmin ? 'admin' : 'student_parent';
                     userRoles = userIsAdmin ? ['admin'] : ['student'];
                     userApprovalStatus = 'approved';
                     userHasSubscription = true;
@@ -3237,11 +3400,25 @@
         // ROLE DETECTION & ACCESS CONTROL
         // ============================================
         
-        async function detectUserRoles(userEmail) {
+        async function detectUserRoles(userEmail, tokenClaims) {
             try {
                 console.log('Detecting user roles for:', userEmail);
+                console.log('Token claims:', tokenClaims);
                 
-                // Try to get user data from checkuserstatus API
+                // PRIORITY 1: Check Azure B2C Security Group isAdmin attribute
+                const azureIsAdmin = tokenClaims?.roles?.includes('isAdmin') || false;
+                console.log('Azure isAdmin attribute:', azureIsAdmin);
+                
+                if (azureIsAdmin) {
+                    console.log('User has Azure isAdmin - granting admin access');
+                    return {
+                        roles: ['admin', 'tutor'],
+                        accessLevel: 'admin',
+                        user: { email: userEmail, isAdmin: true, roles: ['admin'] }
+                    };
+                }
+                
+                // PRIORITY 2: Check database user roles
                 const response = await fetch('/api/checkuserstatus', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -3285,13 +3462,9 @@
                         userAccessLevel = 'student_parent';
                     }
                     
-                    // Update legacy variables for backward compatibility
-                    userIsAdmin = userRoles.includes('tutor');
-                    
-                    console.log('User roles detected:', {
+                    console.log('Database roles detected:', {
                         roles: userRoles,
-                        accessLevel: userAccessLevel,
-                        isAdmin: userIsAdmin
+                        accessLevel: userAccessLevel
                     });
                     
                     return {
@@ -3301,6 +3474,8 @@
                     };
                 }
                 
+                // PRIORITY 3: Default fallback
+                console.log('No database user found - defaulting to student_parent');
                 return { roles: ['student'], accessLevel: 'student_parent', user: null };
             } catch (error) {
                 console.error('Error detecting user roles:', error);
@@ -3309,7 +3484,7 @@
         }
         
         function getUserNavigationItems() {
-            if (userAccessLevel === 'tutor') {
+            if (userAccessLevel === 'admin' || userAccessLevel === 'tutor') {
                 return [
                     { id: 'tutor-dashboard', icon: '👩‍🏫', label: 'Student Management' },
                     { id: 'year-ahead', icon: '📅', label: 'Year Planning' },
@@ -3338,12 +3513,12 @@
         }
         
         function canAccessAdminFeatures() {
-            return userAccessLevel === 'tutor';
+            return userAccessLevel === 'admin' || userAccessLevel === 'tutor';
         }
         
         function canAccessStudentData(studentEmail) {
-            if (userAccessLevel === 'tutor') {
-                // Tutors can access their assigned students
+            if (userAccessLevel === 'admin' || userAccessLevel === 'tutor') {
+                // Admins and tutors can access their assigned students
                 return currentUser?.students?.includes(studentEmail) || true; // For now, allow all
             } else {
                 // Students can only access their own data, parents can access their children
@@ -3586,6 +3761,10 @@
                                     <span>My Students</span>
                                 </div>
                             ` : `
+                                <div class="nav-item" onclick="setCurrentView('admin-users')">
+                                    <span class="nav-item-icon">👤</span>
+                                    <span>User Management</span>
+                                </div>
                                 <div class="nav-item" onclick="setCurrentView('admin-lessons')">
                                     <span class="nav-item-icon">⚙️</span>
                                     <span>Manage Lessons</span>
@@ -3615,6 +3794,9 @@
                     return renderStudentArea();
                 case 'subscription':
                     return renderSubscription();
+                case 'admin-users':
+                    setTimeout(() => loadPendingUsers(), 100);
+                    return renderAdminUsers();
                 case 'admin-lessons':
                     return renderAdminLessons();
                 case 'tutor-dashboard':
@@ -4308,6 +4490,51 @@
             `;
         }
 
+        function renderAdminUsers() {
+            if (!canAccessAdminFeatures() || userAccessLevel !== 'admin') {
+                return `
+                    <div class="content-area">
+                        <div class="coming-soon">
+                            <div class="coming-soon-icon">🚫</div>
+                            <h3>Access Denied</h3>
+                            <p>You don't have permission to access user management.</p>
+                        </div>
+                    </div>
+                `;
+            }
+
+            return `
+                <div class="content-area">
+                    <div class="content-header">
+                        <div>
+                            <h1 class="content-title">User Management</h1>
+                            <p class="content-subtitle">Approve pending users and assign roles</p>
+                        </div>
+                    </div>
+
+                    <div class="admin-dashboard">
+                        <div class="admin-stats">
+                            <div class="stat-card">
+                                <span class="stat-number" id="pending-count">0</span>
+                                <span class="stat-label">Pending Approvals</span>
+                            </div>
+                            <div class="stat-card">
+                                <span class="stat-number" id="total-users">0</span>
+                                <span class="stat-label">Total Users</span>
+                            </div>
+                        </div>
+
+                        <div class="users-section">
+                            <h2>Pending User Approvals</h2>
+                            <div id="pending-users-container">
+                                <div class="loading-spinner">Loading pending users...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderAdminLessons() {
             console.log('Rendering admin lessons page');
             
@@ -4525,7 +4752,7 @@
         // ============================================
 
         function renderTutorDashboard() {
-            if (!canAccessAdminFeatures() || userAccessLevel !== 'tutor') {
+            if (!canAccessAdminFeatures() || (userAccessLevel !== 'tutor' && userAccessLevel !== 'admin')) {
                 return `
                     <div class="content-area">
                         <div class="coming-soon">
@@ -4727,7 +4954,7 @@
         }
 
         function renderTutorStudents() {
-            if (!canAccessAdminFeatures() || userAccessLevel !== 'tutor') {
+            if (!canAccessAdminFeatures() || (userAccessLevel !== 'tutor' && userAccessLevel !== 'admin')) {
                 return `
                     <div class="content-area">
                         <div class="coming-soon">
@@ -5386,6 +5613,130 @@
                 setTimeout(loadTutorDashboard, 100);
             } else if (currentView === 'tutor-students') {
                 setTimeout(loadTutorStudents, 100);
+            }
+        }
+
+        // ============================================
+        // USER MANAGEMENT FUNCTIONS
+        // ============================================
+
+        async function loadPendingUsers() {
+            try {
+                const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+                if (!adminEmail) return;
+
+                const response = await fetch('/api/user-management', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        action: 'get-pending-users',
+                        adminEmail: adminEmail,
+                        isAdmin: userIsAdmin
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    displayPendingUsers(data.users || []);
+                    updateUserStats(data.stats || {});
+                } else {
+                    console.error('Failed to load pending users');
+                }
+            } catch (error) {
+                console.error('Error loading pending users:', error);
+            }
+        }
+
+        function displayPendingUsers(users) {
+            const container = document.getElementById('pending-users-container');
+            if (!container) return;
+
+            if (users.length === 0) {
+                container.innerHTML = `
+                    <div class="no-users">
+                        <span class="no-users-icon">✅</span>
+                        <p>No pending user approvals</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = users.map(user => `
+                <div class="user-approval-card">
+                    <div class="user-info">
+                        <h3>${user.email}</h3>
+                        <p><strong>Name:</strong> ${user.name || 'Not provided'}</p>
+                        <p><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
+                        <p><strong>Requested:</strong> ${new Date(user.createdDate).toLocaleDateString()}</p>
+                        <p><strong>Organization:</strong> ${user.organization || 'N/A'}</p>
+                    </div>
+                    
+                    <div class="role-selection">
+                        <label for="role-${user.email.replace(/[^a-zA-Z0-9]/g, '')}">Assign Role:</label>
+                        <select id="role-${user.email.replace(/[^a-zA-Z0-9]/g, '')}" class="role-select">
+                            <option value="">Select Role</option>
+                            <option value="student_parent">Student/Parent</option>
+                            <option value="tutor">Tutor</option>
+                        </select>
+                    </div>
+
+                    <div class="approval-actions">
+                        <button onclick="approveUser('${user.email}', 'approve')" class="btn-approve">
+                            ✅ Approve
+                        </button>
+                        <button onclick="approveUser('${user.email}', 'reject')" class="btn-reject">
+                            ❌ Reject
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateUserStats(stats) {
+            const pendingCount = document.getElementById('pending-count');
+            const totalUsers = document.getElementById('total-users');
+            
+            if (pendingCount) pendingCount.textContent = stats.pending || 0;
+            if (totalUsers) totalUsers.textContent = stats.total || 0;
+        }
+
+        async function approveUser(email, action) {
+            try {
+                const roleSelect = document.getElementById(`role-${email.replace(/[^a-zA-Z0-9]/g, '')}`);
+                const selectedRole = roleSelect?.value;
+                
+                if (action === 'approve' && !selectedRole) {
+                    showStatus('Please select a role before approving the user.', 'error');
+                    return;
+                }
+
+                const adminEmail = currentAccount?.username || currentAccount?.idTokenClaims?.emails?.[0];
+
+                const response = await fetch('/api/approveuser', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        email: email,
+                        action: action,
+                        adminEmail: adminEmail,
+                        isAdmin: userIsAdmin,
+                        assignedRole: selectedRole
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    showStatus(data.message || `User ${action}d successfully!`, 'success');
+                    
+                    // Reload the pending users list
+                    setTimeout(loadPendingUsers, 1000);
+                } else {
+                    const errorData = await response.json();
+                    showStatus(errorData.error || `Failed to ${action} user`, 'error');
+                }
+            } catch (error) {
+                console.error(`Error ${action}ing user:`, error);
+                showStatus(`Error ${action}ing user. Please try again.`, 'error');
             }
         }
 

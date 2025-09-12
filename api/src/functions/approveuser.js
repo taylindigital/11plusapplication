@@ -5,7 +5,7 @@ module.exports = async function (request, context) {
     context.log('Admin approving/rejecting user');
 
     const body = await request.json().catch(() => ({}));
-    const { email, action, adminEmail } = body;
+    const { email, action, adminEmail, assignedRole } = body;
     
     if (!email || !action) {
         return {
@@ -32,6 +32,18 @@ module.exports = async function (request, context) {
         user.status = action === 'approve' ? 'approved' : 'rejected';
         user.processedDate = new Date().toISOString();
         user.processedBy = adminEmail;
+        
+        // Assign role during approval
+        if (action === 'approve' && assignedRole) {
+            const roles = assignedRole === 'tutor' ? ['tutor'] : ['student', 'parent'];
+            user.roles = JSON.stringify(roles);
+            user.userType = assignedRole;
+            
+            // For backwards compatibility, set isAdmin flag for tutors
+            user.isAdmin = assignedRole === 'tutor';
+            
+            context.log(`Assigned role '${assignedRole}' to user ${email}`);
+        }
         
         await tableClient.updateEntity(user, "Merge");
         
@@ -60,12 +72,14 @@ module.exports = async function (request, context) {
             await poller.pollUntilDone();
         }
         
+        const roleMessage = action === 'approve' && assignedRole ? ` as ${assignedRole}` : '';
         return {
             status: 200,
             jsonBody: { 
                 success: true, 
-                message: `User ${action}d successfully`,
-                email: email 
+                message: `User ${action}d successfully${roleMessage}`,
+                email: email,
+                assignedRole: action === 'approve' ? assignedRole : null
             }
         };
     } catch (error) {
