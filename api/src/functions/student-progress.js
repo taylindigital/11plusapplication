@@ -38,7 +38,7 @@ module.exports = async function (request, context) {
         try {
             body = await request.json();
         } catch (jsonError) {
-            context.log.error('Failed to parse JSON:', jsonError);
+            context.log('Failed to parse JSON:', jsonError);
             return {
                 status: 400,
                 headers: corsHeaders,
@@ -111,7 +111,7 @@ module.exports = async function (request, context) {
         }
 
     } catch (error) {
-        context.log.error('Student Progress API error:', error);
+        context.log('Student Progress API error:', error);
         return {
             status: 500,
             headers: corsHeaders,
@@ -201,7 +201,7 @@ async function getStudentProgress(studentId, context, corsHeaders) {
             }
         };
     } catch (error) {
-        context.log.error('Get progress error:', error);
+        context.log('Get progress error:', error);
         return {
             status: 500,
             headers: corsHeaders,
@@ -233,7 +233,7 @@ async function updateStudentProgress(studentId, progressData, teacherEmail, cont
             }
         };
     } catch (error) {
-        context.log.error('Update progress error:', error);
+        context.log('Update progress error:', error);
         return {
             status: 500,
             headers: corsHeaders,
@@ -261,7 +261,7 @@ async function getHomeworkAssignments(studentId, context, corsHeaders) {
             }
         };
     } catch (error) {
-        context.log.error('Get homework error:', error);
+        context.log('Get homework error:', error);
         return {
             status: 500,
             headers: corsHeaders,
@@ -293,7 +293,7 @@ async function submitHomework(studentId, homeworkData, context, corsHeaders) {
             }
         };
     } catch (error) {
-        context.log.error('Submit homework error:', error);
+        context.log('Submit homework error:', error);
         return {
             status: 500,
             headers: corsHeaders,
@@ -354,7 +354,7 @@ async function getParentDashboard(parentEmail, context, corsHeaders) {
             }
         };
     } catch (error) {
-        context.log.error('Get parent dashboard error:', error);
+        context.log('Get parent dashboard error:', error);
         return {
             status: 500,
             headers: corsHeaders,

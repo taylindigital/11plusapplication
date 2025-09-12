@@ -20,6 +20,8 @@ const stripeCancelSubscription = require('./functions/stripe-cancel-subscription
 const stripeUpdatePaymentMethod = require('./functions/stripe-update-payment-method');
 const stripeWebhook = require('./functions/stripe-webhook');
 const studentProgress = require('./functions/student-progress');
+const tutorManagement = require('./functions/tutor-management');
+const studentInvitations = require('./functions/student-invitations');
 
 // Register existing functions
 app.http('checkuserstatus', {
@@ -125,6 +127,18 @@ app.http('student-progress', {
     handler: studentProgress
 });
 
+app.http('tutor-management', {
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: tutorManagement
+});
+
+app.http('student-invitations', {
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: studentInvitations
+});
+
 // Test endpoint
 app.http('test', {
     methods: ['GET'],
@@ -141,7 +155,8 @@ app.http('test', {
                     'onusersignup', 'lessons', 'upload', 'bulk-upload', 'get-content', 'trackview',
                     'stripe-create-customer', 'stripe-create-subscription',
                     'stripe-get-subscription', 'stripe-cancel-subscription',
-                    'stripe-update-payment-method', 'stripe-webhook', 'student-progress'
+                    'stripe-update-payment-method', 'stripe-webhook', 'student-progress',
+                    'tutor-management', 'student-invitations'
                 ]
             }
         };
