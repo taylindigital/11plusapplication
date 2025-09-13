@@ -11,25 +11,43 @@ let authCache = {
     userInfo: null
 };
 
+// B2C Configuration (from original working version)
+const B2C_CONFIG = {
+    tenantName: "brightstars11plus",
+    tenantId: "d96d2f4e-d080-4c2f-90e1-cce96e64b6ba",
+    clientId: "a4f6894b-e8f4-4102-a777-63d749372a6b",
+    signInSignUpPolicyName: "SignUpSignIn",
+    redirectUri: window.location.origin,
+    scopes: ["openid", "profile"],
+    cacheLocation: "sessionStorage",
+    isConfigured: true
+};
+
+const getAuthority = () => {
+    return `https://${B2C_CONFIG.tenantName}.ciamlogin.com/${B2C_CONFIG.tenantId}`;
+};
+
 const msalConfig = {
     auth: {
-        clientId: "ed29b38d-ff0f-4de9-b5c5-e18fb7c48993",
-        authority: "https://brightstarseducation.b2clogin.com/brightstarseducation.onmicrosoft.com/B2C_1_SignUpSignIn",
-        knownAuthorities: ["brightstarseducation.b2clogin.com"],
-        redirectUri: window.location.origin
+        clientId: B2C_CONFIG.clientId,
+        authority: getAuthority(),
+        knownAuthorities: [`${B2C_CONFIG.tenantName}.ciamlogin.com`],
+        redirectUri: B2C_CONFIG.redirectUri,
+        postLogoutRedirectUri: B2C_CONFIG.redirectUri,
+        navigateToLoginRequestUrl: false
     },
     cache: {
-        cacheLocation: "localStorage",
-        storeAuthStateInCookie: false,
-    },
-    system: {
-        allowNativeBroker: false
+        cacheLocation: B2C_CONFIG.cacheLocation,
+        storeAuthStateInCookie: false
     }
 };
 
 const loginRequest = {
-    scopes: ["openid", "profile"],
-    prompt: "login"
+    scopes: B2C_CONFIG.scopes,
+    extraQueryParameters: {
+        p: B2C_CONFIG.signInSignUpPolicyName
+    },
+    prompt: "select_account"
 };
 
 // Track initialization attempts to prevent infinite loop
@@ -89,11 +107,41 @@ function initializeAuth() {
 }
 
 async function selectAccount() {
+    // Handle redirect response first
+    try {
+        const response = await myMSALObj.handleRedirectPromise();
+        if (response && response.account) {
+            currentAccount = response.account;
+            console.log("User logged in via redirect:", response.account.username);
+        }
+    } catch (error) {
+        console.error("Error handling redirect:", error);
+    }
+    
+    // Check for existing accounts
     const currentAccounts = myMSALObj.getAllAccounts();
     
-    if (currentAccounts.length > 0) {
+    if (currentAccounts.length > 0 && !currentAccount) {
         currentAccount = currentAccounts[0];
         
+        // Try to get token silently to verify account is still valid
+        try {
+            const response = await myMSALObj.acquireTokenSilent({
+                scopes: B2C_CONFIG.scopes,
+                account: currentAccounts[0]
+            });
+            
+            if (response.accessToken) {
+                console.log("User already logged in:", currentAccounts[0].username);
+            }
+        } catch (error) {
+            console.log("Silent token acquisition failed:", error);
+            // Account may be expired, clear it
+            currentAccount = null;
+        }
+    }
+    
+    if (currentAccount) {
         // Performance: Check cache first
         const now = Date.now();
         if (authCache.lastCheck + authCache.cacheDuration > now && authCache.userInfo) {
@@ -103,10 +151,9 @@ async function selectAccount() {
         
         // If no valid cache, check auth state
         await checkUserStatus();
-        updateUI();
-    } else {
-        updateUI();
     }
+    
+    updateUI();
 }
 
 async function checkUserStatus() {
@@ -202,42 +249,34 @@ async function signIn() {
     }
 
     try {
-        showLoadingState('Signing in...');
-        const loginResponse = await myMSALObj.loginPopup(loginRequest);
-        currentAccount = loginResponse.account;
-        
-        // Clear cache on new sign in
-        authCache.lastCheck = 0;
-        
-        await checkUserStatus();
-        updateUI();
+        showLoadingState('Redirecting to login...');
+        await myMSALObj.loginRedirect(loginRequest);
+        // Note: loginRedirect doesn't return here - it redirects the page
     } catch (error) {
         console.error("Login failed:", error);
         showStatus('Login failed. Please try again.', 'error');
-    } finally {
         hideLoadingState();
     }
 }
 
-function signOut() {
-    if (myMSALObj) {
-        showLoadingState('Signing out...');
-        
+async function signOut() {
+    if (!myMSALObj) return;
+
+    try {
+        const logoutRequest = {
+            postLogoutRedirectUri: B2C_CONFIG.redirectUri,
+            mainWindowRedirectUri: B2C_CONFIG.redirectUri
+        };
+
         // Clear cache
         authCache = { lastCheck: 0, cacheDuration: 5 * 60 * 1000, userInfo: null };
+        currentAccount = null;
+        userIsAdmin = false;
+        userHasSubscription = false;
         
-        myMSALObj.logoutPopup({
-            postLogoutRedirectUri: window.location.origin,
-        }).then(() => {
-            currentAccount = null;
-            userIsAdmin = false;
-            userHasSubscription = false;
-            updateUI();
-            hideLoadingState();
-        }).catch(error => {
-            console.error("Logout failed:", error);
-            hideLoadingState();
-        });
+        await myMSALObj.logoutRedirect(logoutRequest);
+    } catch (error) {
+        console.error("Logout failed:", error);
     }
 }
 
