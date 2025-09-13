@@ -34,6 +34,13 @@ const loginRequest = {
 
 // Performance: Initialize with loading state
 function initializeAuth() {
+    // Wait for MSAL to be available
+    if (typeof msal === 'undefined') {
+        console.log('Waiting for MSAL to load...');
+        setTimeout(initializeAuth, 100);
+        return;
+    }
+    
     showLoadingState('Initializing authentication...');
     
     try {
@@ -219,6 +226,10 @@ function updateUI() {
                 document.getElementById('signInButton')?.style.setProperty('display', 'none');
                 document.getElementById('signOutButton')?.style.setProperty('display', 'block');
                 
+                // Show subscription badge
+                const subscriptionBadges = document.querySelectorAll('.subscription-badge');
+                subscriptionBadges.forEach(badge => badge.style.display = 'inline-block');
+                
                 // Update user info displays
                 const userInfoElements = document.querySelectorAll('.user-info');
                 userInfoElements.forEach(element => {
@@ -232,6 +243,10 @@ function updateUI() {
             updates.push(() => {
                 document.getElementById('signInButton')?.style.setProperty('display', 'block');
                 document.getElementById('signOutButton')?.style.setProperty('display', 'none');
+                
+                // Hide subscription badge
+                const subscriptionBadges = document.querySelectorAll('.subscription-badge');
+                subscriptionBadges.forEach(badge => badge.style.display = 'none');
             });
         }
         
