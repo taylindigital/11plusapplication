@@ -21,6 +21,13 @@
     
     <!-- MSAL Library - Load synchronously -->
     <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+    <script>
+        // Verify MSAL loaded
+        console.log('MSAL available after script load:', typeof msal !== 'undefined');
+        if (typeof msal === 'undefined') {
+            console.error('MSAL failed to load from CDN');
+        }
+    </script>
     
     <!-- Performance optimizations -->
     <meta name="theme-color" content="#8B5FBF">
@@ -83,8 +90,8 @@
 
     <!-- Main Content -->
     <div class="container">
-        <!-- Header -->
-        <div class="header">
+        <!-- Header - Hidden by default, shown after login -->
+        <div class="header" id="main-header" style="display: none;">
             <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
             <div class="user-info">
                 <span class="subscription-badge" style="display: none;">Unknown</span>

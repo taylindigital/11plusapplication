@@ -32,11 +32,22 @@ const loginRequest = {
     prompt: "login"
 };
 
+// Track initialization attempts to prevent infinite loop
+let initAttempts = 0;
+const maxInitAttempts = 50; // 5 seconds max
+
 // Performance: Initialize with loading state
 function initializeAuth() {
+    initAttempts++;
+    
     // Wait for MSAL to be available
     if (typeof msal === 'undefined') {
-        console.log('Waiting for MSAL to load...');
+        if (initAttempts > maxInitAttempts) {
+            console.error('MSAL failed to load after 5 seconds');
+            showStatus('Authentication library failed to load. Please refresh the page.', 'error');
+            return;
+        }
+        console.log(`Waiting for MSAL to load... (attempt ${initAttempts})`);
         setTimeout(initializeAuth, 100);
         return;
     }
@@ -242,6 +253,10 @@ function updateUI() {
                 document.getElementById('signInButton')?.style.setProperty('display', 'none');
                 document.getElementById('signOutButton')?.style.setProperty('display', 'block');
                 
+                // Show the header after login
+                const header = document.getElementById('main-header');
+                if (header) header.style.display = 'flex';
+                
                 // Show subscription badge
                 const subscriptionBadges = document.querySelectorAll('.subscription-badge');
                 subscriptionBadges.forEach(badge => badge.style.display = 'inline-block');
@@ -259,6 +274,10 @@ function updateUI() {
             updates.push(() => {
                 document.getElementById('signInButton')?.style.setProperty('display', 'block');
                 document.getElementById('signOutButton')?.style.setProperty('display', 'none');
+                
+                // Hide the header when logged out
+                const header = document.getElementById('main-header');
+                if (header) header.style.display = 'none';
                 
                 // Hide subscription badge
                 const subscriptionBadges = document.querySelectorAll('.subscription-badge');
