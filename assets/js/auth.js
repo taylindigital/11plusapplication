@@ -48,14 +48,24 @@ function initializeAuth() {
         
         myMSALObj.initialize().then(() => {
             console.log("MSAL initialized successfully");
+            
+            // Enable sign-in button once MSAL is ready
+            const signInButton = document.getElementById('signInButton');
+            if (signInButton) {
+                signInButton.disabled = false;
+                signInButton.style.opacity = '1';
+            }
+            
             selectAccount();
             hideLoadingState();
         }).catch(error => {
             console.error("MSAL initialization failed:", error);
+            showStatus('Authentication initialization failed. Please refresh the page.', 'error');
             hideLoadingState();
         });
     } catch (error) {
         console.error("Error creating MSAL instance:", error);
+        showStatus('Authentication setup failed. Please refresh the page.', 'error');
         hideLoadingState();
     }
 }
@@ -167,6 +177,12 @@ function updateSubscriptionBadges() {
 }
 
 async function signIn() {
+    // Ensure MSAL is initialized before attempting login
+    if (!myMSALObj) {
+        showStatus('Authentication is still initializing. Please wait a moment and try again.', 'info');
+        return;
+    }
+
     try {
         showLoadingState('Signing in...');
         const loginResponse = await myMSALObj.loginPopup(loginRequest);
@@ -285,24 +301,22 @@ function updateNavigationVisibility(isSignedIn) {
     });
 }
 
-// Performance utilities
+// Performance utilities - use existing loading overlay
 function showLoadingState(message = 'Loading...') {
     let overlay = document.getElementById('loading-overlay');
     if (!overlay) {
         overlay = document.createElement('div');
         overlay.id = 'loading-overlay';
         overlay.className = 'loading-overlay';
-        overlay.innerHTML = `
-            <div style="text-align: center;">
-                <div class="loading-spinner large"></div>
-                <p style="margin-top: 16px; color: var(--text-medium);">${message}</p>
-            </div>
-        `;
         document.body.appendChild(overlay);
     }
     
-    const messageEl = overlay.querySelector('p');
-    if (messageEl) messageEl.textContent = message;
+    overlay.innerHTML = `
+        <div style="text-align: center;">
+            <div class="loading-spinner large"></div>
+            <p style="margin-top: 16px; color: var(--text-medium);">${message}</p>
+        </div>
+    `;
     
     overlay.classList.add('active');
 }
