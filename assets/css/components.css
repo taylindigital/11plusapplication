@@ -683,3 +683,410 @@
         justify-content: center;
     }
 }
+
+/* Content Grid Layouts */
+.content-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 24px;
+    margin-top: 32px;
+}
+
+.content-card {
+    background: white;
+    border-radius: 16px;
+    padding: 28px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    border: 1px solid rgba(139, 95, 191, 0.1);
+    position: relative;
+    overflow: hidden;
+    cursor: pointer;
+}
+
+.content-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+    border-color: rgba(139, 95, 191, 0.2);
+}
+
+.content-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--primary-purple), var(--bright-orange));
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.content-card:hover::before {
+    opacity: 1;
+}
+
+.content-card .card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 16px;
+    display: block;
+}
+
+.content-card .card-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    line-height: 1.3;
+}
+
+.content-card .card-description {
+    color: var(--text-medium);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.content-card .card-meta {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.content-card .card-meta span {
+    font-size: 0.85rem;
+    padding: 6px 12px;
+    background: rgba(139, 95, 191, 0.1);
+    color: var(--primary-purple);
+    border-radius: 20px;
+    font-weight: 500;
+}
+
+/* Content card themes */
+.content-card.maths .card-icon {
+    color: var(--bright-orange);
+}
+
+.content-card.english .card-icon {
+    color: var(--primary-purple);
+}
+
+.content-card.resources .card-icon {
+    color: var(--success-green);
+}
+
+.content-card.planning .card-icon {
+    color: var(--sky-blue);
+}
+
+.content-card.enhanced {
+    background: linear-gradient(135deg, white 0%, rgba(139, 95, 191, 0.02) 100%);
+}
+
+/* Coming Soon Component */
+.coming-soon {
+    text-align: center;
+    padding: 60px 40px;
+    background: linear-gradient(135deg, rgba(139, 95, 191, 0.05) 0%, rgba(255, 165, 0, 0.05) 100%);
+    border-radius: 20px;
+    border: 2px dashed rgba(139, 95, 191, 0.2);
+    margin: 32px 0;
+}
+
+.coming-soon-icon {
+    font-size: 4rem;
+    margin-bottom: 24px;
+    opacity: 0.8;
+}
+
+.coming-soon h3 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 16px;
+    background: linear-gradient(135deg, var(--primary-purple), var(--bright-orange));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.coming-soon p {
+    color: var(--text-medium);
+    font-size: 1.1rem;
+    line-height: 1.6;
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+/* Additional mobile responsive styles for content */
+@media (max-width: 768px) {
+    .content-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+    
+    .content-card {
+        padding: 20px;
+    }
+    
+    .content-card .card-icon {
+        font-size: 2rem;
+    }
+    
+    .content-card .card-title {
+        font-size: 1.2rem;
+    }
+    
+    .coming-soon {
+        padding: 40px 20px;
+    }
+    
+    .coming-soon-icon {
+        font-size: 3rem;
+    }
+    
+    .coming-soon h3 {
+        font-size: 1.5rem;
+    }
+    
+    .coming-soon p {
+        font-size: 1rem;
+    }
+}
+
+/* Club Selection Styles */
+.club-selection {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 60vh;
+    text-align: center;
+    gap: 40px;
+    padding: 40px 20px;
+}
+
+.club-selection-title {
+    font-size: 42px;
+    color: var(--primary-purple);
+    margin-bottom: 20px;
+    font-weight: 800;
+    text-shadow: 2px 2px 4px rgba(139, 95, 191, 0.2);
+}
+
+.club-selection-subtitle {
+    font-size: 20px;
+    color: var(--text-medium);
+    margin-bottom: 40px;
+    font-weight: 400;
+}
+
+.club-boxes {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 40px;
+    width: 100%;
+    max-width: 900px;
+}
+
+.club-box {
+    background: var(--white);
+    padding: 40px 30px;
+    border-radius: 30px;
+    cursor: pointer;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 8px 40px rgba(0, 0, 0, 0.1);
+    position: relative;
+    overflow: hidden;
+    border: 3px solid rgba(255, 155, 71, 0.3);
+}
+
+.club-box:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.2);
+}
+
+.club-box.year4 {
+    background: linear-gradient(135deg, rgba(255, 155, 71, 0.1), rgba(255, 217, 61, 0.1));
+    border-color: rgba(255, 155, 71, 0.3);
+}
+
+.club-box.year5 {
+    background: linear-gradient(135deg, rgba(107, 207, 127, 0.1), rgba(78, 205, 196, 0.1));
+    border-color: rgba(107, 207, 127, 0.3);
+}
+
+.club-icon {
+    font-size: 64px;
+    margin-bottom: 20px;
+    filter: drop-shadow(2px 2px 6px rgba(0,0,0,0.1));
+}
+
+.club-box.year4 .club-icon {
+    color: var(--bright-orange);
+}
+
+.club-box.year5 .club-icon {
+    color: var(--success-green);
+}
+
+.club-title {
+    font-size: 28px;
+    color: var(--text-primary);
+    margin-bottom: 12px;
+    font-weight: 700;
+}
+
+.club-subtitle {
+    font-size: 18px;
+    color: var(--text-medium);
+    font-weight: 600;
+    margin-bottom: 16px;
+}
+
+.club-description {
+    font-size: 16px;
+    color: var(--text-light);
+    line-height: 1.6;
+}
+
+/* Dashboard Layout */
+.dashboard {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 30px;
+    min-height: calc(100vh - 180px);
+}
+
+.sidebar {
+    background: linear-gradient(135deg, var(--primary-purple), #9d4edd);
+    border-radius: 20px;
+    padding: 20px;
+    color: white;
+    position: sticky;
+    top: 20px;
+    height: fit-content;
+}
+
+.back-to-clubs {
+    background: rgba(255, 255, 255, 0.2);
+    border: none;
+    color: white;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 20px;
+    width: 100%;
+    transition: all 0.3s ease;
+}
+
+.back-to-clubs:hover {
+    background: rgba(255, 255, 255, 0.3);
+    transform: translateX(-2px);
+}
+
+.sidebar-header {
+    text-align: center;
+    padding: 20px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.2);
+    margin-bottom: 20px;
+}
+
+.sidebar-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.sidebar-subtitle {
+    font-size: 14px;
+    opacity: 0.8;
+    font-weight: 400;
+}
+
+.nav-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 16px;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-weight: 500;
+}
+
+.nav-item:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.2);
+    font-weight: 600;
+}
+
+.nav-item-icon {
+    font-size: 18px;
+    width: 24px;
+    text-align: center;
+}
+
+.content-area {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+    min-height: 500px;
+}
+
+/* Logo styles */
+.logo-image {
+    max-height: 60px;
+    object-fit: contain;
+}
+
+/* Mobile responsiveness for club selection and dashboard */
+@media (max-width: 768px) {
+    .club-boxes {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .club-selection-title {
+        font-size: 32px;
+    }
+    
+    .club-box {
+        padding: 30px 20px;
+    }
+    
+    .club-icon {
+        font-size: 48px;
+    }
+    
+    .club-title {
+        font-size: 24px;
+    }
+    
+    .dashboard {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
+    
+    .sidebar {
+        position: static;
+        order: 2;
+    }
+    
+    .content-area {
+        padding: 20px;
+        order: 1;
+    }
+}

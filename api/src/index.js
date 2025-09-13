@@ -23,6 +23,7 @@ const studentProgress = require('./functions/student-progress');
 const tutorManagement = require('./functions/tutor-management');
 const studentInvitations = require('./functions/student-invitations');
 const userManagement = require('./functions/user-management');
+const checkAdminStatus = require('./functions/check-admin-status');
 
 // Register existing functions
 app.http('checkuserstatus', {
@@ -144,6 +145,12 @@ app.http('user-management', {
     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
     authLevel: 'anonymous',
     handler: userManagement
+});
+
+app.http('check-admin-status', {
+    methods: ['GET', 'POST', 'OPTIONS'],
+    authLevel: 'anonymous',
+    handler: checkAdminStatus
 });
 
 // Test endpoint

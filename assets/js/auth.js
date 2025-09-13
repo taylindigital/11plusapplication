@@ -156,6 +156,74 @@ async function selectAccount() {
     updateUI();
 }
 
+// Sophisticated admin detection from multiple sources (like the original system)
+async function detectUserAdmin(email, idTokenClaims, userData = null) {
+    try {
+        // 1. Check Azure B2C token claims first (most authoritative)
+        if (idTokenClaims && idTokenClaims.extension_isAdmin === true) {
+            console.log('Admin status from B2C token claims:', true);
+            return true;
+        }
+        
+        // 2. Check for roles array in token claims
+        if (idTokenClaims && idTokenClaims.roles && Array.isArray(idTokenClaims.roles)) {
+            const hasAdminRole = idTokenClaims.roles.some(role => 
+                role.toLowerCase().includes('admin') || 
+                role.toLowerCase().includes('teacher') ||
+                role.toLowerCase().includes('tutor')
+            );
+            if (hasAdminRole) {
+                console.log('Admin status from B2C roles:', true);
+                return true;
+            }
+        }
+        
+        // 3. Check user data from checkuserstatus API if available
+        if (userData && userData.isAdmin === true) {
+            console.log('Admin status from user data:', true);
+            return true;
+        }
+        
+        // 4. Fallback: Check against known admin emails (legacy support)
+        const knownAdminEmails = [
+            'jason@bridge1.net',
+            'admin@brightstars11plus.com',
+            'teacher@brightstars11plus.com'
+        ];
+        
+        if (knownAdminEmails.includes(email.toLowerCase())) {
+            console.log('Admin status from known admin list:', true);
+            return true;
+        }
+        
+        // 5. Final fallback: Make specific admin check API call
+        try {
+            const adminCheckResponse = await fetch('/api/check-admin-status', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email: email })
+            });
+            
+            if (adminCheckResponse.ok) {
+                const adminData = await adminCheckResponse.json();
+                if (adminData.isAdmin) {
+                    console.log('Admin status from admin check API:', true);
+                    return true;
+                }
+            }
+        } catch (error) {
+            console.log('Admin check API not available:', error.message);
+        }
+        
+        console.log('No admin status detected from any source');
+        return false;
+        
+    } catch (error) {
+        console.error('Error detecting admin status:', error);
+        return false;
+    }
+}
+
 async function checkUserStatus() {
     if (!currentAccount) return;
 
@@ -165,24 +233,35 @@ async function checkUserStatus() {
     try {
         showLoadingState('Checking user status...');
         
-        // Performance: Batch multiple API calls
+        // Performance: Batch multiple API calls with reduced timeout
+        const apiCallTimeout = 3000; // 3 second timeout for faster response
         const [userStatusResponse, subscriptionResponse] = await Promise.allSettled([
-            fetch('/api/checkuserstatus', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            }),
-            fetch('/api/stripe-get-subscription', {
-                method: 'POST', 
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email: email })
-            })
+            Promise.race([
+                fetch('/api/checkuserstatus', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                }),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), apiCallTimeout))
+            ]),
+            Promise.race([
+                fetch('/api/stripe-get-subscription', {
+                    method: 'POST', 
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email: email })
+                }),
+                new Promise((_, reject) => setTimeout(() => reject(new Error('Timeout')), apiCallTimeout))
+            ])
         ]);
 
-        // Handle user status
+        // Handle user status with proper admin detection
         if (userStatusResponse.status === 'fulfilled' && userStatusResponse.value.ok) {
             const userData = await userStatusResponse.value.json();
-            userIsAdmin = userData.isAdmin || false;
+            
+            // Check for admin status from multiple sources (like the original)
+            userIsAdmin = await detectUserAdmin(email, currentAccount.idTokenClaims, userData);
+            
+            console.log('Admin status detected:', userIsAdmin);
         }
 
         // Handle subscription status
