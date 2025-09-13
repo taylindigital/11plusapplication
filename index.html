@@ -19,14 +19,43 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet">
     
-    <!-- MSAL Library - Load synchronously -->
-    <script src="https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js"></script>
+    <!-- MSAL Library with fallback -->
     <script>
-        // Verify MSAL loaded
-        console.log('MSAL available after script load:', typeof msal !== 'undefined');
-        if (typeof msal === 'undefined') {
-            console.error('MSAL failed to load from CDN');
+        // Try multiple MSAL CDN sources
+        async function loadMSAL() {
+            const msalSources = [
+                'https://alcdn.msauth.net/browser/2.38.3/js/msal-browser.min.js',
+                'https://cdn.jsdelivr.net/npm/@azure/msal-browser@2.38.3/lib/msal-browser.min.js',
+                'https://unpkg.com/@azure/msal-browser@2.38.3/lib/msal-browser.min.js'
+            ];
+            
+            for (let i = 0; i < msalSources.length; i++) {
+                try {
+                    console.log(`Trying MSAL source ${i + 1}: ${msalSources[i]}`);
+                    await loadScript(msalSources[i]);
+                    if (typeof msal !== 'undefined') {
+                        console.log('MSAL loaded successfully from source', i + 1);
+                        return;
+                    }
+                } catch (error) {
+                    console.log(`MSAL source ${i + 1} failed:`, error);
+                }
+            }
+            console.error('All MSAL sources failed to load');
         }
+        
+        function loadScript(src) {
+            return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = src;
+                script.onload = resolve;
+                script.onerror = reject;
+                document.head.appendChild(script);
+            });
+        }
+        
+        // Start loading MSAL immediately
+        loadMSAL();
     </script>
     
     <!-- Performance optimizations -->

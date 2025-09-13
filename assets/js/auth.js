@@ -34,7 +34,7 @@ const loginRequest = {
 
 // Track initialization attempts to prevent infinite loop
 let initAttempts = 0;
-const maxInitAttempts = 50; // 5 seconds max
+const maxInitAttempts = 100; // 10 seconds max (longer for CDN fallbacks)
 
 // Performance: Initialize with loading state
 function initializeAuth() {
@@ -43,8 +43,15 @@ function initializeAuth() {
     // Wait for MSAL to be available
     if (typeof msal === 'undefined') {
         if (initAttempts > maxInitAttempts) {
-            console.error('MSAL failed to load after 5 seconds');
-            showStatus('Authentication library failed to load. Please refresh the page.', 'error');
+            console.error('MSAL failed to load after 10 seconds');
+            showStatus('Authentication library failed to load from multiple sources. Please check your internet connection and refresh the page.', 'error');
+            // Show sign-in button as disabled with error message
+            const signInButton = document.getElementById('signInButton');
+            if (signInButton) {
+                signInButton.textContent = '❌ Authentication Unavailable';
+                signInButton.disabled = true;
+                signInButton.style.opacity = '0.6';
+            }
             return;
         }
         console.log(`Waiting for MSAL to load... (attempt ${initAttempts})`);
